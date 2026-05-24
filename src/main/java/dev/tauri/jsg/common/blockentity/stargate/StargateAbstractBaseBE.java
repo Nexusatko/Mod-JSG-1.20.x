@@ -262,6 +262,7 @@ public abstract class StargateAbstractBaseBE<S extends StargateAbstractRendererS
     @Override
     public void setMerged(boolean merged) {
         isMerged = merged;
+        setChanged();
     }
 
     @Override

@@ -655,6 +655,11 @@ public abstract class StargateAbstractDialingManager<SG extends Stargate<?>> ext
             return StargateConnectResult.ADDRESS_MALFORMED_SGN_OK;
         }
 
+        if (!targetStargate.isMerged()) {
+            stargate.getLogManager().warn(Component.literal("Connection is going to fail, because target is not merged!"));
+            return StargateConnectResult.ADDRESS_MALFORMED_SGN_OK;
+        }
+
         var result = checkAddressAndEnergyRequirements(address, true); // we don't want to check energy here - only when establishing the wormhole
         if (result != StargateAddressCheckResult.OK) {
             return result.toConnectResult();
@@ -666,6 +671,7 @@ public abstract class StargateAbstractDialingManager<SG extends Stargate<?>> ext
         var targetDm = ((StargateAbstractDialingManager<?>) targetStargate.getDialingManager());
         var targetConnection = targetDm.activeConnection;
         if (!targetConnection.getStatus().none() && targetConnection.getTarget().map(p -> !stargate.is(p)).orElse(false)) {
+            stargate.getLogManager().warn(Component.literal("Connection is going to fail, because target is busy! (" + targetConnection.getStatus().name() + ", " + targetDm.stargateState.name() + ")"));
             return StargateConnectResult.TARGET_BUSY;
         }
 
@@ -836,7 +842,13 @@ public abstract class StargateAbstractDialingManager<SG extends Stargate<?>> ext
         var targetTile = targetPosOptional.get().getStargate();
         if (targetTile == null) return Pair.of(StargateAddressCheckResult.MALFORMED, null);
 
+        if (!targetTile.isMerged()) {
+            stargate.getLogManager().warn(Component.literal("Getting target gate results in MALFORMED -> target is not merged"));
+            return Pair.of(StargateAddressCheckResult.MALFORMED, targetTile);
+        }
+
         if (!targetTile.getDialingManager().canAcceptConnectionFrom(stargate.getStargatePos())) {
+            stargate.getLogManager().warn(Component.literal("Getting target results in TARGET_BUSY (" + targetTile.getDialingManager().getConnection().getStatus().name() + ", " + targetTile.getDialingManager().getStargateState().name() + ")!"));
             return Pair.of(StargateAddressCheckResult.TARGET_BUSY, targetTile);
         }
 
@@ -858,10 +870,15 @@ public abstract class StargateAbstractDialingManager<SG extends Stargate<?>> ext
     }
 
     public boolean canAcceptConnectionFrom(@Nullable StargatePos targetGatePos) {
-        if (!stargate.isMerged()) return false;
-
-        if (targetGatePos != null && stargate.is(targetGatePos))
+        if (!stargate.isMerged()) {
+            stargate.getLogManager().debug(Component.literal("canAcceptConnectionFrom() is false => not merged"));
             return false;
+        }
+
+        if (targetGatePos != null && stargate.is(targetGatePos)) {
+            stargate.getLogManager().debug(Component.literal("canAcceptConnectionFrom() is false => target == this"));
+            return false;
+        }
 
         boolean allowConnectToDialing = JSGConfig.Stargate.allowConnectToDialing.get();
 
