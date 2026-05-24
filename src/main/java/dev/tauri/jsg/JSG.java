@@ -10,6 +10,7 @@ import dev.tauri.jsg.client.screen.gui.admincontroller.tabs.DialingTab;
 import dev.tauri.jsg.client.screen.gui.admincontroller.tabs.NetworkTab;
 import dev.tauri.jsg.client.screen.gui.mainmenu.GuiCustomMainMenu;
 import dev.tauri.jsg.common.command.JSGCommands;
+import dev.tauri.jsg.common.config.data.ProgressJSON;
 import dev.tauri.jsg.common.injectors.JSGLootTableInjectors;
 import dev.tauri.jsg.common.injectors.JSGTemplatePoolInjectors;
 import dev.tauri.jsg.common.integration.cctweaked.CCDevices;
@@ -164,7 +165,12 @@ public class JSG implements JSGAddon {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        //ProgressJSON.INSTANCE.load(JSGCore.modConfigDir);
+        ProgressJSON.INSTANCE.load(JSGCore.modConfigDir);
+        try {
+            ProgressJSON.INSTANCE.reload(null);
+        } catch (Exception e) {
+            JSG.logger.error("Error while reloading progressJSON:", e);
+        }
     }
 
     @SubscribeEvent

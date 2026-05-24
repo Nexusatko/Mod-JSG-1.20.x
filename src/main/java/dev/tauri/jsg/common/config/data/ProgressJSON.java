@@ -13,6 +13,11 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.HashMap;
 
 public class ProgressJSON extends AbstractJSONConfig<ProgressJSON.Entry> {
+    public static final Codec<Entry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.STRING.fieldOf("currentActId").forGetter(e -> e.currentActId),
+            Codec.STRING.fieldOf("nextActId").forGetter(e -> e.nextActId)
+    ).apply(instance, Entry::new));
+
     public static final ProgressJSON INSTANCE = new ProgressJSON();
 
     public static Entry get() {
@@ -41,11 +46,6 @@ public class ProgressJSON extends AbstractJSONConfig<ProgressJSON.Entry> {
         e.nextActId = next.toString();
         update();
     }
-
-    public static final Codec<Entry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("currentActId").forGetter(e -> e.currentActId),
-            Codec.STRING.fieldOf("nextActId").forGetter(e -> e.nextActId)
-    ).apply(instance, Entry::new));
 
 
     public ProgressJSON() {
