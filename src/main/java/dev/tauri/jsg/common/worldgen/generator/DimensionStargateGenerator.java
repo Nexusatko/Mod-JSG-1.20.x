@@ -34,9 +34,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -45,14 +45,13 @@ public class DimensionStargateGenerator {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onServerStarted(ServerStartedEvent e) {
         var server = e.getServer();
-        long start = System.currentTimeMillis();
         JSG.logger.info("Started generating stargate in dimensions...");
 
         var network = StargateNetwork.INSTANCE;
         var levels = server.levelKeys();
         var lastPercentage = "";
         final int totalDimensions = levels.size();
-        final ConcurrentHashMap<String, StargateGeneratorStepStatus> stats = new ConcurrentHashMap<>();
+        final LinkedHashMap<String, StargateGeneratorStepStatus> stats = new LinkedHashMap<>();
         AtomicInteger totalGenerated = new AtomicInteger();
         AtomicReference<Component> message = new AtomicReference<>(Component.empty());
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> SGGeneratorGuiProvider.showProgress(() -> totalDimensions, () -> stats, message::get));

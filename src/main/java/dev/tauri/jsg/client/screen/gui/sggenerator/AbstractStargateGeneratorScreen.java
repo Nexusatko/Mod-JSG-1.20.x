@@ -15,8 +15,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -25,10 +25,10 @@ public abstract class AbstractStargateGeneratorScreen extends GenericDirtMessage
     final Supplier<String> step;
     final Supplier<Integer> total;
     final Supplier<Component> message;
-    final Supplier<ConcurrentHashMap<String, StargateGeneratorStepStatus>> stats;
+    final Supplier<Map<String, StargateGeneratorStepStatus>> stats;
     final double initTick;
 
-    public AbstractStargateGeneratorScreen(Component title, Supplier<String> step, Supplier<Integer> total, Supplier<ConcurrentHashMap<String, StargateGeneratorStepStatus>> stats, Supplier<Component> message) {
+    public AbstractStargateGeneratorScreen(Component title, Supplier<String> step, Supplier<Integer> total, Supplier<Map<String, StargateGeneratorStepStatus>> stats, Supplier<Component> message) {
         super(title);
         this.step = step;
         this.total = total;

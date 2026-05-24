@@ -8,11 +8,11 @@ import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class SGGeneratorGuiProvider {
-    public static void showProgress(Supplier<Integer> total, Supplier<ConcurrentHashMap<String, StargateGeneratorStepStatus>> stats, Supplier<Component> message) {
+    public static void showProgress(Supplier<Integer> total, Supplier<Map<String, StargateGeneratorStepStatus>> stats, Supplier<Component> message) {
         RenderSystem.recordRenderCall(() -> Minecraft.getInstance().forceSetScreen(new StargateGeneratorScreen(total, stats, message)));
     }
 

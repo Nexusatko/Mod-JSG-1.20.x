@@ -14,15 +14,15 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class LevelGenerationScreen extends AbstractStargateGeneratorScreen {
     protected final StoringChunkProgressListener progressListener;
 
     public LevelGenerationScreen() {
-        super(GameNarrator.NO_TITLE, () -> "menu.preparingSpawn", () -> 1, ConcurrentHashMap::new, Component::empty);
+        super(GameNarrator.NO_TITLE, () -> "menu.preparingSpawn", () -> 1, HashMap::new, Component::empty);
         this.progressListener = Minecraft.getInstance().getProgressListener();
     }
 
