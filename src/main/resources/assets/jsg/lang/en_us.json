@@ -548,9 +548,9 @@
 
   "_comment613": "===>>> Address Tab <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
 
-  "gui.stargate.jsg.milkyway_address": "Milky Way address",
-  "gui.stargate.jsg.pegasus_address": "Pegasus address",
-  "gui.stargate.jsg.universe_address": "Universe address",
+  "gui.stargate.jsg:milkyway_address": "Milky Way address",
+  "gui.stargate.jsg:pegasus_address": "Pegasus address",
+  "gui.stargate.jsg:universe_address": "Universe address",
 
   "_comment614": "===>>> Iris Tab <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
 
@@ -613,7 +613,7 @@
   "item.jsg.universe_dialer.manual_dialing": "Dialing",
   "item.jsg.universe_dialer.manual_dialing.delete": "Delete",
 
-  "_comment619.5": ">>> Admin Controller <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+  "_comment620": ">>> Admin Controller <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
 
   "gui.admincontroller.name": "Admin Controller",
 
@@ -665,6 +665,9 @@
   "gui.admincontroller.response.stargate.close.success": "Closing gate...",
   "gui.admincontroller.response.stargate.close.error.not_open": "Stargate is not open",
   "gui.admincontroller.response.stargate.close.error.blocked_by_event": "Closing blocked by an error (Check logs)",
+
+  "_comment621": ">>> Notebook pages and Notebooks <<<<<<<<<<<<<<<<<<",
+  "item.jsg.notebook.unnamed": "<unnamed>",
 
   "_comment700": "----------------- CHAT MESSAGES ------------------",
 
