@@ -5,7 +5,55 @@
     {
       "weight": 1,
       "element": {
-        "element_type": "minecraft:empty_pool_element"
+        "element_type": "minecraft:single_pool_element",
+        "projection": "rigid",
+        "location": "jsg:cartouche/fixed_address/earth/milkyway/sandstone/vertical/six_without_poo",
+        "processors": "minecraft:empty"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "projection": "rigid",
+        "location": "jsg:cartouche/fixed_address/earth/milkyway/sandstone/vertical/six_with_poo",
+        "processors": "minecraft:empty"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "projection": "rigid",
+        "location": "jsg:cartouche/fixed_address/earth/milkyway/sandstone/vertical/seven_without_poo",
+        "processors": "minecraft:empty"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "projection": "rigid",
+        "location": "jsg:cartouche/fixed_address/earth/milkyway/sandstone/vertical/seven_with_poo",
+        "processors": "minecraft:empty"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "projection": "rigid",
+        "location": "jsg:cartouche/fixed_address/earth/milkyway/sandstone/vertical/eight_without_poo",
+        "processors": "minecraft:empty"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "projection": "rigid",
+        "location": "jsg:cartouche/fixed_address/earth/milkyway/sandstone/vertical/eight_without_poo",
+        "processors": "minecraft:empty"
       }
     }
   ]
