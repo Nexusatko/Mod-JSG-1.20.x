@@ -286,7 +286,7 @@ public class StargateContainerGui extends TabbedContainerScreen<StargateContaine
         this.renderBackground(graphics);
 
         boolean hasAddressUpgrade = false;
-        boolean hasIrisUpgrade = !menu.getSlot(11).getItem().isEmpty();
+        boolean hasIrisUpgrade = !menu.getSlot(8).getItem().isEmpty();
 
         for (var entry : addressTabs.entrySet()) {
             entry.getValue().setVisible(false);
