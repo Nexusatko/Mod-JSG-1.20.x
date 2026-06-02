@@ -26,6 +26,10 @@ public class MainMenuMusicSlider extends AbstractSliderButton {
         this.valueChanged = valueChanged;
         this.originalTitle = pMessage;
         updateMessage();
+        if (getValue() > 0)
+            this.button.texture = BUTTON_TEX;
+        else
+            this.button.texture = BUTTON_TEX_MUTED;
     }
 
     @Override
