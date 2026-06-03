@@ -17,8 +17,6 @@ import dev.tauri.jsg.common.stargate.manager.dialing.StargatePegasusDialingManag
 import dev.tauri.jsg.common.stargate.manager.state.StargateAbstractStateManager;
 import dev.tauri.jsg.common.stargate.manager.state.StargatePegasusStateManager;
 import dev.tauri.jsg.core.common.blockentity.ILinkable;
-import dev.tauri.jsg.core.common.entity.BiomeOverlayInstance;
-import dev.tauri.jsg.core.common.registry.CoreBiomeOverlays;
 import dev.tauri.jsg.core.common.sound.PositionedSound;
 import dev.tauri.jsg.core.common.sound.SoundEvent;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
@@ -30,8 +28,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -97,13 +93,6 @@ public class StargatePegasusBaseBE extends StargateClassicBaseBE<StargatePegasus
             default -> null;
         };
 
-    }
-
-    public static final List<Supplier<BiomeOverlayInstance>> SUPPORTED_OVERLAYS = List.of(CoreBiomeOverlays.NORMAL, CoreBiomeOverlays.FROST, CoreBiomeOverlays.MOSSY, CoreBiomeOverlays.AGED, CoreBiomeOverlays.SOOTY);
-
-    @Override
-    public List<Supplier<BiomeOverlayInstance>> getSupportedOverlays() {
-        return SUPPORTED_OVERLAYS;
     }
 
     @Override

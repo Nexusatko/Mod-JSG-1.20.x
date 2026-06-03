@@ -26,10 +26,8 @@ import dev.tauri.jsg.common.stargate.manager.state.StargateOrlinStateManager;
 import dev.tauri.jsg.common.stargate.network.StargateNetwork;
 import dev.tauri.jsg.common.worldgen.generator.StargateGenerator;
 import dev.tauri.jsg.core.common.blockentity.ILinkable;
-import dev.tauri.jsg.core.common.entity.BiomeOverlayInstance;
 import dev.tauri.jsg.core.common.power.general.EnergyRequiredToOperate;
 import dev.tauri.jsg.core.common.power.general.SmallEnergyStorage;
-import dev.tauri.jsg.core.common.registry.CoreBiomeOverlays;
 import dev.tauri.jsg.core.common.sound.PositionedSound;
 import dev.tauri.jsg.core.common.sound.SoundEvent;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
@@ -44,7 +42,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -189,11 +186,6 @@ public class StargateOrlinBaseBE extends StargateAbstractBaseBE<StargateOrlinRen
     @Override
     public BlockPos getGateCenterPos() {
         return getBlockPos().above();
-    }
-
-    @Override
-    public List<Supplier<BiomeOverlayInstance>> getSupportedOverlays() {
-        return List.of(CoreBiomeOverlays.NORMAL);
     }
 
     public void initializeFromItemStack(ItemStack stack) {

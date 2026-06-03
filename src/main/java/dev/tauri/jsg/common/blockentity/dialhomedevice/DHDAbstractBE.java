@@ -20,7 +20,6 @@ import dev.tauri.jsg.core.common.entity.StateType;
 import dev.tauri.jsg.core.common.item.CommonUpgrade;
 import dev.tauri.jsg.core.common.packet.JSGCorePacketHandler;
 import dev.tauri.jsg.core.common.packet.packets.StateUpdateRequestToServer;
-import dev.tauri.jsg.core.common.registry.CoreBiomeOverlays;
 import dev.tauri.jsg.core.common.registry.CoreFluids;
 import dev.tauri.jsg.core.common.registry.CoreItems;
 import dev.tauri.jsg.core.common.registry.CoreStateTypes;
@@ -57,14 +56,12 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, ILinkable<Stargate<?>>, StateProviderInterface {
 
     // ---------------------------------------------------------------------------------------------------
     // Gate linking
 
-    public static final List<Supplier<BiomeOverlayInstance>> SUPPORTED_OVERLAYS = List.of(CoreBiomeOverlays.NORMAL, CoreBiomeOverlays.FROST, CoreBiomeOverlays.MOSSY, CoreBiomeOverlays.SOOTY, CoreBiomeOverlays.AGED);
     public static final List<Item> SUPPORTED_UPGRADES = Arrays.asList(JSGItems.CRYSTAL_GLYPH_DHD.get(), CoreItems.CRYSTAL_UPGRADE_CAPACITY.get(), CoreItems.CRYSTAL_UPGRADE_EFFICIENCY.get());
     public static final int BIOME_OVERRIDE_SLOT = 5;
 
@@ -127,7 +124,7 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
                 }
                 case BIOME_OVERRIDE_SLOT -> {
                     var override = BiomeOverlayInstance.getBiomeOverlayByItem(stack, true);
-                    yield override != null && getSupportedOverlays().stream().map(Supplier::get).toList().contains(override);
+                    yield override != null;
                 }
                 default -> true;
             };
@@ -348,18 +345,7 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
             return null;
         }
 
-        BiomeOverlayInstance biomeOverlay = BiomeOverlayInstance.getBiomeOverlayByItem(stack);
-
-        if (getSupportedOverlays().stream().map(Supplier::get).toList().contains(biomeOverlay)) {
-            return biomeOverlay;
-        }
-
-        return null;
-    }
-
-    @Override
-    public List<Supplier<BiomeOverlayInstance>> getSupportedOverlays() {
-        return SUPPORTED_OVERLAYS;
+        return BiomeOverlayInstance.getBiomeOverlayByItem(stack);
     }
 
     @Override

@@ -171,14 +171,6 @@ public class StargateUniverseBaseBE extends StargateClassicBaseBE<StargateUniver
     }
 
     // --------------------------------------------------------------------------------
-    // Overlays
-
-    @Override
-    public List<Supplier<BiomeOverlayInstance>> getSupportedOverlays() {
-        return SUPPORTED_OVERLAYS;
-    }
-
-    // --------------------------------------------------------------------------------
     // Sounds
 
     @Nullable

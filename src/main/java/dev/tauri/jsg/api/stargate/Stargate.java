@@ -45,9 +45,11 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -231,12 +233,10 @@ public interface Stargate<E extends JSGEnergyStorage> extends IPreparable, ITick
         return getStargateType();
     }
 
-    List<Supplier<BiomeOverlayInstance>> getSupportedOverlays();
-
     default BiomeOverlayInstance getBiomeOverlayWithOverride() {
         var world = getStargateLevel();
         if (world == null) return CoreBiomeOverlays.NORMAL.get();
-        return BiomeOverlayInstance.getUpdatedBiomeOverlay(world, getMergeHelper().getTopBlock(), getSupportedOverlays().stream().map(Supplier::get).toList());
+        return BiomeOverlayInstance.getUpdatedBiomeOverlay(world, getMergeHelper().getTopBlock());
     }
 
     boolean shouldAutoclose();

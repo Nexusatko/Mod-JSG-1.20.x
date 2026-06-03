@@ -5,23 +5,21 @@ import dev.tauri.jsg.api.sound.StargateSoundEventEnum;
 import dev.tauri.jsg.api.sound.StargateSoundPositionedEnum;
 import dev.tauri.jsg.api.stargate.type.StargateType;
 import dev.tauri.jsg.api.stargate.type.StargateTypes;
+import dev.tauri.jsg.client.renderer.blockentity.stargate.StargateMilkyWayRendererState;
 import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
-import dev.tauri.jsg.core.common.blockentity.ILinkable;
-import dev.tauri.jsg.core.common.entity.BiomeOverlayInstance;
-import dev.tauri.jsg.core.common.registry.CoreBiomeOverlays;
-import dev.tauri.jsg.core.common.sound.PositionedSound;
-import dev.tauri.jsg.core.common.sound.SoundEvent;
-import dev.tauri.jsg.core.common.symbol.SymbolType;
 import dev.tauri.jsg.common.multistructure.mergehelper.StargateMilkyWayMergeHelper;
 import dev.tauri.jsg.common.registry.JSGBlockEntities;
 import dev.tauri.jsg.common.registry.JSGPositionedSounds;
 import dev.tauri.jsg.common.registry.JSGSoundEvents;
 import dev.tauri.jsg.common.registry.tags.JSGBlockTags;
-import dev.tauri.jsg.client.renderer.blockentity.stargate.StargateMilkyWayRendererState;
 import dev.tauri.jsg.common.stargate.manager.dialing.StargateAbstractDialingManager;
 import dev.tauri.jsg.common.stargate.manager.dialing.StargateMilkyWayDialingManager;
 import dev.tauri.jsg.common.stargate.manager.state.StargateAbstractStateManager;
 import dev.tauri.jsg.common.stargate.manager.state.StargateMilkyWayStateManager;
+import dev.tauri.jsg.core.common.blockentity.ILinkable;
+import dev.tauri.jsg.core.common.sound.PositionedSound;
+import dev.tauri.jsg.core.common.sound.SoundEvent;
+import dev.tauri.jsg.core.common.symbol.SymbolType;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
@@ -31,8 +29,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -114,15 +110,5 @@ public class StargateMilkyWayBaseBE extends StargateClassicBaseBE<StargateMilkyW
         if (soundEvent == StargateSoundEventEnum.CHEVRON_OPEN)
             return 0.95f + (0.05f * (getLevel() != null ? getLevel().random.nextFloat() : 0f));
         return super.getSoundEventPitch(soundEvent);
-    }
-
-    // ------------------------------------------------------------------------
-    // Ticking and loading
-
-    public static final List<Supplier<BiomeOverlayInstance>> SUPPORTED_OVERLAYS = List.of(CoreBiomeOverlays.NORMAL, CoreBiomeOverlays.FROST, CoreBiomeOverlays.MOSSY, CoreBiomeOverlays.AGED, CoreBiomeOverlays.SOOTY);
-
-    @Override
-    public List<Supplier<BiomeOverlayInstance>> getSupportedOverlays() {
-        return SUPPORTED_OVERLAYS;
     }
 }

@@ -95,7 +95,7 @@ public class StargateContainerGui extends TabbedContainerScreen<StargateContaine
 
         configTab = createConfigTab(menu.gateTile.getConfig(), imageWidth, imageHeight, leftPos, topPos);
 
-        overlayTab = createOverlayTab(menu.gateTile.getSupportedOverlays(), imageWidth, imageHeight, leftPos, topPos);
+        overlayTab = createOverlayTab(imageWidth, imageHeight, leftPos, topPos);
         overlayTab.setMenu(menu);
 
         irisTab = (TabIris) TabIris.builder()

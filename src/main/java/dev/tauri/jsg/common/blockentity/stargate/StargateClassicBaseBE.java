@@ -92,7 +92,6 @@ import net.minecraftforge.energy.IEnergyStorage;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
-import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -608,13 +607,7 @@ public abstract class StargateClassicBaseBE<S extends StargateClassicRendererSta
             return null;
         }
 
-        BiomeOverlayInstance biomeOverlay = BiomeOverlayInstance.getBiomeOverlayByItem(stack);
-
-        if (getSupportedOverlays().stream().map(Supplier::get).toList().contains(biomeOverlay)) {
-            return biomeOverlay;
-        }
-
-        return null;
+        return BiomeOverlayInstance.getBiomeOverlayByItem(stack);
     }
 
     @Override
@@ -812,7 +805,7 @@ public abstract class StargateClassicBaseBE<S extends StargateClassicRendererSta
                 case 6 -> isItemCapacitor && getSupportedCapacitors() >= 3;
                 case 7 -> {
                     BiomeOverlayInstance override = BiomeOverlayInstance.getBiomeOverlayByItem(stack, true);
-                    yield override != null && getSupportedOverlays().stream().map(Supplier::get).toList().contains(override);
+                    yield override != null;
                 }
                 case 8 -> getIrisManager().canInsertItemAsIris(item);
                 default -> {

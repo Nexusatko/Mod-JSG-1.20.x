@@ -67,7 +67,7 @@ public class DHDContainerGui extends AbstractContainerScreen<DHDContainer> imple
 
         tabs.clear();
 
-        TabBiomeOverlay overlayTab = createOverlayTab(menu.dhdTile.getSupportedOverlays(), imageWidth, imageHeight, getGuiLeft(), getGuiTop());
+        TabBiomeOverlay overlayTab = createOverlayTab(imageWidth, imageHeight, getGuiLeft(), getGuiTop());
         overlayTab.setMenu(menu);
 
         tabs.add(overlayTab);

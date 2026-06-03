@@ -7,7 +7,6 @@ import dev.tauri.jsg.common.item.linkable.dialer.modes.UniverseDialerModes;
 import dev.tauri.jsg.core.common.entity.BiomeOverlayInstance;
 import dev.tauri.jsg.core.common.helper.ItemHelper;
 import dev.tauri.jsg.core.common.item.JSGItem;
-import dev.tauri.jsg.core.common.registry.CoreBiomeOverlays;
 import dev.tauri.jsg.core.common.registry.CoreTabs;
 import dev.tauri.jsg.core.common.util.I18n;
 import dev.tauri.jsg.core.mapping.JSGMapping;
@@ -74,7 +73,7 @@ public class UniverseDialerItem extends JSGItem {
         }
 
         if (world.getGameTime() % 20 == 0) {
-            compound.putString(C_BIOME_OVERLAY, BiomeOverlayInstance.getUpdatedBiomeOverlay(world, entity.blockPosition(), List.of(CoreBiomeOverlays.NORMAL.get(), CoreBiomeOverlays.FROST.get())).getId().toString());
+            compound.putString(C_BIOME_OVERLAY, BiomeOverlayInstance.getUpdatedBiomeOverlay(world, entity.blockPosition()).getId().toString());
             changed = true;
         }
 

@@ -1,7 +1,10 @@
 package dev.tauri.jsg.api.stargate.dialhomedevice;
 
 import dev.tauri.jsg.api.stargate.Stargate;
-import dev.tauri.jsg.core.common.blockentity.*;
+import dev.tauri.jsg.core.common.blockentity.ILinkableBE;
+import dev.tauri.jsg.core.common.blockentity.IPreparable;
+import dev.tauri.jsg.core.common.blockentity.ITickable;
+import dev.tauri.jsg.core.common.blockentity.IUpgradable;
 import dev.tauri.jsg.core.common.symbol.SymbolInterface;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
 import dev.tauri.jsg.core.common.symbol.pointoforigin.PointOfOrigin;
@@ -15,7 +18,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public interface StargateDHD extends ILinkableBE<Stargate<?>>, ITickable, IPreparable, IUpgradable, IBiomeOverlayProvider {
+public interface StargateDHD extends ILinkableBE<Stargate<?>>, ITickable, IPreparable, IUpgradable {
     FluidTank getFluidHandler();
 
     Vec3 getBlockPosInFront();

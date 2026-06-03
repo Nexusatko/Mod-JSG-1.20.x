@@ -54,11 +54,6 @@ public class DHDMilkyWayBE extends DHDAbstractBE {
         super(JSGBlockEntities.DHD_MILKYWAY.get(), pos, state);
     }
 
-    @Override
-    public List<Supplier<BiomeOverlayInstance>> getSupportedOverlays() {
-        return SUPPORTED_OVERLAYS;
-    }
-
     @SuppressWarnings("null")
     @Override
     public void tick(@NotNull Level level) {
@@ -68,7 +63,7 @@ public class DHDMilkyWayBE extends DHDAbstractBE {
             // Each 2s check for the sky
             if (level.getGameTime() % 40 == 0 && rendererStateClient != null
                     && getRendererStateClient().biomeOverride == null) {
-                rendererStateClient.setBiomeOverlay(BiomeOverlayInstance.getUpdatedBiomeOverlay(level, getBlockPos(), SUPPORTED_OVERLAYS.stream().map(Supplier::get).toList()));
+                rendererStateClient.setBiomeOverlay(BiomeOverlayInstance.getUpdatedBiomeOverlay(level, getBlockPos()));
             }
         }
         super.tick(level);
@@ -247,7 +242,7 @@ public class DHDMilkyWayBE extends DHDAbstractBE {
         }
 
         stateType.stateExecutor()
-                .tryType(CoreStateTypes.RENDERER_STATE.get(), () -> rendererStateClient = ((DHDMilkyWayRendererState) state).initClient(getBlockPos(), BiomeOverlayInstance.getUpdatedBiomeOverlay(level, getBlockPos(), SUPPORTED_OVERLAYS.stream().map(Supplier::get).toList()), connected))
+                .tryType(CoreStateTypes.RENDERER_STATE.get(), () -> rendererStateClient = ((DHDMilkyWayRendererState) state).initClient(getBlockPos(), BiomeOverlayInstance.getUpdatedBiomeOverlay(level, getBlockPos()), connected))
                 .tryType(JSGStateTypes.DHD_ACTIVATE_BUTTON.get(), () -> {
                     if (state != null) {
                         DHDActivateButtonState activateState = (DHDActivateButtonState) state;
