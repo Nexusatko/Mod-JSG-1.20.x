@@ -351,6 +351,7 @@ public class StargateUniverseDialingManager extends StargateClassicDialingManage
     @Override
     protected void onWormholeDisconnected() {
         super.onWormholeDisconnected();
+        getSpinHelper().stopSpinning(true);
         scheduleResetStargate();
         var dhd = stargate.getLinkedDevice();
         if (stargate.isLinkedAndDHDOperational() && dhd != null) {
@@ -361,6 +362,7 @@ public class StargateUniverseDialingManager extends StargateClassicDialingManage
     @Override
     protected void onGateOpen(boolean initiating) {
         super.onGateOpen(initiating);
+        getSpinHelper().stopSpinning(true);
         var dhd = stargate.getLinkedDevice();
         if (stargate.isLinkedAndDHDOperational() && dhd != null) {
             dhd.activateSymbol(stargate.getSymbolType().getBRB());

@@ -368,7 +368,7 @@ public abstract class StargateAbstractDialingManager<SG extends Stargate<?>> ext
     }
 
     public boolean canAbortDialing() {
-        return !getStargateState().notInitiating() && (addressDialSequence != null || getStargateState().dialing() || dialedAddress.size() > 0);
+        return !getStargateState().notInitiating() && (addressDialSequence != null || getStargateState().dialing() || dialedAddress.size() > 0 || getSpinHelper().isSpinning());
     }
 
     /**

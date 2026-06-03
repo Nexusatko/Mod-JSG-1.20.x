@@ -7,10 +7,10 @@ import dev.tauri.jsg.api.stargate.ChevronEnum;
 import dev.tauri.jsg.api.stargate.EnumStargateState;
 import dev.tauri.jsg.api.stargate.result.StargateChevronEngageResult;
 import dev.tauri.jsg.common.blockentity.stargate.StargateMilkyWayBaseBE;
-import dev.tauri.jsg.core.common.entity.ScheduledTask;
-import dev.tauri.jsg.core.common.symbol.SymbolInterface;
 import dev.tauri.jsg.common.stargate.animation.incoming.IncomingAnimation;
 import dev.tauri.jsg.common.stargate.animation.incoming.MilkyWayIncomingAnimation;
+import dev.tauri.jsg.core.common.entity.ScheduledTask;
+import dev.tauri.jsg.core.common.symbol.SymbolInterface;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
@@ -100,6 +100,7 @@ public class StargateMilkyWayDialingManager extends StargateClassicDialingManage
     @Override
     protected void onWormholeDisconnected() {
         super.onWormholeDisconnected();
+        getSpinHelper().stopSpinning(true);
         var dhd = stargate.getLinkedDevice();
         if (stargate.isLinkedAndDHDOperational() && dhd != null) {
             dhd.clearSymbols();
@@ -109,6 +110,7 @@ public class StargateMilkyWayDialingManager extends StargateClassicDialingManage
     @Override
     protected void onGateOpen(boolean initiating) {
         super.onGateOpen(initiating);
+        getSpinHelper().stopSpinning(true);
         var dhd = stargate.getLinkedDevice();
         if (stargate.isLinkedAndDHDOperational() && dhd != null) {
             dhd.activateSymbol(stargate.getSymbolType().getBRB());

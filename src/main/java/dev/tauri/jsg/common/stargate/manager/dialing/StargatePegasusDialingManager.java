@@ -229,6 +229,7 @@ public class StargatePegasusDialingManager extends StargateClassicDialingManager
         super.onGateOpen(initiating);
         canDialNextFromBuffer = true;
         addressBuffer.first().clear();
+        getSpinHelper().stopSpinning(true);
         stargate.setChanged();
         var dhd = stargate.getLinkedDevice();
         if (stargate.isLinkedAndDHDOperational() && dhd != null) {
