@@ -9,19 +9,27 @@ import dev.tauri.jsg.api.stargate.manager.IStargateEnergyManager;
 import dev.tauri.jsg.api.stargate.network.StargatePos;
 import dev.tauri.jsg.api.stargate.network.address.StargateAddressDynamic;
 import dev.tauri.jsg.common.blockentity.stargate.StargateAbstractBaseBE;
+import dev.tauri.jsg.common.blockentity.stargate.StargateAbstractMemberBE;
 import dev.tauri.jsg.common.blockentity.stargate.StargateClassicBaseBE;
 import dev.tauri.jsg.core.common.config.json.dimension.JSGDimensionConfig;
 import dev.tauri.jsg.core.common.helper.BlockPosHelper;
 import dev.tauri.jsg.core.common.power.JSGEnergyStorage;
 import dev.tauri.jsg.core.common.power.general.EnergyRequiredToOperate;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @ParametersAreNonnullByDefault
 public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?, ?>, E extends JSGEnergyStorage> extends AbstractStargateManager<SG> implements IStargateEnergyManager<E> {
@@ -61,7 +69,16 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
             currentEnergyRequirements.update(getEnergyRequiredToDial(targetGate.get(), stargate.getDialingManager().getDialedAddress()));
         else
             currentEnergyRequirements.update(EnergyRequiredToOperate.free());
-        getStorage().extractEnergy(currentEnergyRequirements.energyToOpen, false);
+        var energyNeeded = new AtomicInteger(currentEnergyRequirements.energyToOpen);
+        getStorage().extractEnergy(energyNeeded.get(), false);
+        var extracted = getStorage().extractEnergy(energyNeeded.get(), false);
+        energyNeeded.addAndGet(-extracted);
+        if (energyNeeded.get() >= 0) {
+            getEnergyStoragesConnectedToStargate().forEach((pos, storage) -> {
+                if (energyNeeded.get() <= 0) return;
+                energyNeeded.addAndGet(-storage.extractEnergy(energyNeeded.get(), false));
+            });
+        }
     }
 
     @Override
@@ -131,6 +148,37 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
             return;
         }
         getStorage().extractEnergy(currentEnergyRequirements.keepAlive, false);
+    }
+
+    @Override
+    public boolean canOpenWormhole(EnergyRequiredToOperate energyRequiredToDial) {
+        if (getStorage().getEnergyStored() >= energyRequiredToDial.energyToOpen)
+            return true;
+        var energyNeeded = new AtomicInteger(energyRequiredToDial.energyToOpen);
+        getEnergyStoragesConnectedToStargate().forEach((pos, storage) -> {
+            if (energyNeeded.get() <= 0) return;
+            energyNeeded.addAndGet(-storage.extractEnergy(energyNeeded.get(), true));
+        });
+        return energyNeeded.get() <= 0;
+    }
+
+    @Override
+    public Map<BlockPos, IEnergyStorage> getEnergyStoragesConnectedToStargate() {
+        return Util.make(new HashMap<>(), (map) -> {
+            var level = stargate.getLevel();
+            if (level == null) return;
+            for (var pos : stargate.getMergeHelper().getBlocks().keySet()) {
+                for (var dir : Direction.values()) {
+                    var bePos = pos.relative(dir);
+                    var be = level.getBlockEntity(bePos);
+                    if (be == null) continue;
+                    if (be instanceof StargateAbstractMemberBE || be instanceof StargateAbstractBaseBE<?, ?>) continue;
+                    var energyCapOpt = be.getCapability(ForgeCapabilities.ENERGY, dir.getOpposite()).resolve();
+                    if (energyCapOpt.isEmpty()) continue;
+                    map.put(bePos, energyCapOpt.get());
+                }
+            }
+        });
     }
 
     @Override

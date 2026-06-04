@@ -808,7 +808,7 @@ public abstract class StargateAbstractDialingManager<SG extends Stargate<?>> ext
             if (!conn.getStatus().waiting()) return StargateAddressCheckResult.MALFORMED;
             if (conn.withoutEnergy()) return StargateAddressCheckResult.OK;
             var energyRequired = stargate.getEnergyManager().getEnergyRequiredToDial(sg, dialedAddress);
-            if (stargate.getEnergyManager().getStorage().getEnergyStored() < energyRequired.energyToOpen)
+            if (!stargate.getEnergyManager().canOpenWormhole(energyRequired))
                 return StargateAddressCheckResult.NOT_ENOUGH_POWER;
             return StargateAddressCheckResult.OK;
         }, () -> StargateAddressCheckResult.MALFORMED);
@@ -819,7 +819,7 @@ public abstract class StargateAbstractDialingManager<SG extends Stargate<?>> ext
         if (result.first() != StargateAddressCheckResult.OK) return result.first();
         if (noEnergy) return StargateAddressCheckResult.OK;
         var energyRequired = stargate.getEnergyManager().getEnergyRequiredToDial(result.second(), address);
-        if (stargate.getEnergyManager().getStorage().getEnergyStored() < energyRequired.energyToOpen)
+        if (!stargate.getEnergyManager().canOpenWormhole(energyRequired))
             return StargateAddressCheckResult.NOT_ENOUGH_POWER;
         return StargateAddressCheckResult.OK;
     }
