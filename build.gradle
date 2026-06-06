@@ -13,6 +13,13 @@ subprojects {
     apply plugin: 'org.parchmentmc.librarian.forgegradle'
 }
 
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
 allprojects {
     group = mod_group_id
     if (mod_version.contains("Dev"))
@@ -134,6 +141,10 @@ allprojects {
             content {
                 includeGroup "maven.modrinth"
             }
+        }
+        maven {
+            name = 'Just SG Mod'
+            url = 'https://maven.justsgmod.eu'
         }
         flatDir {
             dir rootDir.getAbsolutePath() + "/libs"

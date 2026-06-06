@@ -19,7 +19,6 @@ import dev.tauri.jsg.common.packet.packets.stargate.*;
 import dev.tauri.jsg.core.common.packet.SimplePacketHandler;
 import dev.tauri.jsg.core.mapping.JSGMapping;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.PacketDistributor;
 
 public class JSGPacketHandler {
@@ -39,28 +38,27 @@ public class JSGPacketHandler {
     }
 
     public static void init() {
-        int index = -1;
         // to server
-        HANDLER.registerPacket(DHDButtonClickedToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, DHDButtonClickedToServer::new);
-        HANDLER.registerPacket(SaveIrisCodeToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, SaveIrisCodeToServer::new);
-        HANDLER.registerPacket(UniverseDialerActionPacketToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, UniverseDialerActionPacketToServer::new);
-        HANDLER.registerPacket(GDOCodeKeyPressedToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, GDOCodeKeyPressedToServer::new);
-        HANDLER.registerPacket(UniverseDialerKeyPressedToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, UniverseDialerKeyPressedToServer::new);
-        HANDLER.registerPacket(PrinterButtonClickedToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, PrinterButtonClickedToServer::new);
-        HANDLER.registerPacket(StargatePlayerMotionToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, StargatePlayerMotionToServer::new);
-        HANDLER.registerPacket(ACRenameGatePacketToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, ACRenameGatePacketToServer::new);
-        HANDLER.registerPacket(ACEntryActionPacketToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, ACEntryActionPacketToServer::new);
-        HANDLER.registerPacket(ACLinkedActionPacketToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, ACLinkedActionPacketToServer::new);
-        HANDLER.registerPacket(ACStargateDataRequestPacketToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, ACStargateDataRequestPacketToServer::new);
+        HANDLER.registerPacketToServer(DHDButtonClickedToServer.class);
+        HANDLER.registerPacketToServer(SaveIrisCodeToServer.class);
+        HANDLER.registerPacketToServer(UniverseDialerActionPacketToServer.class);
+        HANDLER.registerPacketToServer(GDOCodeKeyPressedToServer.class);
+        HANDLER.registerPacketToServer(UniverseDialerKeyPressedToServer.class);
+        HANDLER.registerPacketToServer(PrinterButtonClickedToServer.class);
+        HANDLER.registerPacketToServer(StargatePlayerMotionToServer.class);
+        HANDLER.registerPacketToServer(ACRenameGatePacketToServer.class);
+        HANDLER.registerPacketToServer(ACEntryActionPacketToServer.class);
+        HANDLER.registerPacketToServer(ACLinkedActionPacketToServer.class);
+        HANDLER.registerPacketToServer(ACStargateDataRequestPacketToServer.class);
 
         // to client
-        HANDLER.registerPacket(AdminControllerGuiOpenToClient.class, ++index, NetworkDirection.PLAY_TO_CLIENT, AdminControllerGuiOpenToClient::new);
-        HANDLER.registerPacket(StargateMotionAndRotationToClient.class, ++index, NetworkDirection.PLAY_TO_CLIENT, StargateMotionAndRotationToClient::new);
-        HANDLER.registerPacket(StargateWormholeEffectToClient.class, ++index, NetworkDirection.PLAY_TO_CLIENT, StargateWormholeEffectToClient::new);
-        HANDLER.registerPacket(StargatePlayerMotionRequestToClient.class, ++index, NetworkDirection.PLAY_TO_CLIENT, StargatePlayerMotionRequestToClient::new);
-        HANDLER.registerPacket(ACResponsePacketToClient.class, ++index, NetworkDirection.PLAY_TO_CLIENT, ACResponsePacketToClient::new);
-        HANDLER.registerPacket(ACStargateEngageSymbolPacketToClient.class, ++index, NetworkDirection.PLAY_TO_CLIENT, ACStargateEngageSymbolPacketToClient::new);
-        HANDLER.registerPacket(ACStargateDataPacketToClient.class, ++index, NetworkDirection.PLAY_TO_CLIENT, ACStargateDataPacketToClient::new);
-        HANDLER.registerPacket(ProgressUpdateToClient.class, ++index, NetworkDirection.PLAY_TO_CLIENT, ProgressUpdateToClient::new);
+        HANDLER.registerPacketToClient(AdminControllerGuiOpenToClient.class);
+        HANDLER.registerPacketToClient(StargateMotionAndRotationToClient.class);
+        HANDLER.registerPacketToClient(StargateWormholeEffectToClient.class);
+        HANDLER.registerPacketToClient(StargatePlayerMotionRequestToClient.class);
+        HANDLER.registerPacketToClient(ACResponsePacketToClient.class);
+        HANDLER.registerPacketToClient(ACStargateEngageSymbolPacketToClient.class);
+        HANDLER.registerPacketToClient(ACStargateDataPacketToClient.class);
+        HANDLER.registerPacketToClient(ProgressUpdateToClient.class);
     }
 }
