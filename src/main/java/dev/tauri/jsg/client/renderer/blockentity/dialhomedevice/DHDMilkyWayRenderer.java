@@ -6,6 +6,7 @@ import dev.tauri.jsg.api.JSGApi;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
 import dev.tauri.jsg.api.stargate.StargatePointOfOriginsDefaults;
 import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolMilkyWayEnum;
+import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.common.loader.ElementEnum;
 import dev.tauri.jsg.common.raycaster.RaycasterMilkyWayDHD;
 import dev.tauri.jsg.common.registry.JSGBlocks;
@@ -41,7 +42,7 @@ public class DHDMilkyWayRenderer extends DHDAbstractRenderer<DHDMilkyWayRenderer
     }
 
     @Override
-    public void renderSymbols(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
+    public void renderSymbols(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, DHDButtonsState buttonsState) {
         CompoundTag compound = getNoteBookPage();
 
         for (SymbolMilkyWayEnum symbol : SymbolMilkyWayEnum.values()) {
@@ -55,13 +56,13 @@ public class DHDMilkyWayRenderer extends DHDAbstractRenderer<DHDMilkyWayRenderer
                 ElementEnum.MILKYWAY_DHD_BASE.bindTexture(rendererState.getBiomeOverlay());
                 JSGApi.JSG_LOADERS_HOLDER.model().getModel(plate).render(poseStack, bufferSource, combinedLight, combinedOverlay, false, btnColor.x, btnColor.y, btnColor.z, 1f, false);
 
-                JSGApi.JSG_LOADERS_HOLDER.texture().getTexture(rendererState.getButtonTexture(symbol, rendererState.getBiomeOverlay())).bindTexture();
-                JSGApi.JSG_LOADERS_HOLDER.model().getModel(plateLight).render(poseStack, bufferSource, combinedLight, combinedOverlay, rendererState.isButtonActive(symbol), btnColor.x, btnColor.y, btnColor.z, 1f, false);
+                JSGApi.JSG_LOADERS_HOLDER.texture().getTexture(buttonsState.get(symbol).getTexture(rendererState.getBiomeOverlay())).bindTexture();
+                JSGApi.JSG_LOADERS_HOLDER.model().getModel(plateLight).render(poseStack, bufferSource, combinedLight, combinedOverlay, buttonsState.get(symbol).isActive(), btnColor.x, btnColor.y, btnColor.z, 1f, false);
             }
 
             // render symbol light emissive
-            JSGApi.JSG_LOADERS_HOLDER.texture().getTexture(rendererState.getButtonTexture(symbol, rendererState.getBiomeOverlay())).bindTexture();
-            symbol.getModel(tileEntity.getSymbolType().getPointOfOriginType(), tileEntity.getPointOfOrigin(), StargatePointOfOriginsDefaults.VARIANT_DHD_LIGHT).render(poseStack, bufferSource, combinedLight, combinedOverlay, rendererState.isButtonActive(symbol), btnColor.x, btnColor.y, btnColor.z, 1f, false);
+            JSGApi.JSG_LOADERS_HOLDER.texture().getTexture(buttonsState.get(symbol).getTexture(rendererState.getBiomeOverlay())).bindTexture();
+            symbol.getModel(tileEntity.getSymbolType().getPointOfOriginType(), tileEntity.getPointOfOrigin(), StargatePointOfOriginsDefaults.VARIANT_DHD_LIGHT).render(poseStack, bufferSource, combinedLight, combinedOverlay, buttonsState.get(symbol).isActive(), btnColor.x, btnColor.y, btnColor.z, 1f, false);
             if (symbol.brb()) {
                 RenderSystem.setShaderColor(1, 1, 1, 1);
             }

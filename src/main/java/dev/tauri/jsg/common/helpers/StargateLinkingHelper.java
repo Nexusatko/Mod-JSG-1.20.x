@@ -1,8 +1,8 @@
 package dev.tauri.jsg.common.helpers;
 
 import dev.tauri.jsg.api.config.JSGConfig;
+import dev.tauri.jsg.api.dialhomedevice.StargateDHD;
 import dev.tauri.jsg.api.stargate.Stargate;
-import dev.tauri.jsg.api.stargate.dialhomedevice.StargateDHD;
 import dev.tauri.jsg.core.common.blockentity.ILinkableBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

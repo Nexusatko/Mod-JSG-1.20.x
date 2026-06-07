@@ -2,8 +2,8 @@ package dev.tauri.jsg.common.registry;
 
 import dev.tauri.jsg.Constants;
 import dev.tauri.jsg.api.JSGApi;
+import dev.tauri.jsg.api.dialhomedevice.StargateDHD;
 import dev.tauri.jsg.api.stargate.StargateUpgrade;
-import dev.tauri.jsg.api.stargate.dialhomedevice.StargateDHD;
 import dev.tauri.jsg.api.stargate.iris.EnumIrisType;
 import dev.tauri.jsg.common.item.CartridgeItem;
 import dev.tauri.jsg.common.item.admincontroller.AdminControllerItem;

@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import dev.tauri.jsg.api.config.JSGConfig;
 import dev.tauri.jsg.api.entity.StargateAddressData;
 import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
+import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.core.client.renderer.BlockRenderer;
 import dev.tauri.jsg.core.client.renderer.IRaycasterButtonsRenderer;
 import dev.tauri.jsg.core.client.renderer.LinkableRenderer;
@@ -32,6 +33,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> implements LinkableRenderer, BlockEntityRenderer<DHDAbstractBE>, IRaycasterButtonsRenderer {
 
@@ -49,7 +51,7 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
     @SuppressWarnings("unchecked")
     public void render(DHDAbstractBE te, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
         tileEntity = te;
-        rendererState = (S) te.getRendererStateClient();
+        rendererState = (S) te.getStateManager().getRendererStateClient();
         this.partialTicks = partialTicks;
 
         if (rendererState != null && te.getLevel() != null) {
@@ -71,20 +73,23 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
             poseStack.mulPose(Axis.YP.rotationDegrees(Objects.requireNonNull(level).getBlockState(tileEntity.getBlockPos()).getValue(dev.tauri.jsg.core.common.blockstate.JSGProperties.ROTATION_PROPERTY) * -22.5f));
 
             renderDHD(poseStack, bufferSource, combinedLight, combinedOverlay);
-            renderSymbols(poseStack, bufferSource, combinedLight, combinedOverlay);
+            renderSymbols(poseStack, bufferSource, combinedLight, combinedOverlay, tileEntity.getStateManager().getButtonsState());
+
+            for (var symbol : tileEntity.getSymbolType().getValues()) {
+                Optional.ofNullable(tileEntity.getStateManager().getButtonsState().get(symbol)).ifPresent(s -> s.update(partialTicks));
+            }
 
             poseStack.popPose();
-
-            rendererState.iterate(level, partialTicks);
         }
     }
 
-    public abstract void renderSymbols(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay);
+    public abstract void renderSymbols(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, DHDButtonsState buttonsState);
 
     public abstract void renderDHD(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay);
 
     public abstract Block getDHDBlock();
 
+    // TODO: Optimize this probably??
     protected Vector3f getColorByAddress(DHDAbstractRendererState rendererState, CompoundTag compound, SymbolType<?> symbolType, SymbolInterface symbol) {
         if (rendererState == null) return new Vector3f(1f, 1f, 1f);
         if (compound != null && JSGConfig.DialHomeDevice.enablePageHint.get()) {
@@ -106,14 +111,15 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
             List<Integer> symbolsToDisplayList = Arrays.stream(symbolsToDisplay).boxed().toList();
 
             // check address type && button is not activated
-            if (st == symbolType && !rendererState.isButtonActive(symbol) && !rendererState.isButtonActive(st.getOrigin())) {
+            var buttonsState = tileEntity.getStateManager().getButtonsState();
+            if (st == symbolType && !buttonsState.get(symbol).isActive() && !buttonsState.get(st.getOrigin()).isActive()) {
 
-                int activatedButtons = rendererState.getActivatedButtons();
+                var activatedButtons = buttonsState.getActivatedButtons();
                 SymbolInterface displayedSymbol = st.getOrigin();
-                if (symbolsToDisplayList.contains(activatedButtons + 1) && activatedButtons <= 7 && !rendererState.stargateIsConnected)
-                    displayedSymbol = stargateAddress.get(activatedButtons);
-                else if (!symbolsToDisplayList.contains(activatedButtons + 1)) {
-                    for (int i = activatedButtons + 2; i <= 7; i++) {
+                if (symbolsToDisplayList.contains(activatedButtons.size() + 1) && activatedButtons.size() <= 7 && !activatedButtons.contains(symbolType.getBRB()))
+                    displayedSymbol = stargateAddress.get(activatedButtons.size());
+                else if (!symbolsToDisplayList.contains(activatedButtons.size() + 1)) {
+                    for (int i = activatedButtons.size() + 2; i <= 7; i++) {
                         if (symbolsToDisplayList.contains(i))
                             return new Vector3f(1f, 1f, 1f);
                     }
@@ -123,7 +129,7 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
                 if ((stargateAddress.contains(symbol) || symbol.origin()) && displayedSymbol == symbol) {
                     JSGConfigValue.RGBAValue color;
                     if (symbol.origin()) color = JSGConfig.DialHomeDevice.pageHintColorOrigin;
-                    else if (activatedButtons < 6) color = JSGConfig.DialHomeDevice.pageHintColorNormal;
+                    else if (activatedButtons.size() < 6) color = JSGConfig.DialHomeDevice.pageHintColorNormal;
                     else color = JSGConfig.DialHomeDevice.pageHintColorExtra;
                     return new Vector3f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f);
                 }

@@ -1,7 +1,6 @@
 package dev.tauri.jsg.common.integration.jei;
 
 import dev.tauri.jsg.JSG;
-import dev.tauri.jsg.client.screen.inventory.DHDContainerGui;
 import dev.tauri.jsg.client.screen.inventory.StargateContainerGui;
 import dev.tauri.jsg.core.common.integration.jei.JEIAdvancedGuiHandler;
 import dev.tauri.jsg.core.mapping.JSGMapping;
@@ -17,7 +16,6 @@ public final class JEIIntegration implements IModPlugin {
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGuiContainerHandler(StargateContainerGui.class, new JEIAdvancedGuiHandler());
-        registration.addGuiContainerHandler(DHDContainerGui.class, new JEIAdvancedGuiHandler());
     }
 
     @Override

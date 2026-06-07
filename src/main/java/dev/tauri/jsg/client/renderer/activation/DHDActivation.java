@@ -1,8 +1,18 @@
 package dev.tauri.jsg.client.renderer.activation;
 
 import dev.tauri.jsg.core.common.symbol.SymbolInterface;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.CompoundTag;
 
 public class DHDActivation extends dev.tauri.jsg.core.client.renderer.Activation<SymbolInterface> {
+
+    public DHDActivation(SymbolInterface textureKey, CompoundTag compoundTag) {
+        super(textureKey, compoundTag);
+    }
+
+    public DHDActivation(SymbolInterface textureKey, ByteBuf buf) {
+        super(textureKey, buf);
+    }
 
     public DHDActivation(SymbolInterface textureKey, long stateChange, boolean dim) {
         super(textureKey, stateChange, dim);

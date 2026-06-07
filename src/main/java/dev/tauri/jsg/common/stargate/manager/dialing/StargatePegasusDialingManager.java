@@ -160,7 +160,7 @@ public class StargatePegasusDialingManager extends StargateClassicDialingManager
         if (spinHelper.isSpinning()) return false;
         var nextChevron = getNextChevron(symbol, false, ignoreMaxChevrons);
         var currentChevron = dialedAddress.size() > 0 ? getNextChevron(dialedAddress.getLast(), true, ignoreMaxChevrons) : ChevronEnum.getFinal();
-        var r = spinHelper.moveToAndEngage(symbol, nextChevron, currentChevron, noEnergy, ignoreMaxChevrons, !stargate.getSoundManager().isRingRollPlaying(), addressBuffer.first().size() < 2 || nextChevron.isFinal());
+        var r = spinHelper.moveToAndEngage(symbol, nextChevron, currentChevron, noEnergy, ignoreMaxChevrons, !stargate.getSoundManager().isRingRollPlaying(), addressBuffer.first().size() < (addressBuffer.first().contains(stargate.getSymbolType().getBRB()) ? 3 : 2) || nextChevron.isFinal());
         if (r.first()) {
             if (!getStargateState().dialingDHD())
                 setStargateState(EnumStargateState.DIALING_COMPUTER);

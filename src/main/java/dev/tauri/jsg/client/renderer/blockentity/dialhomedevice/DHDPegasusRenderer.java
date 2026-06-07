@@ -6,6 +6,7 @@ import dev.tauri.jsg.api.JSGApi;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
 import dev.tauri.jsg.api.stargate.StargatePointOfOriginsDefaults;
 import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolPegasusEnum;
+import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.common.loader.ElementEnum;
 import dev.tauri.jsg.common.raycaster.RaycasterPegasusDHD;
 import dev.tauri.jsg.common.registry.JSGBlocks;
@@ -40,15 +41,15 @@ public class DHDPegasusRenderer extends DHDAbstractRenderer<DHDPegasusRendererSt
     }
 
     @Override
-    public void renderSymbols(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
+    public void renderSymbols(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, DHDButtonsState buttonsState) {
         CompoundTag compound = getNoteBookPage();
 
         for (SymbolPegasusEnum symbol : SymbolPegasusEnum.values()) {
             poseStack.pushPose();
             var btnColor = getColorByAddress(rendererState, compound, JSGSymbolTypes.PEGASUS.get(), symbol);
-            var btnTex = rendererState.getButtonTexture(symbol, rendererState.getBiomeOverlay());
+            var btnTex = buttonsState.get(symbol).getTexture(rendererState.getBiomeOverlay());
             JSGApi.JSG_LOADERS_HOLDER.texture().getTexture(btnTex).bindTexture();
-            symbol.getModel(symbol.getSymbolType().getPointOfOriginType(), tileEntity.getPointOfOrigin(), StargatePointOfOriginsDefaults.VARIANT_DHD_LIGHT).render(poseStack, bufferSource, combinedLight, combinedOverlay, rendererState.isButtonActive(symbol), btnColor.x, btnColor.y, btnColor.z, 1f, true);
+            symbol.getModel(symbol.getSymbolType().getPointOfOriginType(), tileEntity.getPointOfOrigin(), StargatePointOfOriginsDefaults.VARIANT_DHD_LIGHT).render(poseStack, bufferSource, combinedLight, combinedOverlay, buttonsState.get(symbol).isActive(), btnColor.x, btnColor.y, btnColor.z, 1f, true);
             if (symbol.brb())
                 ElementEnum.PEGASUS_DHD_BASE.bindTexture(rendererState.getBiomeOverlay());
             symbol.getModel(symbol.getSymbolType().getPointOfOriginType(), tileEntity.getPointOfOrigin(), StargatePointOfOriginsDefaults.VARIANT_DHD).render(poseStack, bufferSource, combinedLight, combinedOverlay, false, btnColor.x, btnColor.y, btnColor.z, 1f, true);

@@ -1,0 +1,95 @@
+package dev.tauri.jsg.common.dialhomedevice.manager;
+
+import dev.tauri.jsg.api.config.JSGConfig;
+import dev.tauri.jsg.api.dialhomedevice.DHDReactorState;
+import dev.tauri.jsg.api.dialhomedevice.manager.IDHDReactorManager;
+import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
+import dev.tauri.jsg.core.common.util.FluidTank;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+public class DHDReactorManager extends AbstractDHDManager<DHDAbstractBE> implements IDHDReactorManager {
+    protected final FluidTank tank;
+    protected DHDReactorState state;
+    protected Predicate<FluidTank> canStartOrContinueReaction;
+    protected Function<FluidTank, Integer> energyFromOneMb;
+
+    public DHDReactorManager(DHDAbstractBE dhd, Supplier<FluidTank> tankSupplier, Predicate<FluidTank> canStartOrContinueReaction, Function<FluidTank, Integer> energyFromOneMb) {
+        super(dhd);
+        this.tank = tankSupplier.get();
+        this.canStartOrContinueReaction = canStartOrContinueReaction;
+        this.energyFromOneMb = energyFromOneMb;
+    }
+
+    @Override
+    public DHDReactorState getState() {
+        return state;
+    }
+
+    @Override
+    public FluidTank getTank() {
+        return tank;
+    }
+
+    @Override
+    public void tick(@NotNull Level level) {
+        if (level.isClientSide()) return;
+        if (!canStartOrContinueReaction.test(tank)) {
+            state = DHDReactorState.NO_CRYSTAL;
+            return;
+        }
+        dhd.getLinkedDeviceOptional().ifPresentOrElse((gateTile) -> {
+            var energyStorageOpt = gateTile.getStargateCapability(ForgeCapabilities.ENERGY, null).resolve();
+            if (energyStorageOpt.isEmpty()) {
+                state = DHDReactorState.STANDBY;
+                return;
+            }
+            var energyStorage = energyStorageOpt.get();
+
+            int amount = 1;
+
+            if (state != DHDReactorState.STANDBY) {
+                FluidStack simulatedDrain = tank.drain(amount, IFluidHandler.FluidAction.SIMULATE);
+
+                if (simulatedDrain.getAmount() >= amount)
+                    state = DHDReactorState.ONLINE;
+                else state = DHDReactorState.NO_FUEL;
+            }
+
+            if (state == DHDReactorState.ONLINE || state == DHDReactorState.STANDBY) {
+                float percent = energyStorage.getEnergyStored() / (float) energyStorage.getMaxEnergyStored();
+
+                if (percent < JSGConfig.DialHomeDevice.activationLevel.get())
+                    state = DHDReactorState.ONLINE;
+
+                else if (percent >= JSGConfig.DialHomeDevice.deactivationLevel.get())
+                    state = DHDReactorState.STANDBY;
+            }
+
+            if (state == DHDReactorState.ONLINE) {
+                tank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
+                energyStorage.receiveEnergy(energyFromOneMb.apply(tank), false);
+            }
+        }, () -> state = DHDReactorState.NOT_LINKED);
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+        var compound = new CompoundTag();
+        compound.put("tank", tank.writeToNBT(new CompoundTag()));
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag compound) {
+        tank.readFromNBT(compound.getCompound("tank"));
+    }
+}

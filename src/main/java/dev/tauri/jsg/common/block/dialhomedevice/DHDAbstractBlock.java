@@ -1,7 +1,6 @@
 package dev.tauri.jsg.common.block.dialhomedevice;
 
 import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
-import dev.tauri.jsg.common.container.DHDContainer;
 import dev.tauri.jsg.core.common.block.TickableBEBlock;
 import dev.tauri.jsg.core.common.block.util.IHighlightBlock;
 import dev.tauri.jsg.core.common.block.util.IItemBlock;
@@ -14,13 +13,10 @@ import dev.tauri.jsg.core.common.util.RotationUtil;
 import dev.tauri.jsg.core.common.util.math.MathHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +40,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -154,11 +149,7 @@ public abstract class DHDAbstractBlock extends TickableBEBlock implements IHighl
                 level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS, 1, 1);
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
-        if (!dhd.tryInsertUpgrade(player, hand)) {
-            if (player instanceof ServerPlayer sp) {
-                NetworkHooks.openScreen(sp, new SimpleMenuProvider((id, pInv, p) -> new DHDContainer(id, pInv, dhd), Component.empty()), pos);
-            }
-        }
+        dhd.tryInsertUpgrade(player, hand);
         return InteractionResult.sidedSuccess(level.isClientSide());
     }
 

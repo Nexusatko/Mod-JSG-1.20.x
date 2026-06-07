@@ -190,7 +190,7 @@ public class StargateGenerator implements IStargateGenerator {
                 dhdTile.getItemStackHandler().setStackInSlot(3, new ItemStack(CoreItems.CRYSTAL_UPGRADE_EFFICIENCY.get(), 1));
 
             if (conf.dhdFluid >= 0) {
-                dhdTile.getFluidHandler().setFluid(new FluidStack(CoreFluids.MOLTEN_NAQUADAH_REFINED.get(), conf.dhdFluid));
+                dhdTile.getReactorManager().getTank().setFluid(new FluidStack(CoreFluids.MOLTEN_NAQUADAH_REFINED.get(), conf.dhdFluid));
             }
 
             StargateLinkingHelper.updateLinkedGate(conf.world, conf.gateBasePos, conf.dhdPos);

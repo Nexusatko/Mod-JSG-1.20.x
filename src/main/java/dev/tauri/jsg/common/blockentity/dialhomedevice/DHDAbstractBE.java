@@ -1,28 +1,35 @@
 package dev.tauri.jsg.common.blockentity.dialhomedevice;
 
 import dev.tauri.jsg.JSG;
-import dev.tauri.jsg.api.client.screen.util.DHDScreenHelper;
 import dev.tauri.jsg.api.config.JSGConfig;
-import dev.tauri.jsg.api.registry.JSGStateTypes;
+import dev.tauri.jsg.api.config.ingame.option.StargateConfigOptions;
+import dev.tauri.jsg.api.dialhomedevice.StargateDHD;
+import dev.tauri.jsg.api.integration.StargateComputerEvents;
 import dev.tauri.jsg.api.stargate.Stargate;
-import dev.tauri.jsg.api.stargate.dialhomedevice.DHDReactorStateEnum;
-import dev.tauri.jsg.api.stargate.dialhomedevice.StargateDHD;
-import dev.tauri.jsg.client.renderer.blockentity.dialhomedevice.DHDAbstractRendererState;
+import dev.tauri.jsg.api.stargate.StargateClosedReasonEnum;
+import dev.tauri.jsg.api.stargate.result.StargateCloseResult;
+import dev.tauri.jsg.api.stargate.result.StargateOpenResult;
+import dev.tauri.jsg.common.advancements.JSGCriterions;
 import dev.tauri.jsg.common.blockentity.stargate.StargateAbstractBaseBE;
+import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
+import dev.tauri.jsg.common.dialhomedevice.manager.DHDReactorManager;
+import dev.tauri.jsg.common.dialhomedevice.manager.state.DHDAbstractStateManager;
+import dev.tauri.jsg.common.helpers.StargateLinkingHelper;
 import dev.tauri.jsg.common.registry.JSGItems;
-import dev.tauri.jsg.common.state.dialhomedevice.DHDActivateButtonState;
-import dev.tauri.jsg.common.state.dialhomedevice.DHDContainerGuiUpdate;
 import dev.tauri.jsg.core.common.blockentity.ILinkable;
+import dev.tauri.jsg.core.common.blockentity.JSGBlockEntity;
 import dev.tauri.jsg.core.common.blockentity.StateProviderInterface;
+import dev.tauri.jsg.core.common.config.ingame.IConfigurable;
 import dev.tauri.jsg.core.common.entity.BiomeOverlayInstance;
 import dev.tauri.jsg.core.common.entity.State;
 import dev.tauri.jsg.core.common.entity.StateType;
+import dev.tauri.jsg.core.common.helper.LinkingHelper;
 import dev.tauri.jsg.core.common.item.CommonUpgrade;
-import dev.tauri.jsg.core.common.packet.JSGCorePacketHandler;
-import dev.tauri.jsg.core.common.packet.packets.StateUpdateRequestToServer;
 import dev.tauri.jsg.core.common.registry.CoreFluids;
 import dev.tauri.jsg.core.common.registry.CoreItems;
 import dev.tauri.jsg.core.common.registry.CoreStateTypes;
+import dev.tauri.jsg.core.common.sound.ISoundEvent;
+import dev.tauri.jsg.core.common.sound.JSGSoundHelper;
 import dev.tauri.jsg.core.common.state.BiomeOverrideState;
 import dev.tauri.jsg.core.common.symbol.SymbolInterface;
 import dev.tauri.jsg.core.common.util.FluidTank;
@@ -30,13 +37,13 @@ import dev.tauri.jsg.core.common.util.JSGItemStackHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.BucketItem;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -44,7 +51,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -55,21 +61,157 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
-public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, ILinkable<Stargate<?>>, StateProviderInterface {
-
-    // ---------------------------------------------------------------------------------------------------
-    // Gate linking
-
+public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDHD, ILinkable<Stargate<?>>, StateProviderInterface {
+    // TODO: Refactor to use IUpgrade class
     public static final List<Item> SUPPORTED_UPGRADES = Arrays.asList(JSGItems.CRYSTAL_GLYPH_DHD.get(), CoreItems.CRYSTAL_UPGRADE_CAPACITY.get(), CoreItems.CRYSTAL_UPGRADE_EFFICIENCY.get());
     public static final int BIOME_OVERRIDE_SLOT = 5;
 
-    public abstract DHDScreenHelper getScreenHelper();
+    // ====================================================================================
+
+    protected DHDAbstractStateManager<?, ?> stateManager;
+    protected DHDReactorManager reactorManager;
 
     public DHDAbstractBE(BlockEntityType<?> entityType, BlockPos pos, BlockState state) {
         super(entityType, pos, state);
+        this.stateManager = createStateManager();
+        this.reactorManager = new DHDReactorManager(this, () -> new FluidTank(new FluidStack(CoreFluids.MOLTEN_NAQUADAH_REFINED.get(), 0), JSGConfig.DialHomeDevice.fluidCapacity.get()) {
+            @Override
+            public boolean isFluidValid(FluidStack fluid) {
+                if (fluid == null) return false;
+                return fluid.getFluid() == CoreFluids.MOLTEN_NAQUADAH_REFINED.get();
+            }
+
+            @Override
+            protected void onContentsChanged() {
+                setChanged();
+            }
+        }, (tank) -> hasControlCrystal(), (tank) -> {
+            double energyPerOne = JSGConfig.DialHomeDevice.energyPerNaquadah.get();
+            if (hasUpgrade(CommonUpgrade.EFFICIENCY_UPGRADE)) {
+                energyPerOne *= JSGConfig.DialHomeDevice.efficiencyUpgradeMultiplier.get();
+            }
+            return (int) energyPerOne;
+        });
     }
+
+    @Override
+    public DHDAbstractStateManager<?, ?> getStateManager() {
+        return stateManager;
+    }
+
+    protected abstract DHDAbstractStateManager<?, ?> createStateManager();
+
+    @Override
+    public DHDReactorManager getReactorManager() {
+        return reactorManager;
+    }
+
+
+    @Override
+    public State getState(StateType stateType) {
+        return getStateManager().getState(stateType);
+    }
+
+    @Override
+    public State createState(StateType stateType) {
+        return getStateManager().getState(stateType);
+    }
+
+    @Override
+    public void setState(StateType stateType, State state) {
+        getStateManager().setState(stateType, state);
+    }
+
+
+    public abstract ISoundEvent getButtonPressSound();
+
+    public abstract ISoundEvent getBRBPressSound();
+
+    @Override
+    public void activateSymbol(SymbolInterface symbol) {
+        if (level == null) return;
+        var playSound = getLinkedDeviceOptional().map(gateTile -> {
+            if (!gateTile.getDialingManager().getStargateState().dialingComputer()) return true;
+            return (gateTile instanceof IConfigurable configurable && configurable.getConfig().getValueOrDefault(StargateConfigOptions.Classic.DHD_OC_PRESS_SOUND));
+        }).orElse(false);
+
+        // When using OC to dial, don't play sound of the DHD button press
+        if (playSound) {
+            if (symbol.brb())
+                JSGSoundHelper.playSoundEvent(level, getBlockPos(), getBRBPressSound());
+            else
+                JSGSoundHelper.playSoundEvent(level, getBlockPos(), getButtonPressSound());
+        }
+
+        try {
+            Optional.ofNullable(getStateManager().getButtonsState().get(symbol)).ifPresent(DHDButtonsState.ButtonState::activate);
+        }catch (Exception e){
+            JSG.logger.info("wtf", e);
+        }
+    }
+
+    @Override
+    public void clearSymbols() {
+        getStateManager()
+                .getButtonsState()
+                .getActivatedButtons()
+                .forEach(symbol -> getStateManager()
+                        .getButtonsState()
+                        .get(symbol)
+                        .deactivate());
+    }
+
+    // TODO(Mine): Refactor "dhd_milkyway" key to just "dhd"
+    @Override
+    public void pushSymbolButton(SymbolInterface symbol, @Nullable ServerPlayer player, boolean force) {
+        if (!hasControlCrystal()) {
+            if (player != null)
+                player.sendSystemMessage(Component.translatable("block.jsg.dhd_milkyway.no_crystal_warn"), true);
+            return;
+        }
+        getLinkedDeviceOptional().ifPresentOrElse((gateTile) -> {
+            var dm = gateTile.getDialingManager();
+            var gateState = dm.getStargateState();
+            if (gateState.engaged() && symbol.brb()) {
+                // Gate is open, BRB was press, possible closure attempt
+                if (gateState.initiating()) {
+                    dm.attemptClose(StargateClosedReasonEnum.REQUESTED);
+                    return;
+                }
+                if (player != null) {
+                    StargateComputerEvents.ATTEMPT_CLOSE_FAILED.apply(StargateCloseResult.NOT_INITIATING, dm.getDialedAddress(), false).sendVia(gateTile);
+                    player.sendSystemMessage(Component.translatable("block.jsg.dhd_milkyway.incoming_wormhole_warn"), true);
+                    return;
+                }
+            }
+            if (dm.canAbortDialing() && force && symbol.brb()) {
+                dm.abortDialingSequence();
+                return;
+            }
+            if(symbol.brb() && gateState.idle()) {
+                // BRB pressed on idling gate, attempt to open
+                StargateOpenResult openResult = dm.attemptOpenDialed();
+                if (openResult.ok()) {
+                    JSGCriterions.CHEVRON_SEVEN_LOCKED.trigger(player);
+                    return;
+                }
+                if (openResult == StargateOpenResult.NOT_ENOUGH_POWER && player != null) {
+                    player.sendSystemMessage(Component.translatable("block.jsg.dhd_milkyway.not_enough_power"), true);
+                    return;
+                }
+                return;
+            }
+            dm.engageSymbolDHD(symbol, false, false);
+        }, () -> {
+            if (player != null)
+                player.sendSystemMessage(Component.translatable("block.jsg.dhd_milkyway.not_linked_warn"), true);
+        });
+    }
+
+    // ====================================================================================
+
 
     @Override
     public Vec3 getBlockPosInFront() {
@@ -77,34 +219,8 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
         return getBlockPos().getCenter().add(new Vec3(dhdFacing.getNormal().getX(), dhdFacing.getNormal().getY(), dhdFacing.getNormal().getZ()));
     }
 
-    @Override
-    public FluidTank getFluidHandler() {
-        return fluidHandler;
-    }
-
-    protected final FluidTank fluidHandler = new FluidTank(new FluidStack(CoreFluids.MOLTEN_NAQUADAH_REFINED.get(), 0), JSGConfig.DialHomeDevice.fluidCapacity.get()) {
-
-        @Override
-        public boolean isFluidValid(FluidStack fluid) {
-            if (fluid == null) return false;
-
-            return fluid.getFluid() == CoreFluids.MOLTEN_NAQUADAH_REFINED.get();
-        }
-
-        protected void onContentsChanged() {
-            setChanged();
-        }
-    };
-    protected DHDAbstractRendererState rendererStateClient;
-    protected PacketDistributor.TargetPoint targetPoint;
-    protected DHDReactorStateEnum reactorState = DHDReactorStateEnum.STANDBY;
     private BlockPos linkedGate = null;
     private BlockPos lastPos = BlockPos.ZERO;
-
-    // ---------------------------------------------------------------------------------------------------
-    // Renderer state
-
-    private boolean hadControlCrystal;
 
     protected final ItemStackHandler itemStackHandler = new JSGItemStackHandler(6) {
 
@@ -115,13 +231,16 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
             return switch (slot) {
                 case 0 -> item == getControlCrystal();
                 case 1, 2, 3 -> SUPPORTED_UPGRADES.contains(item) && !hasUpgrade(item);
-                case 4 -> {
-                    if (stack.getItem() instanceof BucketItem bucket) {
-                        FluidStack fluid = new FluidStack(bucket.getFluid(), 1000);
-                        yield (fluid.getFluid() == CoreFluids.MOLTEN_NAQUADAH_REFINED.get());
+                case 4 -> stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).map(fluidHandler -> {
+                    var tanks = fluidHandler.getTanks();
+                    for (var i = 0; i < tanks; i++) {
+                        var tankFluid = fluidHandler.getFluidInTank(i);
+                        if (tankFluid.getFluid() == CoreFluids.MOLTEN_NAQUADAH_REFINED.get()) {
+                            return true;
+                        }
                     }
-                    yield false;
-                }
+                    return false;
+                }).orElse(false);
                 case BIOME_OVERRIDE_SLOT -> {
                     var override = BiomeOverlayInstance.getBiomeOverlayByItem(stack, true);
                     yield override != null;
@@ -170,17 +289,17 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
 
                 case 4:
                     ItemStack stack = getStackInSlot(slot);
-                    if (stack.getItem() instanceof BucketItem bucket) {
-                        FluidStack fluid = new FluidStack(bucket.getFluid(), 1000);
-                        if (fluid.getFluid() == CoreFluids.MOLTEN_NAQUADAH_REFINED.get()) {
-                            int amount = fluid.getAmount();
-                            int filled = fluidHandler.fill(fluid, IFluidHandler.FluidAction.SIMULATE);
-                            if (filled == amount) {
-                                setStackInSlot(slot, new ItemStack(Items.BUCKET));
-                                fluidHandler.fill(fluid, IFluidHandler.FluidAction.EXECUTE);
+                    stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).ifPresent(fluidHandler -> {
+                        var tanks = fluidHandler.getTanks();
+                        for (var i = 0; i < tanks; i++) {
+                            var tankFluid = fluidHandler.getFluidInTank(i);
+                            if (tankFluid.getFluid() == CoreFluids.MOLTEN_NAQUADAH_REFINED.get()) {
+                                var extracted = fluidHandler.drain(tankFluid, IFluidHandler.FluidAction.SIMULATE);
+                                int filled = getReactorManager().getTank().fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+                                fluidHandler.drain(new FluidStack(tankFluid.getFluid(), filled), IFluidHandler.FluidAction.EXECUTE);
                             }
                         }
-                    }
+                    });
                     break;
 
 
@@ -193,18 +312,32 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
         }
     };
 
+    // TODO(Mine): Update client about this change
+    public void updateCrystal() {
+    }
+
     @Override
     public ItemStackHandler getItemStackHandler() {
         return itemStackHandler;
     }
 
-    // ------------------------------------------------------------
+    public abstract TagKey<Block> getLinkableBlocks();
 
-    public DHDAbstractRendererState getRendererStateClient() {
-        return rendererStateClient;
+    public void updateLinkStatus(Level world, BlockPos pos) {
+        if (isLinked() && getLinkedDevice() instanceof ILinkable<?> linkable) {
+            linkable.setLinkedDevice(null);
+            setLinkedDevice(null);
+        }
+        BlockPos closestGate = LinkingHelper.findClosestUnlinked(world, pos, StargateLinkingHelper.getDhdRange(), getLinkableBlocks());
+
+        if (closestGate != null) {
+            ILinkable<?> gateTile = (ILinkable<?>) world.getBlockEntity(closestGate);
+            if (gateTile != null) {
+                gateTile.setLinkedDevice(pos);
+                setLinkedDevice(closestGate);
+            }
+        }
     }
-
-    public abstract void updateLinkStatus(Level world, BlockPos pos);
 
     @Override
     public boolean canLinkTo() {
@@ -216,7 +349,7 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
         linkedGate = devicePos;
         setChanged();
         if (getLevel() != null && !getLevel().isClientSide)
-            sendLinkedDeviceToClients(getBlockPos(), targetPoint);
+            sendLinkedDeviceToClients(getBlockPos(), getTargetPoint());
     }
 
     @Nullable
@@ -241,31 +374,18 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
     @SuppressWarnings("null")
     @Override
     public void onLoad() {
-        if (level != null && !level.isClientSide) {
-            targetPoint = new PacketDistributor.TargetPoint(getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ(), 512, level.dimension());
-            hadControlCrystal = hasControlCrystal();
-            sendState(CoreStateTypes.BIOME_OVERRIDE_STATE.get(), new BiomeOverrideState(determineBiomeOverride()));
-        } else {
-            JSGCorePacketHandler.sendToServer(new StateUpdateRequestToServer(getBlockPos(), CoreStateTypes.RENDERER_STATE.get()));
+        if (getLevel() == null) return;
+        StargateDHD.super.onLoad(getLevel());
+        if (getLevel().isClientSide())
             requestLinkedDeviceFromServer(getBlockPos());
-        }
-    }
-
-    @Override
-    public DHDReactorStateEnum getReactorState() {
-        return reactorState;
     }
 
     @SuppressWarnings("null")
     @Override
     public void tick(@NotNull Level level) {
-        if (level.isClientSide) {
-            if (getRendererStateClient() == null) {
-                JSGCorePacketHandler.sendToServer(new StateUpdateRequestToServer(getBlockPos(), CoreStateTypes.RENDERER_STATE.get()));
-            }
-        }
-        if (!level.isClientSide) {
+        StargateDHD.super.tick(level);
 
+        if (!level.isClientSide) {
             if (!lastPos.equals(getBlockPos())) {
                 lastPos = getBlockPos();
                 this.updateLinkStatus(level, getBlockPos());
@@ -276,70 +396,17 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
             if (hasUpgrade(CommonUpgrade.CAPACITY_UPGRADE))
                 newFluidCapacity *= (int) JSGConfig.DialHomeDevice.capacityUpgradeMultiplier.get();
 
-            if (fluidHandler.getCapacity() != newFluidCapacity) {
-                fluidHandler.setCapacity(newFluidCapacity);
+            if (getReactorManager().getTank().getCapacity() != newFluidCapacity) {
+                getReactorManager().getTank().setCapacity(newFluidCapacity);
                 setChanged();
                 JSG.logger.debug("DHD at {} set itself new capacity! ({}mb)", getBlockPos().toShortString(), newFluidCapacity);
-            }
-
-            // Has crystal
-            if (hasControlCrystal()) {
-                if (isLinked()) {
-                    var gateTile = getLinkedDevice();
-                    if (gateTile == null) {
-                        setLinkedDevice(null);
-
-                        JSG.logger.error("Gate didn't unlink properly, forcing...");
-                        return;
-                    }
-
-                    IEnergyStorage energyStorage = gateTile.getStargateCapability(ForgeCapabilities.ENERGY, null).resolve().orElseThrow();
-
-                    int amount = 1;
-
-                    if (reactorState != DHDReactorStateEnum.STANDBY) {
-                        FluidStack simulatedDrain = fluidHandler.drain(amount, IFluidHandler.FluidAction.SIMULATE);
-
-                        if (simulatedDrain.getAmount() >= amount)
-                            reactorState = DHDReactorStateEnum.ONLINE;
-                        else reactorState = DHDReactorStateEnum.NO_FUEL;
-                    }
-
-                    if (reactorState == DHDReactorStateEnum.ONLINE || reactorState == DHDReactorStateEnum.STANDBY) {
-                        float percent = Objects.requireNonNull(energyStorage).getEnergyStored() / (float) energyStorage.getMaxEnergyStored();
-
-                        if (percent < JSGConfig.DialHomeDevice.activationLevel.get())
-                            reactorState = DHDReactorStateEnum.ONLINE;
-
-                        else if (percent >= JSGConfig.DialHomeDevice.deactivationLevel.get())
-                            reactorState = DHDReactorStateEnum.STANDBY;
-                    }
-
-                    if (reactorState == DHDReactorStateEnum.ONLINE) {
-                        fluidHandler.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-                        double energyPerOne = JSGConfig.DialHomeDevice.energyPerNaquadah.get();
-                        if (hasUpgrade(CommonUpgrade.EFFICIENCY_UPGRADE))
-                            energyPerOne *= JSGConfig.DialHomeDevice.efficiencyUpgradeMultiplier.get();
-                        energyStorage.receiveEnergy((int) energyPerOne, false);
-                    }
-                }
-
-                // Not linked
-                else {
-                    reactorState = DHDReactorStateEnum.NOT_LINKED;
-                }
-            }
-
-            // No crystal
-            else {
-                reactorState = DHDReactorStateEnum.NO_CRYSTAL;
             }
         }
     }
 
-    // Server
-    protected BiomeOverlayInstance determineBiomeOverride() {
-        ItemStack stack = itemStackHandler.getStackInSlot(BIOME_OVERRIDE_SLOT);
+
+    public BiomeOverlayInstance determineBiomeOverride() {
+        ItemStack stack = getItemStackHandler().getStackInSlot(BIOME_OVERRIDE_SLOT);
 
         if (stack.isEmpty()) {
             return null;
@@ -350,63 +417,7 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
 
     @Override
     public boolean hasControlCrystal() {
-        return !itemStackHandler.getStackInSlot(0).isEmpty();
-    }
-
-
-    // -----------------------------------------------------------------------------
-    // Item handler
-
-    private void updateCrystal() {
-        boolean hasControlCrystal = hasControlCrystal();
-
-        if (hadControlCrystal != hasControlCrystal) {
-            if (hasControlCrystal) {
-                getAndSendState(CoreStateTypes.RENDERER_STATE.get());
-            } else {
-                clearSymbols();
-            }
-
-            hadControlCrystal = hasControlCrystal;
-        }
-    }
-
-    public abstract void activateSymbol(SymbolInterface symbol);
-
-    public abstract void pushSymbolButton(SymbolInterface symbol, @Nullable ServerPlayer player, boolean force);
-
-    public void clearSymbols() {
-        if (level != null) {
-            level.blockEntityChanged(getBlockPos());
-        }
-
-        sendState(JSGStateTypes.DHD_ACTIVATE_BUTTON.get(), new DHDActivateButtonState(true));
-    }
-
-    @Override
-    public State createState(StateType stateType) {
-        return stateType.stateSupplier()
-                .tryType(JSGStateTypes.DHD_ACTIVATE_BUTTON.get(), DHDActivateButtonState::new)
-                .tryType(CoreStateTypes.GUI_UPDATE.get(), DHDContainerGuiUpdate::new)
-                .tryType(CoreStateTypes.BIOME_OVERRIDE_STATE.get(), BiomeOverrideState::new)
-                .orElseThrow(this);
-    }
-
-    public boolean isLinkedClient;
-
-    // -----------------------------------------------------------------------------
-    // Fluid handler
-
-    @Override
-    public void setState(StateType stateType, State state) {
-        if (stateType == CoreStateTypes.GUI_UPDATE.get()) {
-            DHDContainerGuiUpdate guiState = (DHDContainerGuiUpdate) state;
-
-            fluidHandler.setFluid(new FluidStack(CoreFluids.MOLTEN_NAQUADAH_REFINED.get(), guiState.fluidAmount));
-            fluidHandler.setCapacity(guiState.tankCapacity);
-            reactorState = guiState.reactorState;
-            isLinkedClient = guiState.isLinked;
-        }
+        return !getItemStackHandler().getStackInSlot(0).isEmpty();
     }
 
 
@@ -419,9 +430,15 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
             return LazyOptional.of(this::getItemStackHandler).cast();
         }
         if (capability == ForgeCapabilities.FLUID_HANDLER && (facing == null || facing == Direction.DOWN)) {
-            return LazyOptional.of(this::getFluidHandler).cast();
+            return LazyOptional.of(() -> getReactorManager().getTank()).cast();
         }
         return super.getCapability(capability, facing);
+    }
+
+
+    @Override
+    public PacketDistributor.TargetPoint getTargetPoint() {
+        return getStateManager().getTargetPoint();
     }
 
 
@@ -430,22 +447,24 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
 
     @Override
     public void saveAdditional(@Nonnull CompoundTag compound) {
+        compound.put("stateManager", stateManager.serializeNBT());
+        compound.put("reactorManager", reactorManager.serializeNBT());
+        super.saveAdditional(compound);
+
+
         if (linkedGate != null) {
             compound.putLong("linkedGate", linkedGate.asLong());
         }
 
         compound.put("itemStackHandler", itemStackHandler.serializeNBT());
-
-        CompoundTag fluidHandlerCompound = new CompoundTag();
-        fluidHandler.writeToNBT(fluidHandlerCompound);
-        compound.put("fluidHandler", fluidHandlerCompound);
-
-        super.saveAdditional(compound);
     }
 
     @Override
     public void load(@Nonnull CompoundTag compound) {
         super.load(compound);
+        stateManager.deserializeNBT(compound.getCompound("stateManager"));
+        reactorManager.deserializeNBT(compound.getCompound("reactorManager"));
+
 
         if (compound.contains("linkedGate")) {
             linkedGate = BlockPos.of(compound.getLong("linkedGate"));
@@ -456,8 +475,6 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
         if (compound.getBoolean("hasUpgrade") || compound.getBoolean("insertAnimation")) {
             itemStackHandler.setStackInSlot(1, new ItemStack(JSGItems.CRYSTAL_GLYPH_DHD.get()));
         }
-
-        fluidHandler.readFromNBT(compound.getCompound("fluidHandler"));
     }
 
     @Nonnull
@@ -473,11 +490,4 @@ public abstract class DHDAbstractBE extends BlockEntity implements StargateDHD, 
         return true;
     }
 
-    @Override
-    public PacketDistributor.TargetPoint getTargetPoint() {
-        if (targetPoint == null && level != null) {
-            targetPoint = new PacketDistributor.TargetPoint(getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ(), 512, level.dimension());
-        }
-        return targetPoint;
-    }
 }
