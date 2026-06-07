@@ -674,7 +674,7 @@ public abstract class StargateClassicBaseBE<S extends StargateClassicRendererSta
         for (int i = 0; i < size; i++) {
             REDSTONE_IO_BLOCKS.add(BlockPos.of(compound.getLong("redstoneIODevice_pos" + i)));
         }
-        updatePowerTier();
+        //updatePowerTier();
     }
 
     // -----------------------------------------------------------------
@@ -920,20 +920,19 @@ public abstract class StargateClassicBaseBE<S extends StargateClassicRendererSta
                 ItemStack stack = itemStackHandler.getStackInSlot(i);
 
                 if (!stack.isEmpty()) {
-                    LazyOptional<IEnergyStorage> capCapability = stack.getCapability(ForgeCapabilities.ENERGY, null);
-                    if (capCapability.isPresent() && capCapability.resolve().isPresent()) {
-                        energyStorage.addStorage(capCapability.resolve().get());
-                    }
+                    var capCapability = stack.getCapability(ForgeCapabilities.ENERGY, null).resolve();
+                    capCapability.ifPresent(energyStorage::addStorage);
                 }
             }
+            setChanged();
             if (getLevel() != null && !getLevel().isClientSide())
                 JSG.logger.debug("Updated to power tier: {}", powerTier);
         }
     }
 
 
-// -----------------------------------------------------------------------------
-// Capabilities
+    // -----------------------------------------------------------------------------
+    // Capabilities
 
     @Override
     public <T> LazyOptional<T> getStargateCapability(Capability<T> capability, @Nullable Direction facing) {

@@ -10,7 +10,7 @@ import dev.tauri.jsg.api.stargate.network.StargatePos;
 import dev.tauri.jsg.api.stargate.network.address.StargateAddressDynamic;
 import dev.tauri.jsg.common.blockentity.stargate.StargateAbstractBaseBE;
 import dev.tauri.jsg.common.blockentity.stargate.StargateAbstractMemberBE;
-import dev.tauri.jsg.common.blockentity.stargate.StargateClassicBaseBE;
+import dev.tauri.jsg.core.common.config.ingame.IConfigurable;
 import dev.tauri.jsg.core.common.config.json.dimension.JSGDimensionConfig;
 import dev.tauri.jsg.core.common.helper.BlockPosHelper;
 import dev.tauri.jsg.core.common.power.JSGEnergyStorage;
@@ -63,24 +63,6 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
         energyTransferredLastTick = energy;
     }
 
-    public void onGateOpen() {
-        var targetGate = stargate.getDialingManager().getConnection().getTarget();
-        if (targetGate.isPresent())
-            currentEnergyRequirements.update(getEnergyRequiredToDial(targetGate.get(), stargate.getDialingManager().getDialedAddress()));
-        else
-            currentEnergyRequirements.update(EnergyRequiredToOperate.free());
-        var energyNeeded = new AtomicInteger(currentEnergyRequirements.energyToOpen);
-        getStorage().extractEnergy(energyNeeded.get(), false);
-        var extracted = getStorage().extractEnergy(energyNeeded.get(), false);
-        energyNeeded.addAndGet(-extracted);
-        if (energyNeeded.get() >= 0) {
-            getEnergyStoragesConnectedToStargate().forEach((pos, storage) -> {
-                if (energyNeeded.get() <= 0) return;
-                energyNeeded.addAndGet(-storage.extractEnergy(energyNeeded.get(), false));
-            });
-        }
-    }
-
     @Override
     public void tick(Level level) {
         if (level.isClientSide) return;
@@ -122,7 +104,7 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
         int maxSeconds = JSGConfig.Stargate.maxOpenedSeconds.get();
         StargateTimeLimitModeEnum limitMode = JSGConfig.Stargate.maxOpenedWhat.get();
 
-        if (stargate instanceof StargateClassicBaseBE<?> casted) {
+        if (stargate instanceof IConfigurable casted) {
             limitMode = casted.getConfig().getValueOrDefault(StargateConfigOptions.Common.TIME_LIMIT_MODE);
             maxSeconds = casted.getConfig().getValueOrDefault(StargateConfigOptions.Common.TIME_LIMIT_TIME);
             configPower = casted.getConfig().getValueOrDefault(StargateConfigOptions.Common.TIME_LIMIT_POWER);
@@ -150,11 +132,29 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
         getStorage().extractEnergy(currentEnergyRequirements.keepAlive, false);
     }
 
+    public void onGateOpen() {
+        var targetGate = stargate.getDialingManager().getConnection().getTarget();
+        if (targetGate.isPresent())
+            currentEnergyRequirements.update(getEnergyRequiredToDial(targetGate.get(), stargate.getDialingManager().getDialedAddress()));
+        else
+            currentEnergyRequirements.update(EnergyRequiredToOperate.free());
+
+        var energyNeeded = new AtomicInteger(currentEnergyRequirements.energyToOpen);
+        energyNeeded.addAndGet(-getStorage().extractEnergy(energyNeeded.get(), false));
+        if (energyNeeded.get() >= 0) {
+            getEnergyStoragesConnectedToStargate().forEach((pos, storage) -> {
+                if (energyNeeded.get() <= 0) return;
+                energyNeeded.addAndGet(-storage.extractEnergy(energyNeeded.get(), false));
+            });
+        }
+    }
+
     @Override
     public boolean canOpenWormhole(EnergyRequiredToOperate energyRequiredToDial) {
         if (getStorage().getEnergyStored() >= energyRequiredToDial.energyToOpen)
             return true;
         var energyNeeded = new AtomicInteger(energyRequiredToDial.energyToOpen);
+        energyNeeded.addAndGet(-getStorage().extractEnergy(energyNeeded.get(), true));
         getEnergyStoragesConnectedToStargate().forEach((pos, storage) -> {
             if (energyNeeded.get() <= 0) return;
             energyNeeded.addAndGet(-storage.extractEnergy(energyNeeded.get(), true));
