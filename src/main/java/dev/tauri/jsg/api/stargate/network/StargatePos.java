@@ -105,6 +105,7 @@ public class StargatePos implements INBTSerializable<CompoundTag> {
             if (tile == null) {
                 forceChunk();
                 tile = getWorld().getBlockEntity(gatePos);
+                if (tile != null) tile.onLoad();
                 unforceChunk();
             }
             return (Stargate<?>) tile;

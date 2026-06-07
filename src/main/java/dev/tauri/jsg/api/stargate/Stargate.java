@@ -353,6 +353,7 @@ public interface Stargate<E extends JSGEnergyStorage> extends IPreparable, ITick
             setStargateChanged();
             updateFacing();
             generateMergeHelper();
+            getMergeHelper().updateMemberStateAndCheck(null);
         } else
             getStateManager().onLoad(level);
         getDialingManager().onLoad(level);
