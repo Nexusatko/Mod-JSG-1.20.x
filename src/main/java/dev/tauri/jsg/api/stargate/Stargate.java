@@ -346,16 +346,15 @@ public interface Stargate<E extends JSGEnergyStorage> extends IPreparable, ITick
     default void onStargateLoaded() {
         var level = getStargateLevel();
         if (level == null) return;
+        getStateManager().onLoad(level);
         if (!level.isClientSide()) {
-            getStateManager().onLoad(level);
             tryRegenerateStargateIfNeeded();
             generateAddresses(false);
             setStargateChanged();
             updateFacing();
             generateMergeHelper();
             getMergeHelper().updateMemberStateAndCheck(null);
-        } else
-            getStateManager().onLoad(level);
+        }
         getDialingManager().onLoad(level);
         getRIGManager().onLoad(level);
         getEventHorizonManager().onLoad(level);
@@ -371,7 +370,7 @@ public interface Stargate<E extends JSGEnergyStorage> extends IPreparable, ITick
         getEnergyManager().tick(level);
         getEventHorizonManager().tick(level);
         getSoundManager().tick(level);
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         // autoclose
         if (getTime() % 20 == 0 && shouldAutoclose()) {
             getDialingManager().attemptClose(StargateClosedReasonEnum.AUTOCLOSE);
