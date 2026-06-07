@@ -17,6 +17,7 @@ import dev.tauri.jsg.core.mapping.JSGMapping;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
@@ -380,10 +381,10 @@ public class NetworkTab extends AdminControllerTab {
                 RenderSystem.enableBlend();
                 RenderSystem.setShaderColor(1, 1, 1, outsideFactor);
                 if (outsideFactor >= 1f && !entry.getKey().getName().isEmpty()) {
-                    graphics.drawCenteredString(NetworkTab.this.baseGUI.getMinecraft().font, entry.getKey().getName(), x + (wh / 2), y - 10, 0xffffff);
+                    graphics.drawCenteredString(NetworkTab.this.baseGUI.getMinecraft().font, entry.getKey().getName(), (int) (x + (wh / 2f)), (int) (y - 10), 0xffffff);
                 }
                 graphics.blit(JSGMapping.rl(id.getNamespace(), "textures/block/stargate/stargate_" + id.getPath() + "_base_front.png"),
-                        x, y, 0, 0.0F, 0.0F, wh, wh, wh, wh);
+                        (int) x, (int) y, 0, 0.0F, 0.0F, wh, wh, wh, wh);
                 RenderSystem.setShaderColor(1, 1, 1, 1);
                 RenderSystem.disableBlend();
             }
@@ -443,8 +444,8 @@ public class NetworkTab extends AdminControllerTab {
             }
         }
 
-        public int currentX;
-        public int currentY;
+        public double currentX;
+        public double currentY;
         public double scale = 1;
 
         public int minXY = 0;
@@ -467,38 +468,41 @@ public class NetworkTab extends AdminControllerTab {
 
                 var pos = gate.getKey().gatePos;
                 if (pos.getX() < minXY) minXY = pos.getX();
-                else if (pos.getX() > maxXY) maxXY = pos.getX();
+                if (pos.getX() > maxXY) maxXY = pos.getX();
                 if (pos.getZ() < minXY) minXY = pos.getZ();
-                else if (pos.getZ() > maxXY) maxXY = pos.getZ();
+                if (pos.getZ() > maxXY) maxXY = pos.getZ();
 
                 var w = new StargateWidget(gate);
                 w.updatePosition(scale);
                 gateWidgets.put(gate.getKey(), w);
                 addRenderableWidget(w);
             }
-            minXY -= 50;
-            maxXY += 50;
-            currentX = minXY + (maxXY - minXY) / 2;
-            currentY = minXY + (maxXY - minXY) / 2;
+            minXY -= 100;
+            maxXY += 100;
+            currentX = minXY + (maxXY - minXY) / 2f;
+            currentY = minXY + (maxXY - minXY) / 2f;
 
-            rescale(0);
+            rescale(0, 0, 0);
             moveCenterTo(0, 0, true);
             clampPosition();
         }
 
         protected void clampPosition() {
-            if (currentX + (int) ((double) maxXY * scale) < getWidth())
-                currentX = (getWidth() - (int) ((double) maxXY * scale));
-            if (currentY + (int) ((double) maxXY * scale) < getHeight())
-                currentY = (getHeight() - (int) ((double) maxXY * scale));
-            if (currentX + (int) ((double) minXY * scale) > 0) currentX = (int) -((double) minXY * scale);
-            if (currentY + (int) ((double) minXY * scale) > 0) currentY = (int) -((double) minXY * scale);
+            if (currentX + (int) ((double) maxXY * scale) < (getWidth() - 50))
+                currentX = (getWidth() - 50 - (int) ((double) maxXY * scale));
+            if (currentY + (int) ((double) maxXY * scale) < (getHeight() - 50))
+                currentY = (getHeight() - 50 - (int) ((double) maxXY * scale));
+            if (currentX + (int) ((double) minXY * scale) > 50)
+                currentX = (int) (50 - ((double) minXY * scale));
+            if (currentY + (int) ((double) minXY * scale) > 50)
+                currentY = (int) (50 - ((double) minXY * scale));
         }
 
         @Override
         public void renderBackground(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
             graphics.pose().translate((currentX) + getX(), (currentY) + getY(), 0);
-            graphics.fillGradient((int) (minXY * scale), (int) (minXY * scale), (int) (maxXY * scale), (int) (maxXY * scale), 0xc52D2D2D, 0xc51D1D1D);
+            graphics.fillGradient((int) (minXY * scale) - 50, (int) (minXY * scale) - 50, (int) (maxXY * scale) + 50, (int) (maxXY * scale) + 50, 0xc52D2D2D, 0xc51D1D1D);
+            //graphics.renderOutline((int) (minXY * scale) - 25, (int) (minXY * scale) - 25, (int) (maxXY * scale) - (int) (minXY * scale) + 50, (int) (maxXY * scale) - (int) (minXY * scale) + 50, 0xc5000000);
             renderRaster(graphics, pMouseX, pMouseY, pPartialTick);
 
             var p = NetworkTab.this.baseGUI.player;
@@ -512,35 +516,51 @@ public class NetworkTab extends AdminControllerTab {
 
                 float outsideFactor = (x != xOriginal || y != yOriginal) ? (float) (0.8f - (Math.min(1f, Math.sqrt((float) (x - xOriginal) * (float) (x - xOriginal) + (float) (y - yOriginal) * (float) (y - yOriginal)) / 10000f) * 0.7f)) : 1f;
                 RenderSystem.setShaderColor(1, 1, 1, outsideFactor);
-                graphics.blit(JSGMapping.rl("textures/gui/widgets.png"), x, y, 7, 7, 192, 0, 14, 14, 256, 256);
+                graphics.blit(JSGMapping.rl("textures/gui/widgets.png"), (int) x, (int) y, 7, 7, 192, 0, 14, 14, 256, 256);
                 RenderSystem.setShaderColor(1, 1, 1, 1);
                 if (outsideFactor >= 1f)
                     graphics.drawCenteredString(NetworkTab.this.baseGUI.getMinecraft().font, Component.translatable("gui.admincontroller.tab.network.map.you_are_here"), (int) (p.position().x() * scale), (int) (p.position().z() * scale) - 3 + 2 + 7, 0xffffff);
                 graphics.pose().popPose();
             }
+            graphics.pose().pushPose();
+            graphics.pose().translate(-(currentX), -(currentY), 0);
+            var i = 0;
+            //graphics.drawString(Minecraft.getInstance().font, "currentX: " + currentX, 10, 10 * (++i), 0xffffff);
+            //graphics.drawString(Minecraft.getInstance().font, "currentY: " + currentY, 10, 10 * (++i), 0xffffff);
+            graphics.drawString(Minecraft.getInstance().font, "scale: " + scale, 10, 10 * (++i), 0xffffff);
+            graphics.drawString(Minecraft.getInstance().font, "mouseX: " + ((pMouseX - getX() - currentX)) / scale, 10, 10 * (++i), 0xffffff);
+            graphics.drawString(Minecraft.getInstance().font, "mouseY: " + ((pMouseY - getY() - currentY)) / scale, 10, 10 * (++i), 0xffffff);
+            graphics.pose().popPose();
         }
 
         public void moveCenterTo(double x, double y, boolean scaleToFit) {
-            currentX = (int) ((-x * scale) + (getWidth() / 2f));
-            currentY = (int) ((-y * scale) + (getHeight() / 2f));
+            movePosTo(x, y, getWidth() / 2f, getHeight() / 2f, scaleToFit);
+        }
+
+        public void movePosTo(double posX, double posY, double destX, double destY, boolean scaleToFit) {
+            currentX = (int) ((-posX * scale) + destX);
+            currentY = (int) ((-posY * scale) + destY);
             if (scaleToFit) {
-                setScale(Math.max((double) getWidth() / ((double) (maxXY - minXY)), (double) getHeight() / ((double) (maxXY - minXY))));
+                setScale(Math.max((double) getWidth() / ((double) (maxXY - minXY)), (double) getHeight() / ((double) (maxXY - minXY))), getWidth() / 2f, getHeight() / 2f);
             }
             clampPosition();
         }
 
         public void select(StargatePos gate) {
-            var widget = networkMap.gateWidgets.get(gate);
+            var widget = gateWidgets.get(gate);
             if (widget == null) {
                 moveCenterTo(0, 0, true);
                 return;
             }
-            networkMap.setScale(4);
-            networkMap.moveCenterTo(gate.gatePos.getX(), gate.gatePos.getZ(), false);
+            setScale(4);
+            moveCenterTo(gate.gatePos.getX(), gate.gatePos.getZ(), false);
         }
 
         protected void renderRaster(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
-            for (var i = 0; i < 2; i++) {
+            //graphics.fill(-5, -1, 5, 1, 0x445A97AE);
+            //graphics.fill(-1, -5, 1, 5, 0x445A97AE);
+            // TODO: Optimize to render only things visible - this is causing lags when there are gates far apart
+            /*for (var i = 0; i < 2; i++) {
                 for (var x = 0; x <= (i == 0 ? maxXY : -minXY); x += 16) {
                     if (x != 0 && scale < 0.25f) continue;
                     var mx = (int) (x * scale);
@@ -555,7 +575,7 @@ public class NetworkTab extends AdminControllerTab {
                         my = (int) (-y * scale);
                     graphics.fill((int) (minXY * scale), my - 1, (int) (maxXY * scale), my + 1, y == 0 ? 0x445A97AE : 0x44ABABAB);
                 }
-            }
+            }*/
         }
 
         @Override
@@ -591,18 +611,33 @@ public class NetworkTab extends AdminControllerTab {
 
         @Override
         public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
-            rescale(pDelta);
+            var oldScale = scale;
+            rescale(pDelta, pMouseX, pMouseY);
+            if (oldScale == scale) return true;
             clampPosition();
             return true;
         }
 
-        public void rescale(double delta) {
+        public void rescale(double delta, double mouseX, double mouseY) {
             var newScale = scale;
             if (delta > 0)
                 newScale *= Math.abs(delta / 4) + 1;
             else
                 newScale /= Math.abs(delta / 4) + 1;
+            var mouseWorldX = (mouseX - getX() - currentX) / scale;
+            var mouseWorldY = (mouseY - getY() - currentX) / scale;
+            setScale(newScale, mouseX - getX(), mouseY - getY());
+            //movePosTo(mouseWorldX, mouseWorldY, mouseX - getX(), mouseY - getY(), false);
+        }
+
+        public void setScale(double newScale, double centerX, double centerY) {
+            var oldX = (currentX - (centerX)) / scale;
+            var oldY = (currentY - (centerY)) / scale;
+            var oldScale = scale;
             setScale(newScale);
+            if (oldScale == scale) return;
+            currentX = (int) (oldX * newScale) + (centerX);
+            currentY = (int) (oldY * newScale) + (centerY);
         }
 
         public void setScale(double newScale) {
@@ -611,6 +646,7 @@ public class NetworkTab extends AdminControllerTab {
                 newScale = (double) getWidth() / (double) (maxXY - minXY);
             if ((maxXY - minXY) * newScale < getHeight())
                 newScale = (double) getHeight() / (double) (maxXY - minXY);
+            if (newScale > 4) return;
             scale = newScale;
             this.gateWidgets.values().forEach((g) -> g.updatePosition(scale));
         }
