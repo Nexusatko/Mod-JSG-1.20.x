@@ -26,7 +26,6 @@ import dev.tauri.jsg.core.common.entity.BiomeOverlayInstance;
 import dev.tauri.jsg.core.common.entity.State;
 import dev.tauri.jsg.core.common.entity.StateType;
 import dev.tauri.jsg.core.common.helper.LinkingHelper;
-import dev.tauri.jsg.core.common.registry.CoreBiomeOverlays;
 import dev.tauri.jsg.core.common.registry.CoreStateTypes;
 import dev.tauri.jsg.core.common.sound.JSGSoundHelper;
 import dev.tauri.jsg.core.common.state.BiomeOverrideState;
@@ -42,14 +41,9 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 public class DHDMilkyWayBE extends DHDAbstractBE {
-    public static final List<Supplier<BiomeOverlayInstance>> SUPPORTED_OVERLAYS = List.of(CoreBiomeOverlays.NORMAL,
-            CoreBiomeOverlays.FROST, CoreBiomeOverlays.MOSSY, CoreBiomeOverlays.SOOTY, CoreBiomeOverlays.AGED);
-
     public DHDMilkyWayBE(BlockPos pos, BlockState state) {
         super(JSGBlockEntities.DHD_MILKYWAY.get(), pos, state);
     }
