@@ -133,6 +133,11 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
     }
 
     public void onGateOpen() {
+        if (stargate.getDialingManager().getConnection().withoutEnergy()) {
+            currentEnergyRequirements.update(EnergyRequiredToOperate.free());
+            return;
+        }
+
         var targetGate = stargate.getDialingManager().getConnection().getTarget();
         if (targetGate.isPresent())
             currentEnergyRequirements.update(getEnergyRequiredToDial(targetGate.get(), stargate.getDialingManager().getDialedAddress()));
