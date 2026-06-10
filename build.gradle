@@ -13,13 +13,6 @@ subprojects {
     apply plugin: 'org.parchmentmc.librarian.forgegradle'
 }
 
-idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = true
-    }
-}
-
 allprojects {
     group = mod_group_id
     if (mod_version.contains("Dev"))
@@ -113,6 +106,7 @@ allprojects {
 
     repositories {
         gradlePluginPortal()
+        mavenCentral()
         maven {
             name = 'MinecraftForge'
             url = 'https://maven.minecraftforge.net/'
@@ -142,10 +136,6 @@ allprojects {
                 includeGroup "maven.modrinth"
             }
         }
-        maven {
-            name = 'Just SG Mod'
-            url = 'https://maven.justsgmod.eu'
-        }
         flatDir {
             dir rootDir.getAbsolutePath() + "/libs"
         }
@@ -159,6 +149,8 @@ allprojects {
     dependencies {
         minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
+        implementation(fg.deobf("eu.justsgmod:jsg-core-${minecraft_version}:${core_version}") { transitive = false })
+
         compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
         compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
 
@@ -167,7 +159,6 @@ allprojects {
         compileOnly "li.cil:oc2:1.0"
         compileOnly "com.github.SlimeKnights:TinkersConstruct:v3.9.2.37"
 
-        implementation fg.deobf("dev.tauri:jsg-core-${minecraft_version}:${core_version}")
 
         compileOnly "com.github.Asek3:oculus:1.8.0"
 
