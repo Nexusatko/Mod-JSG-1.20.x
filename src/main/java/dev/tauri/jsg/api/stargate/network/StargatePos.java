@@ -84,36 +84,30 @@ public class StargatePos implements INBTSerializable<CompoundTag> {
         return stargateType;
     }
 
-    @OnlyIn(Dist.DEDICATED_SERVER)
     public Level getWorld() {
         return Objects.requireNonNull(DimensionsHelper.getLevel(dimension));
     }
 
-    @OnlyIn(Dist.DEDICATED_SERVER)
     protected void forceChunk() {
         ChunkManager.forceChunk((ServerLevel) getWorld(), new ChunkPos(gatePos));
     }
 
-    @OnlyIn(Dist.DEDICATED_SERVER)
     protected void unforceChunk() {
         ChunkManager.unforceChunk((ServerLevel) getWorld(), new ChunkPos(gatePos));
     }
 
-    @OnlyIn(Dist.DEDICATED_SERVER)
     public void forceChunkAndRun(Runnable runnable) {
         forceChunk();
         runnable.run();
         unforceChunk();
     }
 
-    @OnlyIn(Dist.DEDICATED_SERVER)
     public void forceChunkAndCall(Consumer<Stargate<?>> consumer) {
         forceChunk();
         consumer.accept(getStargate());
         unforceChunk();
     }
 
-    @OnlyIn(Dist.DEDICATED_SERVER)
     public Stargate<?> getStargate() {
         try {
             BlockEntity tile = getWorld().getBlockEntity(gatePos);
