@@ -16,9 +16,9 @@ import dev.tauri.jsg.common.dialhomedevice.manager.DHDReactorManager;
 import dev.tauri.jsg.common.dialhomedevice.manager.state.DHDAbstractStateManager;
 import dev.tauri.jsg.common.helpers.StargateLinkingHelper;
 import dev.tauri.jsg.common.registry.JSGItems;
+import dev.tauri.jsg.core.common.blockentity.BEStateProvider;
 import dev.tauri.jsg.core.common.blockentity.ILinkable;
 import dev.tauri.jsg.core.common.blockentity.JSGBlockEntity;
-import dev.tauri.jsg.core.common.blockentity.StateProviderInterface;
 import dev.tauri.jsg.core.common.config.ingame.IConfigurable;
 import dev.tauri.jsg.core.common.entity.BiomeOverlayInstance;
 import dev.tauri.jsg.core.common.entity.State;
@@ -63,7 +63,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDHD, ILinkable<Stargate<?>>, StateProviderInterface {
+public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDHD, ILinkable<Stargate<?>>, BEStateProvider {
     // TODO: Refactor to use IUpgrade class
     public static final List<Item> SUPPORTED_UPGRADES = Arrays.asList(JSGItems.CRYSTAL_GLYPH_DHD.get(), CoreItems.CRYSTAL_UPGRADE_CAPACITY.get(), CoreItems.CRYSTAL_UPGRADE_EFFICIENCY.get());
     public static final int BIOME_OVERRIDE_SLOT = 5;

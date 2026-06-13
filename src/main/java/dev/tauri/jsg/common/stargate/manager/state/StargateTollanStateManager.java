@@ -11,7 +11,7 @@ public class StargateTollanStateManager extends StargateMilkyWayStateManager {
 
     @Override
     protected StargateTollanRendererState.StargateTollanRendererStateBuilder getRendererStateServer() {
-        return (StargateTollanRendererState.StargateTollanRendererStateBuilder) new StargateTollanRendererState.StargateTollanRendererStateBuilder(super.getRendererStateServer());
+        return new StargateTollanRendererState.StargateTollanRendererStateBuilder(super.getRendererStateServer());
     }
 
     @Override

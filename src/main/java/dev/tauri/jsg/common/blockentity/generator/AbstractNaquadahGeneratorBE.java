@@ -1,8 +1,8 @@
 package dev.tauri.jsg.common.blockentity.generator;
 
+import dev.tauri.jsg.core.common.blockentity.BEStateProvider;
 import dev.tauri.jsg.core.common.blockentity.ITickable;
 import dev.tauri.jsg.core.common.blockentity.ScheduledTaskExecutorInterface;
-import dev.tauri.jsg.core.common.blockentity.StateProviderInterface;
 import dev.tauri.jsg.core.common.entity.ScheduledTask;
 import dev.tauri.jsg.core.common.entity.ScheduledTaskType;
 import dev.tauri.jsg.core.common.entity.State;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AbstractNaquadahGeneratorBE extends BlockEntity implements StateProviderInterface, ITickable, ICapabilityProvider, ScheduledTaskExecutorInterface {
+public class AbstractNaquadahGeneratorBE extends BlockEntity implements BEStateProvider, ITickable, ICapabilityProvider, ScheduledTaskExecutorInterface {
     public AbstractNaquadahGeneratorBE(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
         super(pType, pPos, pBlockState);
     }

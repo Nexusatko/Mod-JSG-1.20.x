@@ -81,7 +81,7 @@ public abstract class StargateAbstractStateManager<SG extends StargateAbstractBa
         stateType.stateExecutor()
                 .tryType(CoreStateTypes.SOUND_UPDATE, () -> stargate.getSoundManager().updateClient())
                 .tryType(CoreStateTypes.RENDERER_STATE, () -> {
-                    setRendererStateClient(castState(castState(state).initClient(getBlockPos())));
+                    setRendererStateClient(castState(castState(state).initClient(getStateHandlerBlockPos())));
                     stargate.updateFacing();
                 })
                 .tryType(JSGStateTypes.CHEVRONS_STATE, () -> {
@@ -165,7 +165,7 @@ public abstract class StargateAbstractStateManager<SG extends StargateAbstractBa
     public PacketDistributor.TargetPoint getTargetPoint() {
         if (stargate.getLevel() == null) return targetPoint;
         if (targetPoint == null) {
-            var pos = getBlockPos();
+            var pos = getStateHandlerBlockPos();
             targetPoint = new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), 512, stargate.getLevel().dimension());
         }
         return targetPoint;
@@ -184,7 +184,7 @@ public abstract class StargateAbstractStateManager<SG extends StargateAbstractBa
     }
 
     @Override
-    public BlockPos getBlockPos() {
+    public BlockPos getStateHandlerBlockPos() {
         return stargate.getBlockPos();
     }
 

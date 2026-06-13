@@ -73,7 +73,7 @@ public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S exten
     }
 
     @Override
-    public BlockPos getBlockPos() {
+    public BlockPos getStateHandlerBlockPos() {
         return dhd.getBlockPos();
     }
 
@@ -98,7 +98,7 @@ public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S exten
     public PacketDistributor.TargetPoint getTargetPoint() {
         if (dhd.getLevel() == null) return targetPoint;
         if (targetPoint == null) {
-            var pos = getBlockPos();
+            var pos = getStateHandlerBlockPos();
             targetPoint = new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), 512, dhd.getLevel().dimension());
         }
         return targetPoint;

@@ -9,8 +9,8 @@ import dev.tauri.jsg.client.renderer.blockentity.machine.PrinterRendererState;
 import dev.tauri.jsg.common.item.CartridgeItem;
 import dev.tauri.jsg.common.registry.JSGBlockEntities;
 import dev.tauri.jsg.common.registry.JSGPositionedSounds;
+import dev.tauri.jsg.core.common.blockentity.BEStateProvider;
 import dev.tauri.jsg.core.common.blockentity.ITickable;
-import dev.tauri.jsg.core.common.blockentity.StateProviderInterface;
 import dev.tauri.jsg.core.common.entity.State;
 import dev.tauri.jsg.core.common.entity.StateType;
 import dev.tauri.jsg.core.common.integration.ComputerDeviceHolder;
@@ -48,7 +48,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class PrinterBE extends BlockEntity implements ITickable, ComputerDeviceProvider, StateProviderInterface {
+public class PrinterBE extends BlockEntity implements ITickable, ComputerDeviceProvider, BEStateProvider {
     public PrinterBE(BlockPos pPos, BlockState pBlockState) {
         super(JSGBlockEntities.PRINTER.get(), pPos, pBlockState);
         if (level != null && !level.isClientSide)
