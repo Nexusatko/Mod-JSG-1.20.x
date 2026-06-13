@@ -169,10 +169,10 @@ public class StargatePos implements INBTSerializable<CompoundTag> {
 
         name = compound.getString("stargatePosName");
         if (compound.contains("gateSymbolType")) {
-            gateSymbolType = SymbolType.byId(JSGMapping.rl(compound.getString("gateSymbolType")));
+            gateSymbolType = SymbolType.byId(JSGMapping.fixRL(compound.getString("gateSymbolType")));
         }
         if (compound.contains("stargateTypeSaved")) {
-            stargateType = StargateType.valueOf(JSGMapping.rl(compound.getString("stargateTypeSaved")));
+            stargateType = StargateType.valueOf(JSGMapping.fixRL(compound.getString("stargateTypeSaved")));
         }
         blacklisted = compound.getBoolean("blacklisted");
     }
