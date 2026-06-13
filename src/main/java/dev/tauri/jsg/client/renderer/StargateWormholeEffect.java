@@ -1,15 +1,15 @@
-package dev.tauri.jsg.common.effect;
+package dev.tauri.jsg.client.renderer;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.tauri.jsg.JSG;
+import dev.tauri.jsg.common.effect.StargateWormholeType;
 import dev.tauri.jsg.common.registry.JSGPositionedSounds;
 import dev.tauri.jsg.common.registry.JSGSoundEvents;
 import dev.tauri.jsg.core.client.screen.util.GuiHelper;
 import dev.tauri.jsg.core.client.sound.JSGSoundHelperClient;
 import dev.tauri.jsg.core.client.texture.ITexture;
-import dev.tauri.jsg.core.common.helper.JSGMinecraftHelper;
 import dev.tauri.jsg.core.mapping.JSGMapping;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -54,7 +54,7 @@ public class StargateWormholeEffect {
         isFlying = p.getAbilities().flying;
         lastSpeed = p.getAbilities().getFlyingSpeed();
         p.getAbilities().setFlyingSpeed(0);
-        playingStarted = JSGMinecraftHelper.getPlayerTickClientSide();
+        playingStarted = Minecraft.getInstance().gui.getGuiTicks();
         Vec3 v = p.position();
         travelSoundPos = new BlockPos((int) v.x, (int) v.y, (int) v.z);
         JSGSoundHelperClient.playPositionedSoundClientSide(travelSoundPos, JSGPositionedSounds.WORMHOLE_TRAVEL, true);
@@ -67,7 +67,7 @@ public class StargateWormholeEffect {
     public static void stop() {
         isStopping = true;
         playingStarted = -1;
-        playingWhiteStarted = JSGMinecraftHelper.getPlayerTickClientSide();
+        playingWhiteStarted = Minecraft.getInstance().gui.getGuiTicks();
         isPlaying = false;
         isPlayingWhite = true;
         if (Minecraft.getInstance().player == null) return;
@@ -84,7 +84,7 @@ public class StargateWormholeEffect {
     public static int getCurrentAnimationState() {
         if (playingStarted == -1)
             return 0;
-        int tick = (int) (JSGMinecraftHelper.getPlayerTickClientSide() - playingStarted);
+        int tick = (int) (Minecraft.getInstance().gui.getGuiTicks() - playingStarted);
         int l = (length * 20);
         var framesCount = (type.endFrame - type.startFrame);
         var startFrameOffset = (framesCount - l);
@@ -153,7 +153,7 @@ public class StargateWormholeEffect {
 
     private static float getWhiteCoef() {
         if (!isPlayingWhite) return 0;
-        var alphaCoef = (JSGMinecraftHelper.getPlayerTickClientSide() - playingWhiteStarted) / 20f;
+        var alphaCoef = (Minecraft.getInstance().gui.getGuiTicks() - playingWhiteStarted) / 20f;
         if (alphaCoef > 1f) {
             alphaCoef = 1f;
             isPlayingWhite = false;

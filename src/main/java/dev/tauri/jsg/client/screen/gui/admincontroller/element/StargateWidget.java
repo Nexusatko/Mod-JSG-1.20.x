@@ -6,7 +6,6 @@ import dev.tauri.jsg.client.renderer.blockentity.stargate.StargateAbstractRender
 import dev.tauri.jsg.common.blockentity.stargate.StargateAbstractBaseBE;
 import dev.tauri.jsg.core.client.model.AbstractOBJModel;
 import dev.tauri.jsg.core.client.screen.util.GuiHelper;
-import dev.tauri.jsg.core.common.helper.JSGMinecraftHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -87,7 +86,7 @@ public class StargateWidget extends AbstractWidget {
             if (isSame) return this;
         }
         this.nextLayoutSettings = layoutSettings;
-        this.animationStart = JSGMinecraftHelper.getPlayerTickClientSide() + 3;
+        this.animationStart = Minecraft.getInstance().gui.getGuiTicks() + 3;
         return this;
     }
 
@@ -112,7 +111,7 @@ public class StargateWidget extends AbstractWidget {
 
         var s = layoutSettings.getExposed();
         if (nextLayoutSettings != null) {
-            var progress = (JSGMinecraftHelper.getPlayerTickClientSide() + partialTick - animationStart) / 10;
+            var progress = (Minecraft.getInstance().gui.getGuiTicks() + partialTick - animationStart) / 10;
             if (progress < 0) progress = 0;
             var ns = nextLayoutSettings.getExposed();
             var isSame = ns.paddingBottom == s.paddingBottom && ns.paddingLeft == s.paddingLeft && ns.paddingRight == s.paddingRight && ns.paddingTop == s.paddingTop;

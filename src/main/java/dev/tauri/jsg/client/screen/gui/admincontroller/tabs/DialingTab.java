@@ -11,10 +11,10 @@ import dev.tauri.jsg.common.packet.packets.admincontroller.ACLinkedActionPacketT
 import dev.tauri.jsg.common.packet.packets.admincontroller.event.ACStargateEngageSymbolPacketToClient;
 import dev.tauri.jsg.core.client.screen.widget.ButtonWithIcon;
 import dev.tauri.jsg.core.client.screen.widget.SymbolFrame;
-import dev.tauri.jsg.core.common.helper.JSGMinecraftHelper;
 import dev.tauri.jsg.core.mapping.JSGMapping;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
@@ -164,7 +164,7 @@ public class DialingTab extends AdminControllerTabAsWidget {
                 if (frame.offline) return 0xffa0a0a0;
                 if (frame.incoming) return 0xffECD24F;
                 var stargateState = Optional.ofNullable(baseGUI.stargateData).map(data -> data.stargateState).orElse(EnumStargateState.IDLE);
-                if ((!frame.animating || (JSGMinecraftHelper.getPlayerTickClientSide() / 10 % 2 == 0)) && frame.symbol != null) {
+                if ((!frame.animating || (Minecraft.getInstance().gui.getGuiTicks() / 10 % 2 == 0)) && frame.symbol != null) {
                     if (stargateState.initiating())
                         return 0xff69EC4F;
                     if (stargateState.failing())

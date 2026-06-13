@@ -1,7 +1,7 @@
 package dev.tauri.jsg.client.listener;
 
 import dev.tauri.jsg.JSG;
-import dev.tauri.jsg.common.effect.StargateWormholeEffect;
+import dev.tauri.jsg.client.renderer.StargateWormholeEffect;
 import dev.tauri.jsg.common.entity.client.JSGEntityModelLayer;
 import dev.tauri.jsg.common.entity.client.MastadgeModel;
 import dev.tauri.jsg.common.item.tooltips.ClientStargateInventoryTooltip;
