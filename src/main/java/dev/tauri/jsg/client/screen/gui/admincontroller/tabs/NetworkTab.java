@@ -4,6 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.api.stargate.network.StargatePos;
 import dev.tauri.jsg.api.stargate.network.address.StargateAddress;
+import dev.tauri.jsg.api.stargate.type.StargateType;
+import dev.tauri.jsg.api.stargate.type.StargateTypes;
 import dev.tauri.jsg.client.screen.gui.admincontroller.AdminControllerGUI;
 import dev.tauri.jsg.common.item.admincontroller.AdminControllerAction;
 import dev.tauri.jsg.common.packet.JSGPacketHandler;
@@ -152,14 +154,14 @@ public class NetworkTab extends AdminControllerTab {
         if (searchQuery.startsWith("pos=")) {
             return !pos.toShortString().startsWith(searchQuery.replaceFirst("pos=", ""));
         }
-        if (searchQuery.startsWith("type=")) {
+        if (searchQuery.startsWith("type=") && type != null) {
             return !type.getId().toString().toLowerCase().contains(searchQuery.replaceFirst("type=", "")) && !type.name.toLowerCase().contains(searchQuery.replaceFirst("type=", ""));
         }
         if (name.toLowerCase().contains(searchQuery)) return false;
         if (stargatePos.dimension.location().toString().toLowerCase().contains(searchQuery)) return false;
         if (pos.toShortString().toLowerCase().startsWith(searchQuery)) return false;
-        if (type.getId().toString().toLowerCase().contains(searchQuery)) return false;
-        return !type.name.toLowerCase().contains(searchQuery);
+        if (type != null && type.getId().toString().toLowerCase().contains(searchQuery)) return false;
+        return type != null && !type.name.toLowerCase().contains(searchQuery);
     }
 
     public class AddressList extends SubScreen {
@@ -195,7 +197,7 @@ public class NetworkTab extends AdminControllerTab {
                 List<Component> gateTooltip = List.of(
                         Component.empty().append(Component.translatable("gui.admincontroller.tab.network.map.stargate.name").withStyle(ChatFormatting.BOLD)).append(" ").append(sgPos.getName()),
                         Component.empty().append(Component.translatable("gui.admincontroller.tab.network.map.stargate.pos").withStyle(ChatFormatting.BOLD)).append(" ").append(posString),
-                        Component.empty().append(Component.translatable("gui.admincontroller.tab.network.map.stargate.type").withStyle(ChatFormatting.BOLD)).append(" ").append(sgPos.getStargateType().name).append(" ").append(Component.literal("(" + sgPos.getStargateType().getId().toString() + ")").withStyle(ChatFormatting.DARK_GRAY)),
+                        Component.empty().append(Component.translatable("gui.admincontroller.tab.network.map.stargate.type").withStyle(ChatFormatting.BOLD)).append(" ").append(Optional.ofNullable(sgPos.getStargateType()).map(t -> t.name).orElse("UNKNOWN")).append(" ").append(Component.literal("(" + Optional.ofNullable(sgPos.getStargateType()).map(t -> t.getId().toString()).orElse("UNKNOWN") + ")").withStyle(ChatFormatting.DARK_GRAY)),
                         Component.empty().append(Component.translatable("gui.admincontroller.tab.network.map.stargate.dimension").withStyle(ChatFormatting.BOLD)).append(" ").append(sgPos.dimension.location().toString())
                 );
                 var nameBox = new BiCallbackEditBoxWithTooltip(NetworkTab.this.baseGUI.getMinecraft().font, nameFieldX, 0, nameFieldWidth, ENTRY_HEIGHT, Component.empty(), (val) -> {
@@ -366,7 +368,7 @@ public class NetworkTab extends AdminControllerTab {
                                 (pMouseX - currentX - NetworkMap.this.getX()) < this.getX() + this.getWidth() &&
                                 (pMouseY - currentY - NetworkMap.this.getY()) < this.getY() + this.getHeight()) && NetworkMap.this.isMouseInside(pMouseX, pMouseY);
                 var wh = getWidth();
-                var id = sgPos.getStargateType().getId();
+                var id = Optional.ofNullable(sgPos.getStargateType()).map(StargateType::getId).orElseGet(() -> StargateTypes.MILKYWAY.get().getId());
 
                 var p = NetworkTab.this.baseGUI.player;
                 if (dimension.isEmpty() || p.level().dimension() == dimension.get()) {
@@ -402,7 +404,8 @@ public class NetworkTab extends AdminControllerTab {
                     graphics.renderComponentTooltip(NetworkTab.this.baseGUI.getMinecraft().font, List.of(
                             Component.empty().append(Component.translatable("gui.admincontroller.tab.network.map.stargate.name").withStyle(ChatFormatting.BOLD)).append(" ").append(sgPos.getName()),
                             Component.empty().append(Component.translatable("gui.admincontroller.tab.network.map.stargate.pos").withStyle(ChatFormatting.BOLD)).append(" ").append(posString),
-                            Component.empty().append(Component.translatable("gui.admincontroller.tab.network.map.stargate.type").withStyle(ChatFormatting.BOLD)).append(" ").append(sgPos.getStargateType().name),
+                            Component.empty().append(Component.translatable("gui.admincontroller.tab.network.map.stargate.type").withStyle(ChatFormatting.BOLD)).append(" ").append(Optional.ofNullable(sgPos.getStargateType()).map(t -> t.name).orElse("UNKNOWN")).append(" ").append(Component.literal("(" + Optional.ofNullable(sgPos.getStargateType()).map(t -> t.getId().toString()).orElse("UNKNOWN") + ")").withStyle(ChatFormatting.DARK_GRAY)),
+                            //Component.empty().append(Component.translatable("gui.admincontroller.tab.network.map.stargate.type").withStyle(ChatFormatting.BOLD)).append(" ").append(sgPos.getStargateType().name),
                             Component.empty().append(Component.translatable("gui.admincontroller.tab.network.map.stargate.dimension").withStyle(ChatFormatting.BOLD)).append(" ").append(sgPos.dimension.location().toString())
                     ), pMouseX, pMouseY);
                     return true;

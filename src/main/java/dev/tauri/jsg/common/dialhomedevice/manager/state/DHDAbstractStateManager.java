@@ -6,7 +6,6 @@ import dev.tauri.jsg.client.renderer.blockentity.dialhomedevice.DHDAbstractRende
 import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
 import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.common.dialhomedevice.manager.AbstractDHDManager;
-import dev.tauri.jsg.core.common.blockentity.StateProviderInterface;
 import dev.tauri.jsg.core.common.entity.State;
 import dev.tauri.jsg.core.common.entity.StateType;
 import dev.tauri.jsg.core.common.registry.CoreStateTypes;
@@ -17,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S extends DHDAbstractRendererState> extends AbstractDHDManager<DHD> implements IDHDStateManager, StateProviderInterface {
+public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S extends DHDAbstractRendererState> extends AbstractDHDManager<DHD> implements IDHDStateManager {
     private PacketDistributor.TargetPoint targetPoint;
     protected DHDButtonsState buttonsState;
 

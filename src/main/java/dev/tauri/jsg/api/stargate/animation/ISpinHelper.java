@@ -33,6 +33,14 @@ public interface ISpinHelper extends INBTSerializable<CompoundTag>, ITickable {
     float getRingAngle();
 
     /**
+     * Correct time from server to client one<br>
+     * This method needs to be fired before any client-side ring rotation calculation to make sure the client has correct time offset!
+     * @param currentGameTime the synced time across server-client
+     * @param clientTime the local client total ticks from game start
+     */
+    void correctClientRingStartTime(long currentGameTime, long clientTime);
+
+    /**
      * Calculates the current ring angle
      *
      * @param tick level tick + partial ticks if on client

@@ -18,7 +18,11 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -63,42 +67,53 @@ public class StargatePos implements INBTSerializable<CompoundTag> {
         fromBytes(new FriendlyByteBuf(buf));
     }
 
+    @Nullable
     public SymbolType<?> getGateSymbolType() {
         if (gateSymbolType != null) return gateSymbolType;
+        if (FMLEnvironment.dist.isClient()) return null;
         gateSymbolType = getStargate().getSymbolType();
         return gateSymbolType;
     }
 
+    @Nullable
     public StargateType<?> getStargateType() {
         if (stargateType != null) return stargateType;
-        stargateType = StargateType.parse(getGateSymbolType());
+        var symbolType = getGateSymbolType();
+        if (symbolType == null) return null;
+        stargateType = StargateType.parse(symbolType);
         return stargateType;
     }
 
+    @OnlyIn(Dist.DEDICATED_SERVER)
     public Level getWorld() {
         return Objects.requireNonNull(DimensionsHelper.getLevel(dimension));
     }
 
+    @OnlyIn(Dist.DEDICATED_SERVER)
     protected void forceChunk() {
         ChunkManager.forceChunk((ServerLevel) getWorld(), new ChunkPos(gatePos));
     }
 
+    @OnlyIn(Dist.DEDICATED_SERVER)
     protected void unforceChunk() {
         ChunkManager.unforceChunk((ServerLevel) getWorld(), new ChunkPos(gatePos));
     }
 
+    @OnlyIn(Dist.DEDICATED_SERVER)
     public void forceChunkAndRun(Runnable runnable) {
         forceChunk();
         runnable.run();
         unforceChunk();
     }
 
+    @OnlyIn(Dist.DEDICATED_SERVER)
     public void forceChunkAndCall(Consumer<Stargate<?>> consumer) {
         forceChunk();
         consumer.accept(getStargate());
         unforceChunk();
     }
 
+    @OnlyIn(Dist.DEDICATED_SERVER)
     public Stargate<?> getStargate() {
         try {
             BlockEntity tile = getWorld().getBlockEntity(gatePos);
@@ -115,6 +130,7 @@ public class StargatePos implements INBTSerializable<CompoundTag> {
         }
     }
 
+    @OnlyIn(Dist.DEDICATED_SERVER)
     public BlockState getBlockState() {
         return getWorld().getBlockState(gatePos);
     }
