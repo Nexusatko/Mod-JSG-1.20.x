@@ -74,7 +74,7 @@ allprojects {
 
             server {
                 property 'forge.enabledGameTestNamespaces', "${mod_id}"
-                args '--nogui'
+                //args '--nogui'
             }
 
             // This run config launches GameTestServer and runs all registered gametests, then exits.
@@ -149,7 +149,7 @@ allprojects {
     dependencies {
         minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-        implementation(fg.deobf("eu.justsgmod:jsg-core-${minecraft_version}:${core_version}") { transitive = false })
+        implementation(fg.deobf("eu.justsgmod:jsg-core-${minecraft_version}:${core_version}:") { transitive = false })
 
         compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
         compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")

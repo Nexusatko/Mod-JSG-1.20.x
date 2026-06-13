@@ -12,6 +12,7 @@ import dev.tauri.jsg.common.stargate.animation.chevron.StargateChevronsState;
 import dev.tauri.jsg.common.stargate.animation.chevron.StargateUniverseChevronsState;
 import dev.tauri.jsg.core.common.util.vectors.Vector3f;
 import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.phys.Vec3;
@@ -38,7 +39,8 @@ public class StargateUniverseRenderer extends StargateClassicRenderer<StargateUn
 
     @Override
     protected void renderGate() {
-        var angularRotation = (float) tileEntity.getDialingManager().getSpinHelper().apply(level.getGameTime() + partialTicks, true);
+        tileEntity.getDialingManager().getSpinHelper().correctClientRingStartTime(level.getGameTime(), Minecraft.getInstance().gui.getGuiTicks());
+        var angularRotation = (float) tileEntity.getDialingManager().getSpinHelper().apply(Minecraft.getInstance().gui.getGuiTicks() + partialTicks, true);
 
         stack.mulPose(Axis.ZN.rotationDegrees(angularRotation));
 

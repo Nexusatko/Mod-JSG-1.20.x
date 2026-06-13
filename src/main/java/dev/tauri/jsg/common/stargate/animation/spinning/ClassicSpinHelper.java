@@ -18,6 +18,7 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,6 +50,8 @@ public class ClassicSpinHelper extends State implements ISpinHelper {
     // server only!
     protected CompoundTag stopSpinData;
 
+    protected boolean clientRingRotationStartCorrected = false;
+
     public ClassicSpinHelper(StargateAbstractBaseBE<?, ?> stargate, Consumer<CompoundTag> onSpinStop) {
         this.stargate = stargate;
         this.onSpinStop = onSpinStop;
@@ -63,6 +66,18 @@ public class ClassicSpinHelper extends State implements ISpinHelper {
     public float getRingAngle() {
         return (float) apply(stargate.getTime(), true);
     }
+
+    @Override
+    public void correctClientRingStartTime(long currentGameTime, long clientTime) {
+        if (clientRingRotationStartCorrected)
+            return;
+        if (!FMLEnvironment.dist.isClient())
+            return;
+        clientRingRotationStartCorrected = true;
+        var diff = currentGameTime - ringRotationStart;
+        ringRotationStart = clientTime - diff;
+    }
+
 
     @Override
     public double apply(double tick, boolean clampAngle) {
@@ -412,6 +427,7 @@ public class ClassicSpinHelper extends State implements ISpinHelper {
             rotateFreely = null;
         speedFactor = buf.readFloat();
         direction = EnumSpinDirection.values()[buf.readInt()];
+        clientRingRotationStartCorrected = false;
     }
 
     public void from(ClassicSpinHelper state) {
@@ -423,5 +439,6 @@ public class ClassicSpinHelper extends State implements ISpinHelper {
         rotateFreely = state.rotateFreely;
         speedFactor = state.speedFactor;
         direction = state.direction;
+        clientRingRotationStartCorrected = state.clientRingRotationStartCorrected;
     }
 }

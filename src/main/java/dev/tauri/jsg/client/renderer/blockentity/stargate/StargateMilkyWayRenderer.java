@@ -7,6 +7,7 @@ import dev.tauri.jsg.api.stargate.StargatePointOfOriginsDefaults;
 import dev.tauri.jsg.common.loader.ElementEnum;
 import dev.tauri.jsg.common.stargate.animation.chevron.StargateChevronsState;
 import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.phys.Vec3;
 
@@ -45,7 +46,8 @@ public class StargateMilkyWayRenderer extends StargateClassicRenderer<StargateMi
 
     protected void renderRing() {
         stack.pushPose();
-        var angularRotation = (float) tileEntity.getDialingManager().getSpinHelper().apply(level.getGameTime() + partialTicks, true);
+        tileEntity.getDialingManager().getSpinHelper().correctClientRingStartTime(level.getGameTime(), Minecraft.getInstance().gui.getGuiTicks());
+        var angularRotation = (float) tileEntity.getDialingManager().getSpinHelper().apply(Minecraft.getInstance().gui.getGuiTicks() + partialTicks, true);
 
 
         stack.translate(RING_LOC.x, RING_LOC.z, RING_LOC.y);

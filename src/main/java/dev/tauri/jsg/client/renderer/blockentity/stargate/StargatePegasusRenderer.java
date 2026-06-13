@@ -14,6 +14,7 @@ import dev.tauri.jsg.core.client.model.AbstractOBJModel;
 import dev.tauri.jsg.core.client.renderer.EmissiveRenderer;
 import dev.tauri.jsg.core.common.util.math.NumberUtils;
 import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -58,7 +59,8 @@ public class StargatePegasusRenderer extends StargateClassicRenderer<StargatePeg
         var chevronsState = (StargatePegasusChevronsState) tileEntity.getStateManager().getChevronsState();
 
         if (spinHelper.isSpinning()) {
-            double tick = (level.getGameTime() + partialTicks);
+            tileEntity.getDialingManager().getSpinHelper().correctClientRingStartTime(level.getGameTime(), Minecraft.getInstance().gui.getGuiTicks());
+            double tick = (Minecraft.getInstance().gui.getGuiTicks() + partialTicks);
             int slot = (int) Math.floor(spinHelper.apply(tick, true));
             if (!chevronsState.isSlotActive(slot)) {
                 renderGlyph(((PegasusSpinHelper) spinHelper).getTargetSymbol().getId(), slot, false);
