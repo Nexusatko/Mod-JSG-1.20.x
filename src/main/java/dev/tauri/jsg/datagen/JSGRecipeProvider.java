@@ -21,7 +21,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unused")
 public class JSGRecipeProvider extends RecipeProvider implements IConditionBuilder {
     public JSGRecipeProvider(PackOutput pOutput) {
         super(pOutput);
