@@ -88,7 +88,7 @@ public abstract class StargateAbstractBaseBlock extends TickableBEBlock implemen
 
     @Nullable
     public RegistryObject<CreativeModeTab> getTab() {
-        return CoreTabs.TAB_TRANSPORTATION;
+        return CoreTabs.TAB_TRANSPORTATION.get();
     }
 
     @Override

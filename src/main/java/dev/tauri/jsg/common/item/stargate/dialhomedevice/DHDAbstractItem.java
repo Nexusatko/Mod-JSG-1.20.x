@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 public abstract class DHDAbstractItem extends JSGBlockItem {
     public DHDAbstractItem(Block block) {
-        super(block, new Item.Properties(), List.of(CoreTabs.TAB_TRANSPORTATION));
+        super(block, new Item.Properties(), List.of(CoreTabs.TAB_TRANSPORTATION.get()));
     }
 
     @Override

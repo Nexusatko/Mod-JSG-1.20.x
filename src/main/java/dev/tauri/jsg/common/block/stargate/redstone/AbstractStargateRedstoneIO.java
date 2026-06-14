@@ -71,7 +71,7 @@ public abstract class AbstractStargateRedstoneIO extends JSGBlock implements ITa
 
     @Nullable
     public RegistryObject<CreativeModeTab> getTab() {
-        return CoreTabs.TAB_TRANSPORTATION;
+        return CoreTabs.TAB_TRANSPORTATION.get();
     }
 
     @Override

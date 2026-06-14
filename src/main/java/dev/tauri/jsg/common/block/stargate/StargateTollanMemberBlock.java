@@ -26,7 +26,7 @@ public abstract class StargateTollanMemberBlock extends StargateClassicMemberBlo
         @Nullable
         @Override
         public RegistryObject<CreativeModeTab> getTab() {
-            return CoreTabs.TAB_TRANSPORTATION;
+            return CoreTabs.TAB_TRANSPORTATION.get();
         }
     }
 
@@ -41,7 +41,7 @@ public abstract class StargateTollanMemberBlock extends StargateClassicMemberBlo
         @Nullable
         @Override
         public RegistryObject<CreativeModeTab> getTab() {
-            return CoreTabs.TAB_TRANSPORTATION;
+            return CoreTabs.TAB_TRANSPORTATION.get();
         }
     }
 }

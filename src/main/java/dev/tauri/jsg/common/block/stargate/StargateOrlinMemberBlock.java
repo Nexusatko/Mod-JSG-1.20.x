@@ -38,7 +38,7 @@ public class StargateOrlinMemberBlock extends StargateAbstractMemberBlock implem
     @Nullable
     @Override
     public RegistryObject<CreativeModeTab> getTab() {
-        return CoreTabs.TAB_TRANSPORTATION;
+        return CoreTabs.TAB_TRANSPORTATION.get();
     }
 
     @Override

@@ -46,8 +46,8 @@ public class JSGItems {
     /**
      * DHD power/control crystal
      */
-    public static final RegistryObject<JSGItem> CRYSTAL_CONTROL_MILKYWAY_DHD = Constants.JSG_ITEM_HELPER.builder("crystal_control_dhd").setInTabs(List.of(CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION)).buildGeneric();
-    public static final RegistryObject<JSGItem> CRYSTAL_CONTROL_PEGASUS_DHD = Constants.JSG_ITEM_HELPER.builder("crystal_control_pegasus_dhd").setInTabs(List.of(CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION)).buildGeneric();
+    public static final RegistryObject<JSGItem> CRYSTAL_CONTROL_MILKYWAY_DHD = Constants.JSG_ITEM_HELPER.builder("crystal_control_dhd").setInTabs(List.of(CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get())).buildGeneric();
+    public static final RegistryObject<JSGItem> CRYSTAL_CONTROL_PEGASUS_DHD = Constants.JSG_ITEM_HELPER.builder("crystal_control_pegasus_dhd").setInTabs(List.of(CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get())).buildGeneric();
 
     /**
      * These allow for dialing 8th glyph(cross dimension travel) and show different address spaces
@@ -150,13 +150,13 @@ public class JSGItems {
 
     public static void init() {
         Integrations.TCONSTRUCT.addOnLoad(() -> {
-            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_golden_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS)).buildGeneric();
-            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_sand_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS)).buildGeneric();
-            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_red_sand_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS)).buildGeneric();
-            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_stone").setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS)).buildGeneric();
+            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_golden_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS.get())).buildGeneric();
+            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_sand_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS.get())).buildGeneric();
+            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_red_sand_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS.get())).buildGeneric();
+            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_stone").setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS.get())).buildGeneric();
         });
         Integrations.CREATE.addOnLoad(() -> {
-            CoreRegistryHelpers.ITEM_HELPER.builder("incomplete_chocolate_bar").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS)).buildGeneric();
+            CoreRegistryHelpers.ITEM_HELPER.builder("incomplete_chocolate_bar").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS.get())).buildGeneric();
         });
     }
 }
