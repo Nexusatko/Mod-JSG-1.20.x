@@ -15,8 +15,10 @@ import dev.tauri.jsg.core.common.symbol.SymbolUtil;
 import dev.tauri.jsg.core.mapping.JSGMapping;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -45,7 +47,7 @@ public class CommandSGSetAddress extends AbstractStargateCommand {
 
     @Override
     public ArgumentBuilder<CommandSourceStack, ?> getMainCommandPart(boolean pos) {
-        return Commands.argument("map", StringArgumentType.word())
+        return Commands.argument("map", ResourceLocationArgument.id())
                 .suggests((CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) -> {
                     for (var type : SymbolType.values(JSGSymbolUsages.STARGATES.get())) {
                         if (Objects.equals(builder.getRemainingLowerCase(), "") || type.getId().toString().toLowerCase().startsWith(builder.getRemainingLowerCase()))
@@ -55,7 +57,7 @@ public class CommandSGSetAddress extends AbstractStargateCommand {
                 }).then(getGlyphArguments(1, ctx ->
                         setAddress(
                                 pos ? BlockPosArgument.getLoadedBlockPos(ctx, "position") : null,
-                                StringArgumentType.getString(ctx, "map"),
+                                ResourceLocationArgument.getId(ctx, "map").toString(),
                                 List.of(
                                         StringArgumentType.getString(ctx, "glyph1"),
                                         StringArgumentType.getString(ctx, "glyph2"),
