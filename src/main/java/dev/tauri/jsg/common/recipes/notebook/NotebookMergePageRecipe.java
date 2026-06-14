@@ -67,7 +67,7 @@ public class NotebookMergePageRecipe extends ShapelessRecipe {
 
             if (item == CoreItems.NOTEBOOK_ITEM.get()) {
                 if (stack.hasTag()) {
-                    var notebookTags = stack.getOrCreateTag().getList("addressList", Tag.TAG_COMPOUND);
+                    var notebookTags = stack.getOrCreateTag().getList("pages", Tag.TAG_COMPOUND);
 
                     for (var tag : notebookTags) {
                         if (!NotebookRecipeUtils.tagListContains(pages, (CompoundTag) tag)) {

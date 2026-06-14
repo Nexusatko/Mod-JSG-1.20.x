@@ -197,10 +197,13 @@ public class JSG implements JSGAddon {
     public void serverStarted(ServerStartedEvent event) {
         var recipeManager = event.getServer().getRecipeManager();
         var recipes = recipeManager.getRecipes();
+        // ---------------
+        // TODO: Move to core
         recipes.add(new NotebookCloneRecipe());
         recipes.add(new NotebookCreationRecipe());
         recipes.add(new NotebookMergePageRecipe());
         recipes.add(new NotebookMergeRecipe());
+        // ---------------
         recipes.add(new UniverseDialerCloneRecipe());
         recipes.add(new PageAndUniverseDialerRecipe());
         recipes.add(new StargateOrlinBaseBlockRecipe());
