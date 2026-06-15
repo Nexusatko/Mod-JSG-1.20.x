@@ -18,13 +18,6 @@ import dev.tauri.jsg.common.integration.create.PonderScenes;
 import dev.tauri.jsg.common.integration.oc2.OCDevices;
 import dev.tauri.jsg.common.item.linkable.dialer.modes.UniverseDialerModes;
 import dev.tauri.jsg.common.packet.JSGPacketHandler;
-import dev.tauri.jsg.common.recipes.PageAndUniverseDialerRecipe;
-import dev.tauri.jsg.common.recipes.StargateOrlinBaseBlockRecipe;
-import dev.tauri.jsg.common.recipes.UniverseDialerCloneRecipe;
-import dev.tauri.jsg.common.recipes.notebook.NotebookCloneRecipe;
-import dev.tauri.jsg.common.recipes.notebook.NotebookCreationRecipe;
-import dev.tauri.jsg.common.recipes.notebook.NotebookMergePageRecipe;
-import dev.tauri.jsg.common.recipes.notebook.NotebookMergeRecipe;
 import dev.tauri.jsg.common.registry.JSGRegistriesInit;
 import dev.tauri.jsg.common.stargate.StargateTypesLoader;
 import dev.tauri.jsg.common.stargate.network.StargateNetwork;
@@ -195,20 +188,6 @@ public class JSG implements JSGAddon {
 
     @SubscribeEvent
     public void serverStarted(ServerStartedEvent event) {
-        var recipeManager = event.getServer().getRecipeManager();
-        var recipes = recipeManager.getRecipes();
-        // ---------------
-        // TODO: Move to core
-        recipes.add(new NotebookCloneRecipe());
-        recipes.add(new NotebookCreationRecipe());
-        recipes.add(new NotebookMergePageRecipe());
-        recipes.add(new NotebookMergeRecipe());
-        // ---------------
-        recipes.add(new UniverseDialerCloneRecipe());
-        recipes.add(new PageAndUniverseDialerRecipe());
-        recipes.add(new StargateOrlinBaseBlockRecipe());
-        recipeManager.replaceRecipes(recipes);
-
         JSG.logger.info("Server started!");
     }
 

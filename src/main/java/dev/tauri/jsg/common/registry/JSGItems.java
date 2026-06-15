@@ -150,13 +150,13 @@ public class JSGItems {
 
     public static void init() {
         Integrations.TCONSTRUCT.addOnLoad(() -> {
-            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_golden_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS.get())).buildGeneric();
-            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_sand_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS.get())).buildGeneric();
-            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_red_sand_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS.get())).buildGeneric();
-            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_stone").setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS.get())).buildGeneric();
+            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_golden_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS)).buildGeneric();
+            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_sand_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS)).buildGeneric();
+            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_red_sand_cast").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS)).buildGeneric();
+            CoreRegistryHelpers.ITEM_HELPER.builder("iris_blade_stone").setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS)).buildGeneric();
         });
         Integrations.CREATE.addOnLoad(() -> {
-            CoreRegistryHelpers.ITEM_HELPER.builder("incomplete_chocolate_bar").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS.get())).buildGeneric();
+            CoreRegistryHelpers.ITEM_HELPER.builder("incomplete_chocolate_bar").clearTooltip().setInTabs(List.of(CoreTabs.TAB_INTEGRATIONS)).buildGeneric();
         });
     }
 }

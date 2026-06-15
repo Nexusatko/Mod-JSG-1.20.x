@@ -6,11 +6,18 @@ import com.mojang.datafixers.util.Pair;
 import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
 import dev.tauri.jsg.common.entity.behaviour.DialGateBehaviour;
+import dev.tauri.jsg.common.recipes.PageAndUniverseDialerRecipe;
+import dev.tauri.jsg.common.recipes.StargateOrlinBaseBlockRecipe;
+import dev.tauri.jsg.common.recipes.UniverseDialerCloneRecipe;
 import dev.tauri.jsg.common.registry.JSGVillagers;
 import dev.tauri.jsg.common.registry.util.VillagerUtil;
 import dev.tauri.jsg.core.common.registry.CoreBlocks;
 import dev.tauri.jsg.core.common.util.CreativeItemsChecker;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.Unit;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.npc.Villager;
@@ -19,6 +26,7 @@ import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -28,6 +36,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Random;
+import java.util.concurrent.Executor;
 
 
 @Mod.EventBusSubscriber(modid = JSG.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -90,5 +99,25 @@ public class CommonForgeListener {
         var r = new Random();
         for (int i = 0; i < symbolsCount; i++)
             dhdTile.pushSymbolButton(dhdTile.getSymbolType().getRandomSymbol(r), null, false);
+    }
+
+    @SubscribeEvent
+    public static void onServerResourceReload(AddReloadListenerEvent event) {
+        event.addListener((PreparableReloadListener.PreparationBarrier pPreparationBarrier,
+                           ResourceManager pResourceManager,
+                           ProfilerFiller pPreparationsProfiler,
+                           ProfilerFiller pReloadProfiler,
+                           Executor pBackgroundExecutor,
+                           Executor pGameExecutor) -> pPreparationBarrier.wait(Unit.INSTANCE).thenRun(() -> {
+            var recipesManager = event.getServerResources().getRecipeManager();
+            var recipes = recipesManager.getRecipes();
+
+            recipes.add(new UniverseDialerCloneRecipe());
+            recipes.add(new PageAndUniverseDialerRecipe());
+            recipes.add(new StargateOrlinBaseBlockRecipe());
+
+            recipesManager.replaceRecipes(recipes);
+            JSG.logger.info("Recipes successfully reloaded!");
+        }));
     }
 }
