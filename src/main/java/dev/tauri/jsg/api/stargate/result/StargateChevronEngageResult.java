@@ -7,7 +7,8 @@ public enum StargateChevronEngageResult {
     ADDRESS_FULL,
     BLOCKED_BY_EVENT,
     FAILED_FAIL_GATE,
-    OK_CONNECTED;
+    OK_CONNECTED,
+    NOT_MERGED;
 
     public boolean ok() {
         return this == OK || this == OK_CONNECTED;

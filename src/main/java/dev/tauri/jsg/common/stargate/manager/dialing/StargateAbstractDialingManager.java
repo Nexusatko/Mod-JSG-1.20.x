@@ -234,6 +234,7 @@ public abstract class StargateAbstractDialingManager<SG extends Stargate<?>> ext
     }
 
     public StargateChevronEngageResult dialAddress(StargateAddressDynamic address, boolean noEnergy, boolean ignoreMaxChevrons, EnumDialingType dialingType) {
+        if (!stargate.isMerged()) return StargateChevronEngageResult.NOT_MERGED;
         if (!getStargateState().idle() || addressDialSequence != null) return StargateChevronEngageResult.BUSY;
         if (getDialedAddressSize() > 0) return StargateChevronEngageResult.ALREADY_ENGAGED;
 
