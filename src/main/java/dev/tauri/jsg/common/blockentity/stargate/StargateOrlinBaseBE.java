@@ -2,7 +2,9 @@ package dev.tauri.jsg.common.blockentity.stargate;
 
 import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.api.config.JSGConfig;
+import dev.tauri.jsg.api.entity.StargateAddressData;
 import dev.tauri.jsg.api.power.PowerUtils;
+import dev.tauri.jsg.api.registry.JSGNotebookPageTypes;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
 import dev.tauri.jsg.api.sound.StargateSoundEventEnum;
 import dev.tauri.jsg.api.sound.StargateSoundPositionedEnum;
@@ -26,6 +28,8 @@ import dev.tauri.jsg.common.stargate.manager.state.StargateOrlinStateManager;
 import dev.tauri.jsg.common.stargate.network.StargateNetwork;
 import dev.tauri.jsg.common.worldgen.generator.StargateGenerator;
 import dev.tauri.jsg.core.common.blockentity.ILinkable;
+import dev.tauri.jsg.core.common.entity.IAddressNotebookPageData;
+import dev.tauri.jsg.core.common.entity.NotebookPageType;
 import dev.tauri.jsg.core.common.power.general.EnergyRequiredToOperate;
 import dev.tauri.jsg.core.common.power.general.SmallEnergyStorage;
 import dev.tauri.jsg.core.common.sound.PositionedSound;
@@ -119,23 +123,23 @@ public class StargateOrlinBaseBE extends StargateAbstractBaseBE<StargateOrlinRen
     public CompoundTag notebookPageTag = null;
 
     @Nullable
-    public StargateAddress getAddressFromPageNBT() {
+    public StargateAddressDynamic getAddressFromPageNBT() {
         if (notebookPageTag == null) return setUpRandomGate();
-        if (!notebookPageTag.contains("address"))
+        var data = NotebookPageType.pageDataFromCompound(notebookPageTag);
+        if (data == null || data.type() != JSGNotebookPageTypes.STARGATE_ADDRESS.get())
             return setUpRandomGate();
-        var address = notebookPageTag.getCompound("address");
-        return new StargateAddress(address);
+        if (data.data() == null || !(data.data() instanceof IAddressNotebookPageData addressData) || !(addressData.getAddress() instanceof StargateAddress stargateAddress))
+            return setUpRandomGate();
+        return new StargateAddressDynamic(stargateAddress).addOriginIfMissingAndImmutable();
     }
 
     @Nullable
-    private StargateAddress setUpRandomGate() {
+    private StargateAddressDynamic setUpRandomGate() {
         if (level == null) return null;
         var gate = StargateNetwork.INSTANCE.getRandomAddress(level.getRandom(), JSGSymbolTypes.MILKYWAY.get(), StargateTypes.MILKYWAY.get(), null);
         if (gate == null) return null;
-        var tag = gate.second().serializeNBT();
-        if (notebookPageTag == null) notebookPageTag = new CompoundTag();
-        notebookPageTag.put("address", tag);
-        return gate.second();
+        notebookPageTag = JSGNotebookPageTypes.STARGATE_ADDRESS.get().createCompoundTag(new StargateAddressData(new StargateAddressDynamic(gate.second()).addOriginIfMissingAndImmutable()));
+        return new StargateAddressDynamic(gate.second()).addOriginIfMissingAndImmutable();
     }
 
     @Nullable
