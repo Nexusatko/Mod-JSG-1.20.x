@@ -88,7 +88,7 @@ public class StargateAbstractCCMethods<T extends StargateAbstractBaseBE<?, ?>> e
     @SuppressWarnings("unused")
     @LuaFunction(mainThread = true)
     public final Object[] getSymbolType() {
-        return new Object[]{deviceTile.isMerged() ? deviceTile.getSymbolType().getId() : null};
+        return new Object[]{deviceTile.isMerged() ? deviceTile.getSymbolType().getId().toString() : null};
     }
 
     @SuppressWarnings("unused")
