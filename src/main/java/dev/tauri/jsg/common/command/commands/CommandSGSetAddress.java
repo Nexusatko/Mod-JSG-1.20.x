@@ -18,6 +18,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -56,7 +57,7 @@ public class CommandSGSetAddress extends AbstractStargateCommand {
                 }).then(getGlyphArguments(1, ctx ->
                         setAddress(
                                 pos ? BlockPosArgument.getLoadedBlockPos(ctx, "position") : null,
-                                ResourceLocationArgument.getId(ctx, "map").toString(),
+                                ResourceLocationArgument.getId(ctx, "map"),
                                 List.of(
                                         StringArgumentType.getString(ctx, "glyph1"),
                                         StringArgumentType.getString(ctx, "glyph2"),
@@ -117,7 +118,7 @@ public class CommandSGSetAddress extends AbstractStargateCommand {
     }
 
 
-    private int setAddress(@Nullable BlockPos position, String map, List<String> glyphs, @NotNull CommandContext<CommandSourceStack> ctx) {
+    private int setAddress(@Nullable BlockPos position, ResourceLocation map, List<String> glyphs, @NotNull CommandContext<CommandSourceStack> ctx) {
         var stargate = getStargate(position, ctx);
         if (stargate == null) return 0;
 
@@ -126,7 +127,7 @@ public class CommandSGSetAddress extends AbstractStargateCommand {
             return 0;
         }
 
-        var symbolType = SymbolType.byId(JSGMapping.rl(map.toLowerCase()));
+        var symbolType = SymbolType.byId(map);
         if (symbolType == null) {
             baseCommand.sendErrorMess(ctx.getSource(), "commands.sgsetaddress.noaddressspace");
             return 0;
