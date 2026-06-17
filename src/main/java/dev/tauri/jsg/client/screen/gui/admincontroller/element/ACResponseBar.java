@@ -55,25 +55,25 @@ public class ACResponseBar extends AbstractWidget {
         this.title = title;
         if (!hide) return;
         hide = false;
-        animationStart = JSGMinecraftHelper.getPlayerTickClientSide();
+        animationStart = JSGMinecraftHelper.getGUITicks();
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_TOAST_IN, 1.0F, 1.5f));
     }
 
     public void showTemp(Component title) {
         show(title);
-        stayTime = ANIMATION_LENGTH + JSGMinecraftHelper.getPlayerTickClientSide() + 20 * 5;
+        stayTime = ANIMATION_LENGTH + JSGMinecraftHelper.getGUITicks() + 20 * 5;
     }
 
     public void hide() {
         if (hide) return;
         hide = true;
-        animationStart = JSGMinecraftHelper.getPlayerTickClientSide();
+        animationStart = JSGMinecraftHelper.getGUITicks();
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_TOAST_OUT, 1.0F, 1.5f));
     }
 
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        var tick = (JSGMinecraftHelper.getPlayerTickClientSide() + partialTick) - animationStart;
+        var tick = (JSGMinecraftHelper.getGUITicks() + partialTick) - animationStart;
         float coef = (float) Math.min(1, Math.max(0, (tick / (double) ANIMATION_LENGTH)));
         if (hide)
             coef = 1 - coef;
@@ -81,7 +81,7 @@ public class ACResponseBar extends AbstractWidget {
         var currentX = this.visibleX + maxWidth - currentWidth;
         setX(currentX);
         setWidth(currentWidth);
-        if (!hide && stayTime > 0 && (JSGMinecraftHelper.getPlayerTickClientSide() + partialTick) >= stayTime) {
+        if (!hide && stayTime > 0 && (JSGMinecraftHelper.getGUITicks() + partialTick) >= stayTime) {
             hide();
         }
         if (currentWidth <= 0) return;
