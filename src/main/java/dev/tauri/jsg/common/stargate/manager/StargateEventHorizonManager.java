@@ -193,7 +193,7 @@ public abstract class StargateEventHorizonManager extends AbstractStargateManage
             return TravelerSendResult.BLOCKED_BY_EVENT;
         }
         traveler.send();
-        StargateComputerEvents.EH_TRAVELER.apply(false, (traveler.get() instanceof Entity e ? e.getType() : null)).sendVia(stargate);
+        StargateComputerEvents.EH_TRAVELER.apply(false, (traveler.get() instanceof Entity e ? e : null)).sendVia(stargate);
         return TravelerSendResult.OK;
     }
 
@@ -204,7 +204,7 @@ public abstract class StargateEventHorizonManager extends AbstractStargateManage
         if (traveler.getTransmitter() != null) // rig entity has null transmitter
             ((StargateEventHorizonManager) traveler.getTransmitter().getEventHorizonManager()).remove(traveler);
         stargate.playSoundEvent(JSGSoundEvents.WORMHOLE_GO);
-        StargateComputerEvents.EH_TRAVELER.apply(true, (traveler.get() instanceof Entity e ? e.getType() : null)).sendVia(stargate);
+        StargateComputerEvents.EH_TRAVELER.apply(true, (traveler.get() instanceof Entity e ? e : null)).sendVia(stargate);
 
         if (stargate instanceof StargateWithIris<?> irisGate && irisGate.getIrisManager().isIrisClosed()) {
             traveler.killIris();

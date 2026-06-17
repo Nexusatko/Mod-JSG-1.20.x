@@ -9,7 +9,8 @@ import dev.tauri.jsg.api.stargate.result.StargateCloseResult;
 import dev.tauri.jsg.api.stargate.result.StargateOpenResult;
 import dev.tauri.jsg.core.common.integration.SignalHolder;
 import dev.tauri.jsg.core.common.symbol.SymbolInterface;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.Optional;
@@ -55,7 +56,12 @@ public class StargateComputerEvents {
     public static final Function<Boolean, SignalHolder> EH_UNSTABLE = (isInitiating) -> SignalHolder.of("stargate_event_horizon_unstable", isInitiating);
     public static final Function<Boolean, SignalHolder> EH_UNSTABLE_BLACK_HOLE = (isInitiating) -> SignalHolder.of("stargate_event_horizon_unstable_black_hole", isInitiating);
     public static final Function<Boolean, SignalHolder> EH_STABILIZED = (isInitiating) -> SignalHolder.of("stargate_event_horizon_stabilized", isInitiating);
-    public static final BiFunction<Boolean, EntityType<?>, SignalHolder> EH_TRAVELER = (inbound, entityType) -> SignalHolder.of("stargate_event_horizon_traveler", inbound, Optional.of(entityType).map(e -> e.getDescription().getString()).orElse("unknown"));
+    public static final BiFunction<Boolean, Entity, SignalHolder> EH_TRAVELER = (inbound, entity) -> {
+        if (entity instanceof Player player) {
+            return SignalHolder.of("stargate_event_horizon_traveler", inbound, entity.getType().getDescription().getString(), player.getStringUUID(), player.getName());
+        }
+        return SignalHolder.of("stargate_event_horizon_traveler", inbound, Optional.of(entity).map(e -> e.getType().getDescription().getString()).orElse("unknown"));
+    };
 
     public static final Function<Boolean, SignalHolder> IRIS_TOGGLED = (close) -> SignalHolder.of("stargate_iris_toggled", close);
     public static final Function<IrisDestroyReason, SignalHolder> IRIS_DESTROYED = (reason) -> SignalHolder.of("stargate_iris_destroyed", reason.name());
