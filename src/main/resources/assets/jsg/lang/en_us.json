@@ -548,9 +548,9 @@
 
   "_comment613": "===>>> Address Tab <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
 
-  "gui.stargate.jsg:milkyway_address": "Milky Way address",
-  "gui.stargate.jsg:pegasus_address": "Pegasus address",
-  "gui.stargate.jsg:universe_address": "Universe address",
+  "gui.stargate.jsg.milkyway_address": "Milky Way address",
+  "gui.stargate.jsg.pegasus_address": "Pegasus address",
+  "gui.stargate.jsg.universe_address": "Universe address",
 
   "_comment614": "===>>> Iris Tab <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
 
