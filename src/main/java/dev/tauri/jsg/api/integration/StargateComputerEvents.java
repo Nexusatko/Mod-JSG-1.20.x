@@ -58,7 +58,7 @@ public class StargateComputerEvents {
     public static final Function<Boolean, SignalHolder> EH_STABILIZED = (isInitiating) -> SignalHolder.of("stargate_event_horizon_stabilized", isInitiating);
     public static final BiFunction<Boolean, Entity, SignalHolder> EH_TRAVELER = (inbound, entity) -> {
         if (entity instanceof Player player) {
-            return SignalHolder.of("stargate_event_horizon_traveler", inbound, entity.getType().getDescription().getString(), player.getStringUUID(), player.getName());
+            return SignalHolder.of("stargate_event_horizon_traveler", inbound, entity.getType().getDescription().getString(), player.getStringUUID(), player.getName().getString());
         }
         return SignalHolder.of("stargate_event_horizon_traveler", inbound, Optional.of(entity).map(e -> e.getType().getDescription().getString()).orElse("unknown"));
     };
