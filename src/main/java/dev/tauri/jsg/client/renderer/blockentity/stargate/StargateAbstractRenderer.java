@@ -137,6 +137,7 @@ public abstract class StargateAbstractRenderer<S extends StargateAbstractRendere
         this.partialTicks = partialTicks;
         this.source = bufferSource;
         if (tileEntity.getLevel() == null) return;
+        if (rendererState == null) return;
         level = tileEntity.getLevel();
         this.combinedLight = getCombinedLight();
 
