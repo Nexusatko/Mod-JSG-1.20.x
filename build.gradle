@@ -4,6 +4,7 @@ plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id "com.vanniktech.maven.publish" version "0.36.0"
 }
 subprojects {
     apply plugin: 'java'
@@ -11,6 +12,7 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'net.minecraftforge.gradle'
     apply plugin: 'org.parchmentmc.librarian.forgegradle'
+    apply plugin: 'com.vanniktech.maven.publish'
 }
 
 allprojects {
@@ -221,5 +223,32 @@ allprojects {
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    }
+
+    // PUBLISHING
+    mavenPublishing {
+        coordinates("eu.tauridev", mod_id.replaceAll("_", "-") + "-" + minecraft_version, version)
+
+        pom {
+            name = mod_name
+            description = mod_description
+            inceptionYear = "2026"
+            url = "https://docs.tauridev.eu/jsg/"
+            licenses {
+                license {
+                    name = "All Rights Reserved"
+                }
+            }
+            developers {
+                developer {
+                    id = "tau-ri-dev"
+                    name = "Tau'ri Dev"
+                    url = "https://github.com/Tau-ri-Dev/Mod-JSG-1.20.x"
+                }
+            }
+            scm {
+                url = "https://github.com/Tau-ri-Dev/Mod-JSG-1.20.x"
+            }
+        }
     }
 }

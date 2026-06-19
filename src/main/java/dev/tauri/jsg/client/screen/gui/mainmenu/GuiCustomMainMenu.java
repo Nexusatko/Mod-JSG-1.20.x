@@ -617,7 +617,7 @@ public class GuiCustomMainMenu extends Screen {
     }
 
     /**
-     * Used to draw hovered texts & updater notification
+     * Used to draw hovered texts and updater notification
      */
     public void drawFg(int mouseX, int mouseY) {
         NOTIFIER.update();
