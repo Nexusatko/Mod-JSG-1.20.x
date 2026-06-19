@@ -3,6 +3,7 @@ package dev.tauri.jsg.api.registry;
 import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.api.JSGApi;
 import dev.tauri.jsg.api.stargate.type.StargateType;
+import dev.tauri.jsg.common.item.linkable.dialer.UniverseDialerMode;
 import dev.tauri.jsg.common.stargate.rig.RIGWave;
 import dev.tauri.jsg.core.mapping.JSGMapping;
 import net.minecraft.core.Registry;
@@ -27,9 +28,15 @@ public class JSGRegistries {
 
     public static final ResourceKey<Registry<StargateType<?>>> STARGATE_TYPE = ResourceKey.createRegistryKey(JSGMapping.rl(JSGApi.MOD_ID, "stargate_type"));
     public static final ResourceKey<Registry<RIGWave>> RIG_WAVES = ResourceKey.createRegistryKey(JSGMapping.rl(JSGApi.MOD_ID, "rig_waves"));
+    public static final ResourceKey<Registry<UniverseDialerMode>> UNIVERSE_DIALER_MODES = ResourceKey.createRegistryKey(JSGMapping.rl(JSGApi.MOD_ID, "universe_dialer_modes"));
 
     public static final Supplier<IForgeRegistry<StargateType<?>>> R_STARGATE_TYPE = create(STARGATE_TYPE);
     public static final Function<RegistryAccess, Registry<RIGWave>> R_RIG_WAVES = (access) -> access.registryOrThrow(RIG_WAVES);
+    public static final Supplier<IForgeRegistry<UniverseDialerMode>> R_UNIVERSE_DIALER_MODES = create(UNIVERSE_DIALER_MODES, (owner, stage, id, key, mode, oldObj) -> mode.added());
+
+    private static <T> Supplier<IForgeRegistry<T>> create(ResourceKey<Registry<T>> id, IForgeRegistry.AddCallback<T> onAdd) {
+        return create(id, () -> new RegistryBuilder<T>().setName(id.location()).add(onAdd));
+    }
 
     private static <T> Supplier<IForgeRegistry<T>> create(ResourceKey<Registry<T>> id) {
         return create(id, () -> RegistryBuilder.of(id.location()));

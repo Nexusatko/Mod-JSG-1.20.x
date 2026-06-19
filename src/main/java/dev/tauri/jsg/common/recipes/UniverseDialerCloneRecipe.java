@@ -1,9 +1,9 @@
 package dev.tauri.jsg.common.recipes;
 
 import dev.tauri.jsg.JSG;
+import dev.tauri.jsg.api.registry.JSGUniverseDialerModes;
 import dev.tauri.jsg.common.item.linkable.dialer.UniverseDialerItem;
 import dev.tauri.jsg.common.item.linkable.dialer.modes.UDMemoryMode;
-import dev.tauri.jsg.common.item.linkable.dialer.modes.UniverseDialerModes;
 import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.core.common.recipe.notebook.NotebookRecipeUtils;
 import dev.tauri.jsg.core.mapping.JSGMapping;
@@ -62,7 +62,7 @@ public class UniverseDialerCloneRecipe extends ShapelessRecipe {
             var item = stack.getItem();
 
             if (item == JSGItems.UNIVERSE_DIALER.get()) {
-                var modeTag = UniverseDialerModes.MEMORY.getTag(stack.getOrCreateTag());
+                var modeTag = JSGUniverseDialerModes.MEMORY.get().getTag(stack.getOrCreateTag());
                 var addressTags = modeTag.getList(UDMemoryMode.C_ENTRIES, Tag.TAG_COMPOUND);
 
                 for (var tag : addressTags) {
@@ -77,9 +77,9 @@ public class UniverseDialerCloneRecipe extends ShapelessRecipe {
 
         var output = new ItemStack(JSGItems.UNIVERSE_DIALER.get(), outputCount);
         var compound = new CompoundTag();
-        var modeTag = UniverseDialerModes.MEMORY.getTag(compound);
+        var modeTag = JSGUniverseDialerModes.MEMORY.get().getTag(compound);
         modeTag.put(UDMemoryMode.C_ENTRIES, addressTagList);
-        compound.put(UniverseDialerModes.MEMORY.id + UniverseDialerItem.C_MODE_TAG, modeTag);
+        compound.put(JSGUniverseDialerModes.MEMORY.get().id + UniverseDialerItem.C_MODE_TAG, modeTag);
         output.setTag(compound);
 
         return output;

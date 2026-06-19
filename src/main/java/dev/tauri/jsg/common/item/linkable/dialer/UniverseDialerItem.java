@@ -1,9 +1,9 @@
 package dev.tauri.jsg.common.item.linkable.dialer;
 
+import dev.tauri.jsg.api.registry.JSGUniverseDialerModes;
 import dev.tauri.jsg.client.renderer.item.dialer.UniverseDialerBEWLR;
 import dev.tauri.jsg.client.screen.gui.DialerVirtualGui;
 import dev.tauri.jsg.common.item.linkable.dialer.modes.UDMemoryMode;
-import dev.tauri.jsg.common.item.linkable.dialer.modes.UniverseDialerModes;
 import dev.tauri.jsg.core.common.entity.BiomeOverlayInstance;
 import dev.tauri.jsg.core.common.helper.ItemHelper;
 import dev.tauri.jsg.core.common.item.JSGItem;
@@ -93,7 +93,7 @@ public class UniverseDialerItem extends JSGItem {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
         ItemHelper.applyGenericToolTip(this.getDescriptionId(), components, tooltipFlag);
 
-        var list = stack.getOrCreateTag().getCompound(UniverseDialerModes.MEMORY.id + C_MODE_TAG).getList(UDMemoryMode.C_ENTRIES, Tag.TAG_COMPOUND);
+        var list = stack.getOrCreateTag().getCompound(JSGUniverseDialerModes.MEMORY.get().id + C_MODE_TAG).getList(UDMemoryMode.C_ENTRIES, Tag.TAG_COMPOUND);
         components.add(Component.literal(ChatFormatting.GRAY + I18n.format("item.jsg.universe_dialer.saved_gates", list.size())));
 
         for (int i = 0; i < list.size(); i++) {

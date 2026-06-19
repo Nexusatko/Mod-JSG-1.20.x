@@ -28,6 +28,7 @@ public class JSGRegistriesInit {
         JSGBlockEntities.init();
         JSGMenuTypes.init();
         JSGVillagers.init();
+        JSGUniverseDialerModes.init();
 
         JSGCriterions.init();
     }
@@ -38,5 +39,6 @@ public class JSGRegistriesInit {
         });
         JSGApi.REGISTRY_HELPER.register(bus);
         StargateTypesLoader.register(bus);
+        JSGUniverseDialerModes.register(bus);
     }
 }

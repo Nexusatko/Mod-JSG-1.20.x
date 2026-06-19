@@ -7,6 +7,7 @@ import dev.tauri.jsg.api.integration.StargateComputerEvents;
 import dev.tauri.jsg.api.registry.JSGNotebookPageTypes;
 import dev.tauri.jsg.api.registry.JSGScheduledTaskTypes;
 import dev.tauri.jsg.api.registry.JSGSymbolUsages;
+import dev.tauri.jsg.api.registry.JSGUniverseDialerModes;
 import dev.tauri.jsg.api.stargate.Stargate;
 import dev.tauri.jsg.api.stargate.listener.IStargateListenerHandler;
 import dev.tauri.jsg.api.stargate.network.StargatePos;
@@ -15,7 +16,6 @@ import dev.tauri.jsg.api.stargate.network.address.StargateAddressDynamic;
 import dev.tauri.jsg.api.util.IStargateGenerator;
 import dev.tauri.jsg.client.renderer.blockentity.stargate.StargateAbstractRendererState;
 import dev.tauri.jsg.common.config.JSGConfigUtil;
-import dev.tauri.jsg.common.item.linkable.dialer.modes.UniverseDialerModes;
 import dev.tauri.jsg.common.multistructure.mergehelper.StargateAbstractMergeHelper;
 import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.common.stargate.StargateListenerHandler;
@@ -366,7 +366,7 @@ public abstract class StargateAbstractBaseBE<S extends StargateAbstractRendererS
         var gateAddressMap = getAddressMap();
 
         if (stack.getItem() == JSGItems.UNIVERSE_DIALER.get()) {
-            UniverseDialerModes.MEMORY.addEntry(gateAddressMap.get(symbolType), symbolsToDisplay, 0, stack);
+            JSGUniverseDialerModes.MEMORY.get().addEntry(gateAddressMap.get(symbolType), symbolsToDisplay, 0, stack);
         } else {
             stack = JSGNotebookPageTypes.STARGATE_ADDRESS.get().createPage(new StargateAddressData(new StargateAddressDynamic(gateAddressMap.get(symbolType)), symbolsToDisplay, getPointOfOrigin(symbolType)), PageNotebookItemFilled.getBiomeKeyFromWorld(getLevel(), getBlockPos()));
         }

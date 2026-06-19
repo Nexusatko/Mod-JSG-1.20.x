@@ -1,6 +1,7 @@
 package dev.tauri.jsg.common.item.linkable.dialer;
 
 import dev.tauri.jsg.api.config.JSGConfig;
+import dev.tauri.jsg.api.registry.JSGRegistries;
 import dev.tauri.jsg.api.stargate.network.address.StargateAddress;
 import dev.tauri.jsg.client.renderer.item.dialer.IUniverseDialerScreen;
 import dev.tauri.jsg.common.item.linkable.dialer.utils.UDCommonUtils;
@@ -27,12 +28,14 @@ import net.minecraftforge.network.NetworkEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 
 public abstract class UniverseDialerMode {
     public static final String C_LINKED_POS = "linkedPos";
-    private static final HashMap<ResourceLocation, UniverseDialerMode> MODES = new HashMap<>();
     private static UniverseDialerMode lastMode;
     private static UniverseDialerMode firstMode;
 
@@ -54,8 +57,12 @@ public abstract class UniverseDialerMode {
         this.title = title;
         this.matchBlocks = matchBlocks;
         this.linkMatchTest = linkMatchTest;
-        MODES.put(id, this);
+    }
 
+    /**
+     * This method should be ONLY called by JSG registry for UD modes
+     */
+    public void added() {
         if (firstMode == null) firstMode = this;
         if (lastMode == null) lastMode = this;
         firstMode.prev = this;
@@ -151,7 +158,7 @@ public abstract class UniverseDialerMode {
     }
 
     public static Optional<UniverseDialerMode> valueOf(ResourceLocation id) {
-        return Optional.ofNullable(MODES.get(id));
+        return Optional.ofNullable(JSGRegistries.R_UNIVERSE_DIALER_MODES.get().getValue(id));
     }
 
     public static UniverseDialerMode getDefault() {
@@ -159,7 +166,7 @@ public abstract class UniverseDialerMode {
     }
 
     public static Collection<UniverseDialerMode> values() {
-        return MODES.values();
+        return JSGRegistries.R_UNIVERSE_DIALER_MODES.get().getValues();
     }
 
     @Override

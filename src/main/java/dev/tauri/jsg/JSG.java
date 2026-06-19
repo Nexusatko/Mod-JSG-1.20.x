@@ -16,7 +16,6 @@ import dev.tauri.jsg.common.injectors.JSGTemplatePoolInjectors;
 import dev.tauri.jsg.common.integration.cctweaked.CCDevices;
 import dev.tauri.jsg.common.integration.create.PonderScenes;
 import dev.tauri.jsg.common.integration.oc2.OCDevices;
-import dev.tauri.jsg.common.item.linkable.dialer.modes.UniverseDialerModes;
 import dev.tauri.jsg.common.packet.JSGPacketHandler;
 import dev.tauri.jsg.common.registry.JSGRegistriesInit;
 import dev.tauri.jsg.common.stargate.StargateTypesLoader;
@@ -137,7 +136,6 @@ public class JSG implements JSGAddon {
         JSGRegistriesInit.init();
 
         JSGPacketHandler.init();
-        UniverseDialerModes.init();
 
         JSGTemplatePoolInjectors.register();
         JSGLootTableInjectors.register();

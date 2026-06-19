@@ -1,8 +1,8 @@
 package dev.tauri.jsg.common.recipes;
 
+import dev.tauri.jsg.api.registry.JSGUniverseDialerModes;
 import dev.tauri.jsg.common.item.linkable.dialer.UniverseDialerItem;
 import dev.tauri.jsg.common.item.linkable.dialer.modes.UDMemoryMode;
-import dev.tauri.jsg.common.item.linkable.dialer.modes.UniverseDialerModes;
 import dev.tauri.jsg.common.registry.JSGItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -27,7 +27,7 @@ public class DialerRecipeUtils {
         }
 
         modeTag.put(UDMemoryMode.C_ENTRIES, list);
-        compound.put(UniverseDialerModes.MEMORY.id + UniverseDialerItem.C_MODE_TAG, modeTag);
+        compound.put(JSGUniverseDialerModes.MEMORY.get().id + UniverseDialerItem.C_MODE_TAG, modeTag);
         stack.setTag(compound);
 
         return stack;
