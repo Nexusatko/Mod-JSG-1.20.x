@@ -156,7 +156,7 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
 
     @Override
     public boolean canOpenWormhole(EnergyRequiredToOperate energyRequiredToDial) {
-        if (getStorage().getTrueMaxEnergyStored() >= energyRequiredToDial.energyToOpen)
+        if (getStorage().getTrueEnergyStored() >= energyRequiredToDial.energyToOpen)
             return true;
         var energyNeeded = new AtomicLong(energyRequiredToDial.energyToOpen);
         energyNeeded.addAndGet(-getStorage().extractLongEnergy(energyNeeded.get(), true));
