@@ -278,19 +278,15 @@ public class JSGConfig {
         //      POWER
         // --------------------------------------
 
-        public static final JSGConfigValue.IntValue stargateEnergyStorage = C_SG.add(new JSGConfigValue.IntValue(BUILDER, "Power.Stargate's internal buffer size", 71280000, 4608, Integer.MAX_VALUE,
+        public static final JSGConfigValue.LongValue stargateEnergyStorage = C_SG.add(new JSGConfigValue.LongValue(BUILDER, "Power.Stargate's internal energy storage", Integer.MAX_VALUE, 4608, Long.MAX_VALUE,
                 "SIDE: SERVER/CLIENT"
         ));
 
-        public static final JSGConfigValue.IntValue stargateMaxEnergyTransfer = C_SG.add(new JSGConfigValue.IntValue(BUILDER, "Power.Stargate's max power throughput", 26360, 1, 500000,
+        public static final JSGConfigValue.LongValue openingBlockToEnergyRatio = C_SG.add(new JSGConfigValue.LongValue(BUILDER, "Power.Stargate wormhole establish power draw", Integer.MAX_VALUE / 10000, 0, Long.MAX_VALUE,
                 "SIDE: SERVER"
         ));
 
-        public static final JSGConfigValue.IntValue openingBlockToEnergyRatio = C_SG.add(new JSGConfigValue.IntValue(BUILDER, "Power.Stargate wormhole open power draw", 4608, 0, 500000,
-                "SIDE: SERVER"
-        ));
-
-        public static final JSGConfigValue.IntValue keepAliveBlockToEnergyRatioPerTick = C_SG.add(new JSGConfigValue.IntValue(BUILDER, "Power.Stargate wormhole sustain power draw", 2, 0, 50,
+        public static final JSGConfigValue.IntValue keepAliveBlockToEnergyRatioPerTick = C_SG.add(new JSGConfigValue.IntValue(BUILDER, "Power.Stargate wormhole sustain power draw", Integer.MAX_VALUE / 1000000, 0, Integer.MAX_VALUE,
                 "SIDE: SERVER"
         ));
 

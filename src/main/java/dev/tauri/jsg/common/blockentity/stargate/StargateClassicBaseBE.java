@@ -27,6 +27,7 @@ import dev.tauri.jsg.common.jub.JUBDevice;
 import dev.tauri.jsg.common.registry.JSGBlocks;
 import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.common.registry.JSGSoundEvents;
+import dev.tauri.jsg.common.registry.tags.JSGItemTags;
 import dev.tauri.jsg.common.stargate.manager.StargateEnergyManager;
 import dev.tauri.jsg.common.stargate.manager.StargateEventHorizonManager;
 import dev.tauri.jsg.common.stargate.manager.StargateIrisManager;
@@ -44,7 +45,6 @@ import dev.tauri.jsg.core.common.entity.ScheduledTask;
 import dev.tauri.jsg.core.common.entity.ScheduledTaskType;
 import dev.tauri.jsg.core.common.helper.BlockHelper;
 import dev.tauri.jsg.core.common.helper.LinkingHelper;
-import dev.tauri.jsg.core.common.item.capacitor.CapacitorItemBlock;
 import dev.tauri.jsg.core.common.loader.PointOfOriginsLoader;
 import dev.tauri.jsg.core.common.packet.JSGCorePacketHandler;
 import dev.tauri.jsg.core.common.packet.packets.StateUpdateRequestToServer;
@@ -502,10 +502,10 @@ public abstract class StargateClassicBaseBE<S extends StargateClassicRendererSta
                     float chance = rand.nextFloat();
                     var entry = JSGDimensionConfig.INSTANCE.getConfigEntry(level.dimension());
                     if (entry != null && chance < (entry.getFloat("lightingBoltChance", 0) * 0.0005) && BlockHelper.isBlockDirectlyUnderSky(level, topBlock)) {
-                        int max = JSGConfig.Stargate.stargateEnergyStorage.get() / 17;
-                        int min = max / 6;
-                        int energy = (int) ((rand.nextFloat() * (max - min)) + min);
-                        getEnergyManager().getStorage().receiveEnergy(energy, false);
+                        long max = JSGConfig.Stargate.stargateEnergyStorage.get() / 17000;
+                        long min = max / 6;
+                        long energy = (int) ((rand.nextFloat() * (max - min)) + min);
+                        getEnergyManager().getStorage().receiveLongEnergy(energy, false);
                         LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(level);
                         if (lightningbolt != null) {
                             lightningbolt.moveTo(Vec3.atBottomCenterOf(topBlock));
@@ -797,7 +797,7 @@ public abstract class StargateClassicBaseBE<S extends StargateClassicRendererSta
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             Item item = stack.getItem();
-            boolean isItemCapacitor = (item instanceof CapacitorItemBlock);
+            boolean isItemCapacitor = stack.is(JSGItemTags.STARGATE_CAPACITORS) && stack.getCapability(ForgeCapabilities.ENERGY).isPresent();
             return switch (slot) {
                 case 0, 1, 2, 3 -> StargateUpgrade.contains(item) && !hasUpgrade(item);
                 case 4 -> isItemCapacitor && getSupportedCapacitors() >= 1;
@@ -992,7 +992,7 @@ public abstract class StargateClassicBaseBE<S extends StargateClassicRendererSta
         for (var entry : StargateNetwork.INSTANCE.getAll().entrySet()) {
             StargatePos stargatePos = entry.getKey();
             var type = stargatePos.getStargateType();
-            if (!type.isClassic) continue;
+            if (type == null || !type.isClassic) continue;
             if (checkStargateType && gateType != type) continue;
 
             ResourceKey<Level> targetDim = stargatePos.fakeGateDimension;

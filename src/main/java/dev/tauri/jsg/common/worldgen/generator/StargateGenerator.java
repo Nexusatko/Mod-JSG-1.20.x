@@ -17,7 +17,7 @@ import dev.tauri.jsg.core.common.config.ingame.IConfigurable;
 import dev.tauri.jsg.core.common.helper.BlockHelper;
 import dev.tauri.jsg.core.common.helper.BlockPosHelper;
 import dev.tauri.jsg.core.common.helper.ItemHandlerHelper;
-import dev.tauri.jsg.core.common.registry.CoreBlocks;
+import dev.tauri.jsg.core.common.power.JSGEnergyStorage;
 import dev.tauri.jsg.core.common.registry.CoreFluids;
 import dev.tauri.jsg.core.common.registry.CoreItems;
 import it.unimi.dsi.fastutil.Pair;
@@ -30,7 +30,6 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
@@ -40,8 +39,9 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class StargateGenerator implements IStargateGenerator {
-    public void setStargateEnergyInternalSmart(IStargateGenerator.PlacementConfig config, int energy) {
-        var stargateCapacity = (int) (JSGConfig.Stargate.stargateEnergyStorage.get() / 4f);
+    @Override
+    public void setStargateEnergyInternalSmart(IStargateGenerator.PlacementConfig config, long energy) {
+        var stargateCapacity = (long) (JSGConfig.Stargate.stargateEnergyStorage.get() / 4f);
         config.stargateEnergyInternal = Math.min(stargateCapacity, energy);
         var toCaps = (energy - config.stargateEnergyInternal);
         while (toCaps > 0) {
@@ -105,7 +105,7 @@ public class StargateGenerator implements IStargateGenerator {
             configTile.setConfig(conf.stargateConfig.apply(configTile.getConfig()));
         }
 
-        gateTile.getEnergyManager().getStorage().setEnergyStored(conf.stargateEnergyInternal);
+        gateTile.getEnergyManager().getStorage().setEnergy(conf.stargateEnergyInternal, true);
 
         if (gateTile instanceof IUpgradable upgradable) {
             int nextSlot = 0;
@@ -143,16 +143,19 @@ public class StargateGenerator implements IStargateGenerator {
                 upgradable.getItemHandler().insertItem(8, new ItemStack(JSGItems.UPGRADE_IRIS_CREATIVE.get(), 1), false);
 
             nextSlot = 4;
-            for (Pair<Integer, Boolean> e : conf.capacitors) {
+            for (Pair<Long, Boolean> e : conf.capacitors) {
                 if (nextSlot >= 7) break;
                 ItemStack capacitor;
                 if (e.second()) {
-                    capacitor = new ItemStack(CoreBlocks.CAPACITOR_BLOCK_CREATIVE.get());
+                    capacitor = new ItemStack(CoreItems.CRYSTAL_ENERGY_BASIC.get());
                 } else {
                     if (e.first() < 0) continue;
-                    capacitor = new ItemStack(CoreBlocks.CAPACITOR_BLOCK.get());
-                    IEnergyStorage storage = capacitor.getCapability(ForgeCapabilities.ENERGY, null).resolve().orElseThrow();
-                    storage.receiveEnergy(e.first(), false);
+                    capacitor = new ItemStack(CoreItems.CRYSTAL_ENERGY_CREATIVE.get());
+                    var storage = capacitor.getCapability(ForgeCapabilities.ENERGY, null).resolve().orElseThrow();
+                    if (storage instanceof JSGEnergyStorage jsgEnergyStorage)
+                        jsgEnergyStorage.receiveLongEnergy(e.first(), false);
+                    else
+                        storage.receiveEnergy(JSGEnergyStorage.regularEnergy(e.first()), false);
                 }
                 upgradable.getItemHandler().insertItem(nextSlot++, capacitor, false);
             }

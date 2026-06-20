@@ -3,6 +3,7 @@ package dev.tauri.jsg.datagen.tag;
 import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.common.registry.tags.JSGItemTags;
+import dev.tauri.jsg.core.common.registry.CoreItems;
 import dev.tauri.jsg.core.mapping.JSGMapping;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
@@ -38,5 +39,12 @@ public class JSGItemTagGenerator extends ItemTagsProvider {
                 .add(JSGItems.IRIS_BLADE.get())
                 .add(JSGItems.IRIS_BLADE_TRINIUM.get())
                 .addOptional(JSGMapping.rl(JSG.MOD_ID, "iris_blade_stone"));
+
+        // Stargate energy extenders
+        tag(JSGItemTags.STARGATE_CAPACITORS)
+                .add(CoreItems.CRYSTAL_ENERGY_BASIC.get())
+                .add(CoreItems.CRYSTAL_ENERGY_ADVANCED.get())
+                .add(CoreItems.CRYSTAL_ENERGY_ULTIMATE.get())
+                .add(CoreItems.CRYSTAL_ENERGY_CREATIVE.get());
     }
 }

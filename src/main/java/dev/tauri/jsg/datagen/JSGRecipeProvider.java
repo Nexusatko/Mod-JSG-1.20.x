@@ -3,7 +3,6 @@ package dev.tauri.jsg.datagen;
 import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.common.registry.JSGBlocks;
 import dev.tauri.jsg.common.registry.JSGItems;
-import dev.tauri.jsg.core.common.registry.CoreBlocks;
 import dev.tauri.jsg.core.common.registry.CoreItems;
 import dev.tauri.jsg.core.common.registry.tag.CoreItemTags;
 import net.minecraft.data.PackOutput;
@@ -154,14 +153,14 @@ public class JSGRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('F', JSGItems.FRAGMENT_MILKYWAY.get())
                 .define('E', CoreItemTags.GEM_ENDER)
                 .define('N', CoreItems.CIRCUIT_CONTROL_NAQUADAH.get())
-                .define('B', CoreBlocks.CAPACITOR_BLOCK.get())
+                .define('B', CoreItems.CRYSTAL_ENERGY_BASIC.get())
                 .define('C', CoreItems.CIRCUIT_CONTROL_CRYSTAL.get())
                 .define('G', CoreItemTags.GEAR_NAQUADAH_ALLOY)
                 .unlockedBy("has_red_crystal", has(CoreItemTags.GEM_RED))
                 .unlockedBy("has_fragment", has(JSGItems.FRAGMENT_MILKYWAY.get()))
                 .unlockedBy("has_ender_crystal", has(CoreItemTags.GEM_ENDER))
                 .unlockedBy("has_circuit_naquadah", has(CoreItems.CIRCUIT_CONTROL_NAQUADAH.get()))
-                .unlockedBy("has_capacitor", has(CoreBlocks.CAPACITOR_BLOCK.get()))
+                .unlockedBy("has_capacitor", has(CoreItems.CRYSTAL_ENERGY_BASIC.get()))
                 .unlockedBy("has_circuit_crystal", has(CoreItems.CIRCUIT_CONTROL_CRYSTAL.get()))
                 .unlockedBy("has_gear", has(CoreItemTags.GEAR_NAQUADAH_ALLOY))
                 .save(pWriter);
@@ -199,14 +198,14 @@ public class JSGRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('F', JSGItems.FRAGMENT_PEGASUS.get())
                 .define('E', CoreItemTags.GEM_ENDER)
                 .define('N', CoreItems.CIRCUIT_CONTROL_NAQUADAH.get())
-                .define('B', CoreBlocks.CAPACITOR_BLOCK.get())
+                .define('B', CoreItems.CRYSTAL_ENERGY_BASIC.get())
                 .define('C', CoreItems.CIRCUIT_CONTROL_CRYSTAL.get())
                 .define('G', CoreItemTags.GEAR_NAQUADAH_ALLOY)
                 .unlockedBy("has_pegasus_crystal", has(CoreItemTags.GEM_PEGASUS))
                 .unlockedBy("has_fragment", has(JSGItems.FRAGMENT_PEGASUS.get()))
                 .unlockedBy("has_ender_crystal", has(CoreItemTags.GEM_ENDER))
                 .unlockedBy("has_circuit_naquadah", has(CoreItems.CIRCUIT_CONTROL_NAQUADAH.get()))
-                .unlockedBy("has_capacitor", has(CoreBlocks.CAPACITOR_BLOCK.get()))
+                .unlockedBy("has_capacitor", has(CoreItems.CRYSTAL_ENERGY_BASIC.get()))
                 .unlockedBy("has_circuit_crystal", has(CoreItems.CIRCUIT_CONTROL_CRYSTAL.get()))
                 .unlockedBy("has_gear", has(CoreItemTags.GEAR_NAQUADAH_ALLOY))
                 .save(pWriter);
@@ -244,14 +243,14 @@ public class JSGRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('F', JSGItems.FRAGMENT_UNIVERSE.get())
                 .define('E', CoreItemTags.GEM_ENDER)
                 .define('N', CoreItems.CIRCUIT_CONTROL_NAQUADAH.get())
-                .define('B', CoreBlocks.CAPACITOR_BLOCK.get())
+                .define('B', CoreItems.CRYSTAL_ENERGY_BASIC.get())
                 .define('C', CoreItems.CIRCUIT_CONTROL_CRYSTAL.get())
                 .define('G', CoreItemTags.GEAR_NAQUADAH)
                 .unlockedBy("has_white_crystal", has(CoreItemTags.GEM_WHITE))
                 .unlockedBy("has_fragment", has(JSGItems.FRAGMENT_UNIVERSE.get()))
                 .unlockedBy("has_ender_crystal", has(CoreItemTags.GEM_ENDER))
                 .unlockedBy("has_circuit_naquadah", has(CoreItems.CIRCUIT_CONTROL_NAQUADAH.get()))
-                .unlockedBy("has_capacitor", has(CoreBlocks.CAPACITOR_BLOCK.get()))
+                .unlockedBy("has_capacitor", has(CoreItems.CRYSTAL_ENERGY_BASIC.get()))
                 .unlockedBy("has_circuit_crystal", has(CoreItems.CIRCUIT_CONTROL_CRYSTAL.get()))
                 .unlockedBy("has_gear", has(CoreItemTags.GEAR_NAQUADAH))
                 .save(pWriter);
@@ -293,14 +292,14 @@ public class JSGRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('F', JSGItems.FRAGMENT_TOLLAN.get())
                 .define('E', CoreItemTags.GEM_ENDER)
                 .define('N', CoreItems.CIRCUIT_CONTROL_NAQUADAH.get())
-                .define('B', CoreBlocks.CAPACITOR_BLOCK.get())
+                .define('B', CoreItems.CRYSTAL_ENERGY_BASIC.get())
                 .define('C', CoreItems.CIRCUIT_CONTROL_CRYSTAL.get())
                 .define('G', CoreItemTags.GEAR_TITANIUM)
                 .unlockedBy("has_blue_crystal", has(CoreItemTags.GEM_BLUE))
                 .unlockedBy("has_fragment", has(JSGItems.FRAGMENT_TOLLAN.get()))
                 .unlockedBy("has_ender_crystal", has(CoreItemTags.GEM_ENDER))
                 .unlockedBy("has_circuit_naquadah", has(CoreItems.CIRCUIT_CONTROL_NAQUADAH.get()))
-                .unlockedBy("has_capacitor", has(CoreBlocks.CAPACITOR_BLOCK.get()))
+                .unlockedBy("has_capacitor", has(CoreItems.CRYSTAL_ENERGY_BASIC.get()))
                 .unlockedBy("has_circuit_crystal", has(CoreItems.CIRCUIT_CONTROL_CRYSTAL.get()))
                 .unlockedBy("has_gear", has(CoreItemTags.GEAR_TITANIUM))
                 .save(pWriter);
@@ -337,14 +336,14 @@ public class JSGRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('F', JSGItems.FRAGMENT_MILKYWAY.get())
                 .define('E', CoreItemTags.GEM_ENDER)
                 .define('N', CoreItems.CIRCUIT_CONTROL_NAQUADAH.get())
-                .define('B', CoreBlocks.CAPACITOR_BLOCK.get())
+                .define('B', CoreItems.CRYSTAL_ENERGY_BASIC.get())
                 .define('C', CoreItems.CIRCUIT_CONTROL_CRYSTAL.get())
                 .define('G', CoreItemTags.GEAR_NAQUADAH)
                 .unlockedBy("has_white_crystal", has(CoreItemTags.GEM_WHITE))
                 .unlockedBy("has_fragment", has(JSGItems.FRAGMENT_MILKYWAY.get()))
                 .unlockedBy("has_ender_crystal", has(CoreItemTags.GEM_ENDER))
                 .unlockedBy("has_circuit_naquadah", has(CoreItems.CIRCUIT_CONTROL_NAQUADAH.get()))
-                .unlockedBy("has_capacitor", has(CoreBlocks.CAPACITOR_BLOCK.get()))
+                .unlockedBy("has_capacitor", has(CoreItems.CRYSTAL_ENERGY_BASIC.get()))
                 .unlockedBy("has_circuit_crystal", has(CoreItems.CIRCUIT_CONTROL_CRYSTAL.get()))
                 .unlockedBy("has_gear", has(CoreItemTags.GEAR_NAQUADAH))
                 .save(pWriter);

@@ -147,7 +147,7 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
 
         try {
             Optional.ofNullable(getStateManager().getButtonsState().get(symbol)).ifPresent(DHDButtonsState.ButtonState::activate);
-        }catch (Exception e){
+        } catch (Exception e) {
             JSG.logger.info("wtf", e);
         }
     }
@@ -190,7 +190,7 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
                 dm.abortDialingSequence();
                 return;
             }
-            if(symbol.brb() && gateState.idle()) {
+            if (symbol.brb() && gateState.idle()) {
                 // BRB pressed on idling gate, attempt to open
                 StargateOpenResult openResult = dm.attemptOpenDialed();
                 if (openResult.ok()) {
@@ -392,12 +392,12 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
             }
 
             // Fluid upgrades
-            int newFluidCapacity = JSGConfig.DialHomeDevice.fluidCapacity.get();
+            double newFluidCapacity = JSGConfig.DialHomeDevice.fluidCapacity.get();
             if (hasUpgrade(CommonUpgrade.CAPACITY_UPGRADE))
-                newFluidCapacity *= (int) JSGConfig.DialHomeDevice.capacityUpgradeMultiplier.get();
+                newFluidCapacity *= JSGConfig.DialHomeDevice.capacityUpgradeMultiplier.get();
 
             if (getReactorManager().getTank().getCapacity() != newFluidCapacity) {
-                getReactorManager().getTank().setCapacity(newFluidCapacity);
+                getReactorManager().getTank().setCapacity((int) newFluidCapacity);
                 setChanged();
                 JSG.logger.debug("DHD at {} set itself new capacity! ({}mb)", getBlockPos().toShortString(), newFluidCapacity);
             }

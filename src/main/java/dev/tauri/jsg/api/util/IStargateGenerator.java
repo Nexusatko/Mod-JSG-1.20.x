@@ -25,7 +25,7 @@ public interface IStargateGenerator {
 
     GeneratedStargate generateStargate(@Nonnull IStargateGenerator.PlacementConfig conf, boolean replaceMemberBlocks);
 
-    void setStargateEnergyInternalSmart(IStargateGenerator.PlacementConfig config, int energy);
+    void setStargateEnergyInternalSmart(IStargateGenerator.PlacementConfig config, long energy);
 
     enum StargateUpgradesEnum {
         GLYPH_CRYSTAL_TYPE,
@@ -63,8 +63,8 @@ public interface IStargateGenerator {
         @Nonnull
         public StargateType<?> gateType = StargateTypes.MILKYWAY.get();
         @Nonnull
-        public List<Pair<Integer, Boolean>> capacitors = new ArrayList<>(); // List<Pair<[capacity], [isCreative]>>
-        public int stargateEnergyInternal = -1;
+        public List<Pair<Long, Boolean>> capacitors = new ArrayList<>(); // List<Pair<[capacity], [isCreative]>>
+        public long stargateEnergyInternal = -1;
         public Function<BEConfig, BEConfig> stargateConfig = null;
         @Nonnull
         public EnumIrisMode irisMode = EnumIrisMode.OPENED;

@@ -45,7 +45,7 @@ public class StargateClassicOCMethods extends AbstractOCMethods<StargateClassicB
             return new Object[]{false, "stargate_iris_error_mode", "Iris mode must be set to OC"};
         boolean result = deviceTile.getIrisManager().toggleIris();
         deviceTile.setChanged();
-        if (!result && (deviceTile.getIrisManager().hasShield() && deviceTile.getIrisManager().isIrisOpened() && deviceTile.getEnergyManager().getStorage().getEnergyStored() < JSGConfig.Stargate.irisShieldPowerDraw.get() * 3))
+        if (!result && (deviceTile.getIrisManager().hasShield() && deviceTile.getIrisManager().isIrisOpened() && deviceTile.getEnergyManager().getStorage().getTrueEnergyStored() < JSGConfig.Stargate.irisShieldPowerDraw.get() * 3L))
             return new Object[]{false, "stargate_iris_not_power", "Not enough power to close shield"};
         else if (!result)
             return new Object[]{false, "stargate_iris_busy", "Iris is busy"};

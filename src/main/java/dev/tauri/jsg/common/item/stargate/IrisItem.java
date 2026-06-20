@@ -9,6 +9,7 @@ import dev.tauri.jsg.core.common.registry.CoreTabs;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -20,13 +21,13 @@ import java.util.List;
 public class IrisItem extends JSGItem implements ICreativeThing, IIrisItem {
 
     public static IrisItem createCreative() {
-        IrisItem i = new IrisItem(new Item.Properties(), EnumIrisType.IRIS_CREATIVE);
+        IrisItem i = new IrisItem(new Item.Properties().rarity(Rarity.EPIC), EnumIrisType.IRIS_CREATIVE);
         i.creativeIris = true;
         return i;
     }
 
     public static IrisItem createShield() {
-        IrisItem i = new IrisItem(new Item.Properties(), EnumIrisType.SHIELD);
+        IrisItem i = new IrisItem(new Item.Properties().rarity(Rarity.UNCOMMON), EnumIrisType.SHIELD);
         i.isShield = true;
         return i;
     }

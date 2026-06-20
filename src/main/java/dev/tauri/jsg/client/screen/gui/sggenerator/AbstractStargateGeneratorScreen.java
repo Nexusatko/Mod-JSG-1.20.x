@@ -77,31 +77,33 @@ public abstract class AbstractStargateGeneratorScreen extends GenericDirtMessage
         graphics.fill((int) (x + 2 + loaderX), y + 2, (int) (x + 2 + loaderXRight), y + 8, 0xffffffff);
 
         var t = (double) this.total.get();
-        var stats = this.stats.get();
+        final var stats = this.stats.get();
         var perDim = ((progressSize - 4) / t);
         AtomicInteger i = new AtomicInteger(0);
-        stats.forEach((stepName, stepStatus) -> {
-            var xOffset = (perDim * (double) i.get());
-            var pX = (int) (x + 2 + xOffset);
-            var pXMax = (int) (x + 2 + xOffset + perDim);
-            if (i.get() == (t - 1)) {
-                pXMax = x + (progressSize - 2);
-            }
-            var pY = y + 2;
-            var pYMax = y + 8;
+        synchronized (stats) {
+            stats.forEach((stepName, stepStatus) -> {
+                var xOffset = (perDim * (double) i.get());
+                var pX = (int) (x + 2 + xOffset);
+                var pXMax = (int) (x + 2 + xOffset + perDim);
+                if (i.get() == (t - 1)) {
+                    pXMax = x + (progressSize - 2);
+                }
+                var pY = y + 2;
+                var pYMax = y + 8;
 
-            var color = stepStatus.getColor();
-            var hover = false;
-            if (GuiHelper.isPointInRegion(pX, pY, (pXMax - pX), (pYMax - pY), mouseX, mouseY)) {
-                color = JSGColorUtil.blendColors(color, 0xffffffff, 0.5f);
-                hover = true;
-            }
-            graphics.fill(pX, pY, pXMax, pYMax, color);
-            if (hover) {
-                graphics.renderTooltip(font, List.of(Component.literal(stepName), stepStatus.getMessage()), Optional.empty(), mouseX, mouseY);
-            }
-            i.incrementAndGet();
-        });
+                var color = stepStatus.getColor();
+                var hover = false;
+                if (GuiHelper.isPointInRegion(pX, pY, (pXMax - pX), (pYMax - pY), mouseX, mouseY)) {
+                    color = JSGColorUtil.blendColors(color, 0xffffffff, 0.5f);
+                    hover = true;
+                }
+                graphics.fill(pX, pY, pXMax, pYMax, color);
+                if (hover) {
+                    graphics.renderTooltip(font, List.of(Component.literal(stepName), stepStatus.getMessage()), Optional.empty(), mouseX, mouseY);
+                }
+                i.incrementAndGet();
+            });
+        }
     }
 
     protected static final double ASSEMBLY_DURATION = 20 * 20;

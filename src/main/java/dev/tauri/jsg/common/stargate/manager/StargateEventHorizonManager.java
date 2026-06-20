@@ -591,7 +591,7 @@ public abstract class StargateEventHorizonManager extends AbstractStargateManage
         });
     }
 
-    public void updateUnstability(double energySecondsToClose, int energyTransferredLastTick) {
+    public void updateUnstability(double energySecondsToClose, long energyTransferredLastTick) {
         if (!stargate.getDialingManager().getStargateState().engaged()) {
             resetFlashingSequence();
             return;

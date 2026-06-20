@@ -264,7 +264,7 @@ public class StargateIrisManager extends AbstractStargateManager<StargateClassic
         switch (state) {
             case OPENED:
             case OPENING:
-                if (hasShield() && stargate.getEnergyManager().getStorage().getEnergyStored() < JSGConfig.Stargate.irisShieldPowerDraw.get() * 3)
+                if (hasShield() && stargate.getEnergyManager().getStorage().getTrueEnergyStored() < JSGConfig.Stargate.irisShieldPowerDraw.get() * 3L)
                     return false;
 
                 StargateComputerEvents.IRIS_TOGGLED.apply(true).sendVia(stargate);
@@ -439,7 +439,7 @@ public class StargateIrisManager extends AbstractStargateManager<StargateClassic
                 if (isIrisClosed()) {
                     stargate.getEnergyManager().getStorage().extractEnergy(shieldKeepAlive, false);
                 }
-                if (stargate.getEnergyManager().getStorage().getEnergyStored() < shieldKeepAlive) {
+                if (stargate.getEnergyManager().getStorage().getTrueEnergyStored() < shieldKeepAlive) {
                     StargateComputerEvents.IRIS_OUT_OF_POWER.get().sendVia(stargate);
                     toggleIris();
                 } else if (mode == EnumIrisMode.CLOSED && state != EnumIrisState.CLOSING && state != EnumIrisState.CLOSED) {

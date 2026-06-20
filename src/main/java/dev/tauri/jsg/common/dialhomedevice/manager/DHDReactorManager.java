@@ -4,6 +4,7 @@ import dev.tauri.jsg.api.config.JSGConfig;
 import dev.tauri.jsg.api.dialhomedevice.DHDReactorState;
 import dev.tauri.jsg.api.dialhomedevice.manager.IDHDReactorManager;
 import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
+import dev.tauri.jsg.core.common.power.JSGEnergyStorage;
 import dev.tauri.jsg.core.common.util.FluidTank;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -48,11 +49,10 @@ public class DHDReactorManager extends AbstractDHDManager<DHDAbstractBE> impleme
         }
         dhd.getLinkedDeviceOptional().ifPresentOrElse((gateTile) -> {
             var energyStorageOpt = gateTile.getStargateCapability(ForgeCapabilities.ENERGY, null).resolve();
-            if (energyStorageOpt.isEmpty()) {
+            if (energyStorageOpt.isEmpty() || !(energyStorageOpt.get() instanceof JSGEnergyStorage energyStorage)) {
                 state = DHDReactorState.STANDBY;
                 return;
             }
-            var energyStorage = energyStorageOpt.get();
 
             int amount = 1;
 
@@ -65,7 +65,7 @@ public class DHDReactorManager extends AbstractDHDManager<DHDAbstractBE> impleme
             }
 
             if (state == DHDReactorState.ONLINE || state == DHDReactorState.STANDBY) {
-                float percent = energyStorage.getEnergyStored() / (float) energyStorage.getMaxEnergyStored();
+                float percent = energyStorage.getTrueEnergyStored() / (float) energyStorage.getTrueMaxEnergyStored();
 
                 if (percent < JSGConfig.DialHomeDevice.activationLevel.get())
                     state = DHDReactorState.ONLINE;
@@ -76,7 +76,7 @@ public class DHDReactorManager extends AbstractDHDManager<DHDAbstractBE> impleme
 
             if (state == DHDReactorState.ONLINE) {
                 tank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-                energyStorage.receiveEnergy(energyFromOneMb.apply(tank), false);
+                energyStorage.receiveLongEnergy(energyFromOneMb.apply(tank), false);
             }
         }, () -> state = DHDReactorState.NOT_LINKED);
     }

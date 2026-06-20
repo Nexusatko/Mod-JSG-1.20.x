@@ -126,7 +126,7 @@ public class GuiCustomMainMenu extends Screen {
 
     public static float getMusicVolume() {
         if (musicVolume == null) {
-            musicVolume = (float) JSGConfig.General.mainMenuMusicVolume.get();
+            musicVolume = JSGConfig.General.mainMenuMusicVolume.get().floatValue();
         }
         return musicVolume;
     }

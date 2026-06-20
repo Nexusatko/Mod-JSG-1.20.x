@@ -10,6 +10,7 @@ import dev.tauri.jsg.core.client.screen.util.GuiHelper;
 import dev.tauri.jsg.core.client.screen.widget.ScrollableWidget;
 import dev.tauri.jsg.core.common.blockentity.IBELogManager;
 import dev.tauri.jsg.core.common.helper.JSGMinecraftHelper;
+import dev.tauri.jsg.core.common.power.JSGEnergyStorage;
 import dev.tauri.jsg.core.common.symbol.SymbolInterface;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -146,9 +147,7 @@ public class DiagnosticsTab extends AdminControllerTabAsWidget {
                 ), x, y, 0xffffff);
         y += 10;
         graphics.drawString(font,
-                getStatusComponent(Component.translatable("gui.admincontroller.tab.diagnostics.energy"),
-                        String.format("%d", data.energyBuffer)
-                ), x, y, 0xffffff);
+                getStatusComponent(Component.translatable("gui.admincontroller.tab.diagnostics.energy"), JSGEnergyStorage.energyToString(data.energyBuffer)), x, y, 0xffffff);
         y += 10;
         graphics.drawString(font,
                 getStatusComponent(Component.translatable("gui.admincontroller.tab.diagnostics.energy_consumption"),

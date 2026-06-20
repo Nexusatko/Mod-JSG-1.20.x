@@ -5,11 +5,11 @@ import dev.tauri.jsg.api.stargate.StargateUpgrade;
 import dev.tauri.jsg.api.stargate.iris.EnumIrisMode;
 import dev.tauri.jsg.common.blockentity.stargate.StargateClassicBaseBE;
 import dev.tauri.jsg.common.registry.JSGMenuTypes;
+import dev.tauri.jsg.common.registry.tags.JSGItemTags;
 import dev.tauri.jsg.core.client.screen.tab.OpenTabHolderInterface;
 import dev.tauri.jsg.core.client.screen.util.ContainerHelper;
 import dev.tauri.jsg.core.common.forgeutil.SlotHandler;
 import dev.tauri.jsg.core.common.item.IUpgradeItem;
-import dev.tauri.jsg.core.common.item.capacitor.CapacitorItemBlock;
 import dev.tauri.jsg.core.common.menu.JSGContainer;
 import dev.tauri.jsg.core.common.packet.JSGCorePacketHandler;
 import dev.tauri.jsg.core.common.packet.packets.StateUpdatePacketToClient;
@@ -42,8 +42,8 @@ public class StargateContainer extends JSGContainer implements OpenTabHolderInte
     public StargateClassicBaseBE<?> gateTile;
     public boolean hasCreative;
     private final BlockPos pos;
-    private int lastEnergyStored;
-    private int energyTransferredLastTick;
+    private long lastEnergyStored;
+    private long energyTransferredLastTick;
     private double lastEnergySecondsToClose;
     private int lastProgress;
     protected final List<Integer> openedTabsSlotsIds = new ArrayList<>();
@@ -149,7 +149,7 @@ public class StargateContainer extends JSGContainer implements OpenTabHolderInte
             )).toList();
 
             // Capacitors
-            if (stack.getItem() instanceof CapacitorItemBlock) {
+            if (stack.is(JSGItemTags.STARGATE_CAPACITORS) && stack.getCapability(ForgeCapabilities.ENERGY).isPresent()) {
                 for (int i = 4; i < 7; i++) {
                     if (!getSlot(i).hasItem() && getSlot(i).mayPlace(stack)) {
                         ItemStack stack1 = stack.copy();
@@ -237,7 +237,7 @@ public class StargateContainer extends JSGContainer implements OpenTabHolderInte
 
         LargeEnergyStorage energyStorage = (LargeEnergyStorage) gateTile.getStargateCapability(ForgeCapabilities.ENERGY, null).resolve().orElseThrow();
 
-        if (lastEnergyStored != Objects.requireNonNull(energyStorage).getEnergyStoredInternally()
+        if (lastEnergyStored != Objects.requireNonNull(energyStorage).getTrueEnergyStored()
                 || lastEnergySecondsToClose != gateTile.getEnergyManager().getSecondsToClose()
                 || energyTransferredLastTick != gateTile.getEnergyManager().getTransferredLastTick()
                 || irisMode != gateTile.getIrisManager().getIrisMode()
@@ -251,7 +251,7 @@ public class StargateContainer extends JSGContainer implements OpenTabHolderInte
             if (playerInventory.player instanceof ServerPlayer sp)
                 JSGCorePacketHandler.sendTo(new StateUpdatePacketToClient(pos, CoreStateTypes.GUI_UPDATE, gateTile.getState(CoreStateTypes.GUI_UPDATE.get())), sp);
 
-            lastEnergyStored = energyStorage.getEnergyStoredInternally();
+            lastEnergyStored = energyStorage.getTrueEnergyStored();
             energyTransferredLastTick = gateTile.getEnergyManager().getTransferredLastTick();
             lastEnergySecondsToClose = gateTile.getEnergyManager().getSecondsToClose();
             openedSince = gateTile.getDialingManager().getConnection().getSince();

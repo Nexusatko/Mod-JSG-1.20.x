@@ -21,9 +21,9 @@ public class ACStargateData {
     public StargateConnectionStatus stargateConnectionStatus;
     public boolean initiatingConnection;
     public StargateAddressDynamic dialedAddress;
-    public int energyBuffer;
-    public int energyBufferMax;
-    public int energyConsumption;
+    public long energyBuffer;
+    public long energyBufferMax;
+    public long energyConsumption;
     public double secondsToClose;
     public long secondsOpen;
     public IBELogManager logManager = new StargateLogManager();
@@ -42,8 +42,8 @@ public class ACStargateData {
         this.stargateConnectionStatus = dm.getConnection().getStatus();
         this.initiatingConnection = dm.getConnection().isInitiating();
         this.dialedAddress = new StargateAddressDynamic(dm.getDialedAddress());
-        this.energyBuffer = em.getStorage().getEnergyStored();
-        this.energyBufferMax = em.getStorage().getMaxEnergyStored();
+        this.energyBuffer = em.getStorage().getTrueEnergyStored();
+        this.energyBufferMax = em.getStorage().getTrueMaxEnergyStored();
         this.energyConsumption = em.getTransferredLastTick();
         this.secondsToClose = em.getSecondsToClose();
         this.secondsOpen = dm.getConnection().getSecondsOpen();
@@ -67,9 +67,9 @@ public class ACStargateData {
         buf.writeInt(stargateConnectionStatus.ordinal());
         buf.writeBoolean(initiatingConnection);
         dialedAddress.toBytes(buf);
-        buf.writeInt(energyBuffer);
-        buf.writeInt(energyBufferMax);
-        buf.writeInt(energyConsumption);
+        buf.writeLong(energyBuffer);
+        buf.writeLong(energyBufferMax);
+        buf.writeLong(energyConsumption);
         buf.writeDouble(secondsToClose);
         buf.writeLong(secondsOpen);
         for (var chevron : ChevronEnum.values()) {
@@ -86,9 +86,9 @@ public class ACStargateData {
         stargateConnectionStatus = StargateConnectionStatus.values()[buf.readInt()];
         initiatingConnection = buf.readBoolean();
         dialedAddress = new StargateAddressDynamic(buf);
-        energyBuffer = buf.readInt();
-        energyBufferMax = buf.readInt();
-        energyConsumption = buf.readInt();
+        energyBuffer = buf.readLong();
+        energyBufferMax = buf.readLong();
+        energyConsumption = buf.readLong();
         secondsToClose = buf.readDouble();
         secondsOpen = buf.readLong();
         chevronActiveStateMap.clear();

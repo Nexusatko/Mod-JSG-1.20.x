@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
 
 public abstract class UniverseDialerMode {
@@ -59,17 +60,25 @@ public abstract class UniverseDialerMode {
         this.linkMatchTest = linkMatchTest;
     }
 
+    private static final AtomicBoolean calculationsDone = new AtomicBoolean(false);
+
     /**
      * This method should be ONLY called by JSG registry for UD modes
      */
-    public void added() {
-        if (firstMode == null) firstMode = this;
-        if (lastMode == null) lastMode = this;
-        firstMode.prev = this;
-        lastMode.next = this;
-        prev = lastMode;
-        next = firstMode;
-        lastMode = this;
+    public static void calculateModesSequence() {
+        synchronized (calculationsDone) {
+            if (calculationsDone.get()) return;
+            for (var mode : JSGRegistries.R_UNIVERSE_DIALER_MODES.get().getValues()) {
+                if (firstMode == null) firstMode = mode;
+                if (lastMode == null) lastMode = mode;
+                firstMode.prev = mode;
+                lastMode.next = mode;
+                mode.prev = lastMode;
+                mode.next = firstMode;
+                lastMode = mode;
+            }
+            calculationsDone.set(true);
+        }
     }
 
     @Nonnull

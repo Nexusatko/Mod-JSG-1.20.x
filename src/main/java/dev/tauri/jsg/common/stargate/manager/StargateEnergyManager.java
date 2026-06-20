@@ -29,16 +29,16 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @ParametersAreNonnullByDefault
 public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?, ?>, E extends JSGEnergyStorage> extends AbstractStargateManager<SG> implements IStargateEnergyManager<E> {
     // saved
     protected final EnergyRequiredToOperate currentEnergyRequirements = EnergyRequiredToOperate.free();
-    protected int energyStoredLastTick = -1;
+    protected long energyStoredLastTick = -1;
 
     // not saved
-    protected int energyTransferredLastTick;
+    protected long energyTransferredLastTick;
     protected double energySecondsToClose = -1;
 
     public StargateEnergyManager(SG stargate) {
@@ -51,7 +51,7 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
     }
 
     @Override
-    public int getTransferredLastTick() {
+    public long getTransferredLastTick() {
         return energyTransferredLastTick;
     }
 
@@ -59,7 +59,7 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
         energySecondsToClose = seconds;
     }
 
-    public void setTransferredLastTick(int energy) {
+    public void setTransferredLastTick(long energy) {
         energyTransferredLastTick = energy;
     }
 
@@ -72,10 +72,10 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
 
         checkMaximumTimeLimitOpen();
 
-        energyTransferredLastTick = getStorage().getEnergyStored() - energyStoredLastTick;
+        energyTransferredLastTick = getStorage().getTrueEnergyStored() - energyStoredLastTick;
         if (energyStoredLastTick == -1)
             energyTransferredLastTick = 0;
-        energyStoredLastTick = getStorage().getEnergyStored();
+        energyStoredLastTick = getStorage().getTrueEnergyStored();
         stargate.setChanged();
 
         stargate.getDialingManager().getConnection().runIfInitializing((connOutgoing, sgOutgoing) -> {
@@ -100,8 +100,8 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
     protected void checkMaximumTimeLimitOpen() {
         if (!stargate.getDialingManager().getConnection().getStatus().full())
             return;
-        int configPower = JSGConfig.Stargate.maxOpenedPowerDrawAfterLimit.get();
-        int maxSeconds = JSGConfig.Stargate.maxOpenedSeconds.get();
+        long configPower = JSGConfig.Stargate.maxOpenedPowerDrawAfterLimit.get();
+        long maxSeconds = JSGConfig.Stargate.maxOpenedSeconds.get();
         StargateTimeLimitModeEnum limitMode = JSGConfig.Stargate.maxOpenedWhat.get();
 
         if (stargate instanceof IConfigurable casted) {
@@ -111,14 +111,14 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
         }
         boolean enabled = (limitMode != StargateTimeLimitModeEnum.DISABLED);
         if (!enabled) return;
-        var secondsOpen = stargate.getDialingManager().getConnection().getSecondsOpen();
+        long secondsOpen = stargate.getDialingManager().getConnection().getSecondsOpen();
         if (secondsOpen < maxSeconds) return;
         if (limitMode == StargateTimeLimitModeEnum.CLOSE_GATE) {
             stargate.getDialingManager().attemptClose(StargateClosedReasonEnum.TIME_LIMIT);
             return;
         }
-        var power = (int) ((secondsOpen / (double) maxSeconds) * configPower);
-        getStorage().extractEnergy(power, false);
+        var power = (long) ((secondsOpen / (double) maxSeconds) * configPower);
+        getStorage().extractLongEnergy(power, false);
     }
 
     protected void consumeByWormhole() {
@@ -129,7 +129,7 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
             stargate.getDialingManager().attemptClose(StargateClosedReasonEnum.OUT_OF_POWER);
             return;
         }
-        getStorage().extractEnergy(currentEnergyRequirements.keepAlive, false);
+        getStorage().extractLongEnergy(currentEnergyRequirements.keepAlive, false);
     }
 
     public void onGateOpen() {
@@ -144,26 +144,26 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
         else
             currentEnergyRequirements.update(EnergyRequiredToOperate.free());
 
-        var energyNeeded = new AtomicInteger(currentEnergyRequirements.energyToOpen);
-        energyNeeded.addAndGet(-getStorage().extractEnergy(energyNeeded.get(), false));
-        if (energyNeeded.get() >= 0) {
+        var energyNeeded = new AtomicLong(currentEnergyRequirements.energyToOpen);
+        energyNeeded.addAndGet(-getStorage().extractLongEnergy(energyNeeded.get(), false));
+        /*if (energyNeeded.get() >= 0) {
             getEnergyStoragesConnectedToStargate().forEach((pos, storage) -> {
                 if (energyNeeded.get() <= 0) return;
                 energyNeeded.addAndGet(-storage.extractEnergy(energyNeeded.get(), false));
             });
-        }
+        }*/
     }
 
     @Override
     public boolean canOpenWormhole(EnergyRequiredToOperate energyRequiredToDial) {
-        if (getStorage().getEnergyStored() >= energyRequiredToDial.energyToOpen)
+        if (getStorage().getTrueMaxEnergyStored() >= energyRequiredToDial.energyToOpen)
             return true;
-        var energyNeeded = new AtomicInteger(energyRequiredToDial.energyToOpen);
-        energyNeeded.addAndGet(-getStorage().extractEnergy(energyNeeded.get(), true));
-        getEnergyStoragesConnectedToStargate().forEach((pos, storage) -> {
+        var energyNeeded = new AtomicLong(energyRequiredToDial.energyToOpen);
+        energyNeeded.addAndGet(-getStorage().extractLongEnergy(energyNeeded.get(), true));
+        /*getEnergyStoragesConnectedToStargate().forEach((pos, storage) -> {
             if (energyNeeded.get() <= 0) return;
             energyNeeded.addAndGet(-storage.extractEnergy(energyNeeded.get(), true));
-        });
+        });*/
         return energyNeeded.get() <= 0;
     }
 
@@ -225,7 +225,7 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
     public CompoundTag serializeNBT() {
         var compound = new CompoundTag();
         compound.put("energyStorage", getStorage().serializeNBT());
-        compound.putInt("energyStoredLastTick", energyStoredLastTick);
+        compound.putLong("energyStoredLastTick", energyStoredLastTick);
         compound.put("currentEnergyRequirements", currentEnergyRequirements.serializeNBT());
         return compound;
     }
@@ -233,7 +233,10 @@ public abstract class StargateEnergyManager<SG extends StargateAbstractBaseBE<?,
     @Override
     public void deserializeNBT(CompoundTag compound) {
         getStorage().deserializeNBT(compound.getCompound("energyStorage"));
-        energyStoredLastTick = compound.getInt("energyStoredLastTick");
+        if (compound.contains("energyStoredLastTick", CompoundTag.TAG_INT))
+            energyStoredLastTick = compound.getInt("energyStoredLastTick");
+        else
+            energyStoredLastTick = compound.getLong("energyStoredLastTick");
         currentEnergyRequirements.deserializeNBT(compound.getCompound("currentEnergyRequirements"));
     }
 }

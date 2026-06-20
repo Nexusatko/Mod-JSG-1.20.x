@@ -75,7 +75,7 @@ public abstract class StargateClassicStateManager<SG extends StargateClassicBase
                 })
                 .tryType(CoreStateTypes.GUI_UPDATE, () -> {
                     StargateContainerGuiUpdate guiUpdate = (StargateContainerGuiUpdate) state;
-                    stargate.getEnergyManager().getStorage().setEnergyStoredInternally(guiUpdate.energyStored);
+                    stargate.getEnergyManager().getStorage().setEnergy(guiUpdate.energyStored, true);
                     stargate.getEnergyManager().setSecondsToClose((long) guiUpdate.secondsToClose);
                     stargate.getEnergyManager().setTransferredLastTick(guiUpdate.transferredLastTick);
                     stargate.getIrisManager().setIrisMode(guiUpdate.irisMode);
@@ -104,7 +104,7 @@ public abstract class StargateClassicStateManager<SG extends StargateClassicBase
         return stateType.stateSupplier()
                 .tryType(CoreStateTypes.GUI_STATE, () -> new StargateContainerGuiState(stargate.getAddressMap(), stargate.getConfig()))
                 .tryType(CoreStateTypes.GUI_UPDATE, () -> new StargateContainerGuiUpdate(
-                        stargate.getEnergyManager().getStorage().getEnergyStoredInternally(),
+                        stargate.getEnergyManager().getStorage().getEnergyStoredInternal(),
                         stargate.getEnergyManager().getTransferredLastTick(),
                         stargate.getEnergyManager().getSecondsToClose(),
                         stargate.getIrisManager().getIrisMode(),

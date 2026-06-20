@@ -46,7 +46,7 @@ public class StargateOrlinBaseBlock extends StargateAbstractBaseBlock {
         if (!(world.getBlockEntity(pos) instanceof StargateOrlinBaseBE baseTile)) return false;
         var energyStorage = baseTile.getCapability(ForgeCapabilities.ENERGY).resolve();
         if (energyStorage.isEmpty()) return false;
-        int energyStored = baseTile.getEnergyManager().getStorage().getEnergyStored();
+        long energyStored = baseTile.getEnergyManager().getStorage().getTrueEnergyStored();
         var energyString = String.format("%,d", energyStored);
         var energyNeeded = baseTile.getEnergyRequiredToDial();
         if (energyNeeded == null) return false;

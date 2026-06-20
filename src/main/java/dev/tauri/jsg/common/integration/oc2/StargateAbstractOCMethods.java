@@ -59,13 +59,13 @@ public class StargateAbstractOCMethods extends AbstractOCMethods<StargateAbstrac
     @SuppressWarnings("unused")
     @Callback(name = "getEnergyStored")
     public final Object[] getEnergyStored() {
-        return new Object[]{deviceTile.getEnergyManager().getStorage().getEnergyStored()};
+        return new Object[]{deviceTile.getEnergyManager().getStorage().getTrueEnergyStored()};
     }
 
     @SuppressWarnings("unused")
     @Callback(name = "getMaxEnergyStored")
     public final Object[] getMaxEnergyStored() {
-        return new Object[]{deviceTile.getEnergyManager().getStorage().getMaxEnergyStored()};
+        return new Object[]{deviceTile.getEnergyManager().getStorage().getTrueMaxEnergyStored()};
     }
 
     @SuppressWarnings("unused")
@@ -162,7 +162,7 @@ public class StargateAbstractOCMethods extends AbstractOCMethods<StargateAbstrac
 
         energyMap.put("open", energyRequired.energyToOpen);
         energyMap.put("keepAlive", energyRequired.keepAlive);
-        energyMap.put("canOpen", deviceTile.getEnergyManager().getStorage().getEnergyStored() >= energyRequired.energyToOpen);
+        energyMap.put("canOpen", deviceTile.getEnergyManager().getStorage().getTrueEnergyStored() >= energyRequired.energyToOpen);
 
         return new Object[]{true, "energy_map", energyMap};
     }

@@ -11,8 +11,8 @@ public class StargateContainerGuiUpdate extends State {
         this.stargateConnection = stargateConnection;
     }
 
-    public int energyStored;
-    public int transferredLastTick;
+    public long energyStored;
+    public long transferredLastTick;
     public double secondsToClose;
     public EnumIrisMode irisMode;
     public String irisCode;
@@ -21,7 +21,7 @@ public class StargateContainerGuiUpdate extends State {
     public double irisTemp;
     public int pageProgress;
 
-    public StargateContainerGuiUpdate(int energyStored, int transferredLastTick, double secondsToClose, EnumIrisMode irisMode, String irisCode, StargateConnection stargateConnection, double gateTemp, double irisTemp, int pageProgress) {
+    public StargateContainerGuiUpdate(long energyStored, long transferredLastTick, double secondsToClose, EnumIrisMode irisMode, String irisCode, StargateConnection stargateConnection, double gateTemp, double irisTemp, int pageProgress) {
         this.energyStored = energyStored;
         this.transferredLastTick = transferredLastTick;
         this.secondsToClose = secondsToClose;
@@ -36,8 +36,8 @@ public class StargateContainerGuiUpdate extends State {
     @Override
     public void toBytes(ByteBuf buff) {
         var buf = new FriendlyByteBuf(buff);
-        buf.writeInt(energyStored);
-        buf.writeInt(transferredLastTick);
+        buf.writeLong(energyStored);
+        buf.writeLong(transferredLastTick);
         buf.writeDouble(secondsToClose);
         buf.writeByte(irisMode.id);
         buf.writeUtf(irisCode);
@@ -50,8 +50,8 @@ public class StargateContainerGuiUpdate extends State {
     @Override
     public void fromBytes(ByteBuf buff) {
         var buf = new FriendlyByteBuf(buff);
-        energyStored = buf.readInt();
-        transferredLastTick = buf.readInt();
+        energyStored = buf.readLong();
+        transferredLastTick = buf.readLong();
         secondsToClose = buf.readDouble();
         irisMode = EnumIrisMode.getValue(buf.readByte());
         irisCode = buf.readUtf();

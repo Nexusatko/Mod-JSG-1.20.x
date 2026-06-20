@@ -6,6 +6,7 @@ import dev.tauri.jsg.api.power.PowerUtils;
 import dev.tauri.jsg.core.client.screen.util.GuiHelper;
 import dev.tauri.jsg.core.client.texture.ITexture;
 import dev.tauri.jsg.core.common.config.ingame.BEConfig;
+import dev.tauri.jsg.core.common.power.JSGEnergyStorage;
 import dev.tauri.jsg.core.common.power.general.SmallEnergyStorage;
 import dev.tauri.jsg.core.common.util.JSGItemStackHandler;
 import dev.tauri.jsg.core.mapping.JSGMapping;
@@ -55,7 +56,7 @@ public class ClientStargateInventoryTooltip implements ClientTooltipComponent {
             energyResult = renderInventory(font, x, y, graphics, handler, compound);
             offsetY += 44;
         }
-        var energyStorage = PowerUtils.getSmall();
+        var energyStorage = PowerUtils.getSmall(() -> {});
         if (compound.contains("stargateEnergyManager"))
             energyStorage.deserializeNBT(compound.getCompound("stargateEnergyManager").getCompound("energyStorage"));
         renderEnergyStorage(font, x, y + offsetY, graphics, energyResult, energyStorage);
@@ -65,8 +66,8 @@ public class ClientStargateInventoryTooltip implements ClientTooltipComponent {
         ITexture.bindTextureWithMc(TEXTURE_LOCATION);
         GuiHelper.drawModalRectWithCustomSizedTexture(x, y, 0, 44, 90, 7, 128, 128);
 
-        var energyStored = energyStorage.getEnergyStored() + inventoryRenderEnergyResult.additionalEnergy();
-        var maxEnergyStored = energyStorage.getMaxEnergyStored() + inventoryRenderEnergyResult.additionalCapacity();
+        var energyStored = energyStorage.getTrueEnergyStored() + inventoryRenderEnergyResult.additionalEnergy();
+        var maxEnergyStored = energyStorage.getTrueMaxEnergyStored() + inventoryRenderEnergyResult.additionalCapacity();
         var blockedSlots = inventoryRenderEnergyResult.blockedOutSlots();
 
         var maxWidth = 87;
@@ -81,8 +82,8 @@ public class ClientStargateInventoryTooltip implements ClientTooltipComponent {
     protected InventoryRenderEnergyResult renderInventory(Font font, int x, int y, GuiGraphics graphics, JSGItemStackHandler itemStackHandler, CompoundTag compound) {
         int capacitorsCount = 3;
         int maxCapacitors = 3;
-        int additionalEnergy = 0;
-        int additionalCapacity = 0;
+        long additionalEnergy = 0;
+        long additionalCapacity = 0;
         if (compound.contains("config")) {
             try {
                 var config = new BEConfig(() -> {
@@ -113,9 +114,9 @@ public class ClientStargateInventoryTooltip implements ClientTooltipComponent {
                     // capacitors
                     renderItemStack(item, x + 18 * (slot - 4), y + 22, graphics, font, slot);
                     var energyCap = item.getCapability(ForgeCapabilities.ENERGY).resolve();
-                    if (energyCap.isPresent()) {
-                        additionalEnergy += energyCap.get().getEnergyStored();
-                        additionalCapacity += energyCap.get().getMaxEnergyStored();
+                    if (energyCap.isPresent() && energyCap.get() instanceof JSGEnergyStorage energyStorage) {
+                        additionalEnergy += energyStorage.getTrueEnergyStored();
+                        additionalCapacity += energyStorage.getTrueMaxEnergyStored();
                         capacitorsCount++;
                     }
                 } else if (slot == 7) {
@@ -136,6 +137,6 @@ public class ClientStargateInventoryTooltip implements ClientTooltipComponent {
         graphics.renderItemDecorations(font, item, x + 1, y + 1);
     }
 
-    public record InventoryRenderEnergyResult(int additionalEnergy, int additionalCapacity, int blockedOutSlots) {
+    public record InventoryRenderEnergyResult(long additionalEnergy, long additionalCapacity, int blockedOutSlots) {
     }
 }

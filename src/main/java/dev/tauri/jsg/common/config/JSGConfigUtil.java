@@ -6,7 +6,6 @@ import dev.tauri.jsg.common.block.stargate.StargateAbstractMemberBlock;
 import dev.tauri.jsg.common.block.stargate.redstone.AbstractStargateRedstoneIO;
 import dev.tauri.jsg.common.registry.JSGBlocks;
 import dev.tauri.jsg.common.registry.tags.JSGBlockTags;
-import dev.tauri.jsg.core.common.block.capacitor.CapacitorBlock;
 import dev.tauri.jsg.core.common.block.cartouche.CartoucheBlock;
 import dev.tauri.jsg.core.common.block.core.InvisibleBlock;
 import dev.tauri.jsg.core.common.registry.tag.CoreBlockTags;
@@ -40,7 +39,6 @@ public class JSGConfigUtil {
         if (state.getBlock() instanceof InvisibleBlock) return false;
         if (state.getBlock() instanceof StargateAbstractBaseBlock) return false;
         if (state.getBlock() instanceof StargateAbstractMemberBlock) return false;
-        if (state.getBlock() instanceof CapacitorBlock) return false;
         if (state.getBlock() instanceof AbstractStargateRedstoneIO) return false;
         if (state.getBlock() instanceof CartoucheBlock) return false;
 

@@ -19,7 +19,7 @@ public interface IStargateEnergyManager<E extends JSGEnergyStorage> extends INBT
 
     double getSecondsToClose();
 
-    int getTransferredLastTick();
+    long getTransferredLastTick();
 
     boolean canOpenWormhole(EnergyRequiredToOperate energyRequiredToDial);
 

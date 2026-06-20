@@ -32,10 +32,10 @@ public class JSGRegistries {
 
     public static final Supplier<IForgeRegistry<StargateType<?>>> R_STARGATE_TYPE = create(STARGATE_TYPE);
     public static final Function<RegistryAccess, Registry<RIGWave>> R_RIG_WAVES = (access) -> access.registryOrThrow(RIG_WAVES);
-    public static final Supplier<IForgeRegistry<UniverseDialerMode>> R_UNIVERSE_DIALER_MODES = create(UNIVERSE_DIALER_MODES, (owner, stage, id, key, mode, oldObj) -> mode.added());
+    public static final Supplier<IForgeRegistry<UniverseDialerMode>> R_UNIVERSE_DIALER_MODES = create(UNIVERSE_DIALER_MODES, (owner, stage) -> UniverseDialerMode.calculateModesSequence());
 
-    private static <T> Supplier<IForgeRegistry<T>> create(ResourceKey<Registry<T>> id, IForgeRegistry.AddCallback<T> onAdd) {
-        return create(id, () -> new RegistryBuilder<T>().setName(id.location()).add(onAdd));
+    private static <T> Supplier<IForgeRegistry<T>> create(ResourceKey<Registry<T>> id, IForgeRegistry.BakeCallback<T> onBake) {
+        return create(id, () -> new RegistryBuilder<T>().setName(id.location()).onBake(onBake));
     }
 
     private static <T> Supplier<IForgeRegistry<T>> create(ResourceKey<Registry<T>> id) {

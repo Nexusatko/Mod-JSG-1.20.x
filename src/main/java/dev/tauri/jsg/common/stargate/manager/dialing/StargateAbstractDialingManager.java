@@ -37,6 +37,7 @@ import dev.tauri.jsg.core.common.config.ingame.IConfigurable;
 import dev.tauri.jsg.core.common.config.json.dimension.JSGDimensionConfig;
 import dev.tauri.jsg.core.common.entity.ScheduledTask;
 import dev.tauri.jsg.core.common.entity.ScheduledTaskType;
+import dev.tauri.jsg.core.common.power.JSGEnergyStorage;
 import dev.tauri.jsg.core.common.symbol.SymbolInterface;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
 import it.unimi.dsi.fastutil.Pair;
@@ -809,6 +810,7 @@ public abstract class StargateAbstractDialingManager<SG extends Stargate<?>> ext
             if (!conn.getStatus().waiting()) return StargateAddressCheckResult.MALFORMED;
             if (conn.withoutEnergy()) return StargateAddressCheckResult.OK;
             var energyRequired = stargate.getEnergyManager().getEnergyRequiredToDial(sg, dialedAddress);
+            stargate.getLogManager().debug(Component.literal("Checking energy requirements... Needed: open=" + JSGEnergyStorage.energyToString(energyRequired.energyToOpen) + ", keepAlive=" + JSGEnergyStorage.energyToString(energyRequired.keepAlive) + "; Has: " + stargate.getEnergyManager().getStorage().toString()));
             if (!stargate.getEnergyManager().canOpenWormhole(energyRequired))
                 return StargateAddressCheckResult.NOT_ENOUGH_POWER;
             return StargateAddressCheckResult.OK;
