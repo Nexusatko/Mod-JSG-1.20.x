@@ -1,6 +1,7 @@
 package dev.tauri.jsg.common.datafixer;
 
 import dev.tauri.jsg.JSG;
+import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.core.JSGCore;
 import dev.tauri.jsg.core.common.registry.CoreItems;
 import dev.tauri.jsg.core.mapping.JSGMapping;
@@ -13,6 +14,25 @@ import java.util.List;
 public class JSGItemsDataFixer {
     public static void fixMappings(List<MissingMappingsEvent.Mapping<Item>> listToFix) {
         listToFix.forEach(mapping -> {
+
+            if (mapping.getKey().equals(JSGMapping.rl(JSG.MOD_ID, "crystal_control_dhd"))) {
+                mapping.remap(JSGItems.MILKYWAY_DHD_MAIN_CRYSTAL.get());
+                return;
+            }
+            if (mapping.getKey().equals(JSGMapping.rl(JSG.MOD_ID, "crystal_control_pegasus_dhd"))) {
+                mapping.remap(JSGItems.PEGASUS_DHD_MAIN_CRYSTAL.get());
+                return;
+            }
+
+            if (mapping.getKey().equals(JSGMapping.rl(JSG.MOD_ID, "dhd_brb"))) {
+                mapping.remap(JSGItems.MILKYWAY_DHD_ACTIVATION_BUTTON.get());
+                return;
+            }
+            if (mapping.getKey().equals(JSGMapping.rl(JSG.MOD_ID, "dhd_bbb"))) {
+                mapping.remap(JSGItems.PEGASUS_DHD_ACTIVATION_BUTTON.get());
+                return;
+            }
+
             if (mapping.getKey().equals(JSGMapping.rl(JSG.MOD_ID, "capacitor_block"))) {
                 mapping.remap(CoreItems.CRYSTAL_ENERGY_BASIC.get());
                 return;

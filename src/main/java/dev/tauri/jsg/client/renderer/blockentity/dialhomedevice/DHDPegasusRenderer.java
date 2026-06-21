@@ -2,10 +2,10 @@ package dev.tauri.jsg.client.renderer.blockentity.dialhomedevice;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.tauri.jsg.api.JSGApi;
+import dev.tauri.jsg.api.item.IDHDPartItem;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
 import dev.tauri.jsg.api.stargate.StargatePointOfOriginsDefaults;
 import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolPegasusEnum;
-import dev.tauri.jsg.common.dialhomedevice.DHDParts;
 import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.common.loader.ElementEnum;
 import dev.tauri.jsg.common.raycaster.RaycasterPegasusDHD;
@@ -31,12 +31,12 @@ public class DHDPegasusRenderer extends DHDAbstractRenderer<DHDPegasusRendererSt
     @Override
     public List<RayCastedButton> getRaycasterButtons() {
         if (rendererState == null) return List.of();
-        if (!rendererState.isAssembled(DHDParts.BUTTON_CONSOLE_WITH_BUTTONS)) {
+        if (!rendererState.isAssembled(JSGItems.PEGASUS_DHD_BUTTONS_CONSOLE.get())) {
             return RaycasterPegasusDHD.BUTTONS.stream()
                     .filter(btn -> btn.buttonId >= 100)
                     .toList();
         }
-        if (!rendererState.isAssembled(DHDParts.ACTIVATION_BUTTON)) {
+        if (!rendererState.isAssembled(JSGItems.PEGASUS_DHD_ACTIVATION_BUTTON.get())) {
             return RaycasterPegasusDHD.BUTTONS.stream()
                     .filter(btn -> btn.buttonId != tileEntity.getSymbolType().getBRB().getId())
                     .toList();
@@ -54,7 +54,7 @@ public class DHDPegasusRenderer extends DHDAbstractRenderer<DHDPegasusRendererSt
         CompoundTag compound = getNoteBookPage();
 
         for (SymbolPegasusEnum symbol : SymbolPegasusEnum.values()) {
-            if (symbol.brb() && !rendererState.isAssembled(DHDParts.BUTTON_CONSOLE_WITH_BUTTONS))
+            if (symbol.brb() && !rendererState.isAssembled(JSGItems.PEGASUS_DHD_ACTIVATION_BUTTON.get()))
                 continue;
             poseStack.pushPose();
             var btnColor = getColorByAddress(rendererState, compound, JSGSymbolTypes.PEGASUS.get(), symbol);
@@ -99,7 +99,7 @@ public class DHDPegasusRenderer extends DHDAbstractRenderer<DHDPegasusRendererSt
     }
 
     @Override
-    public @NotNull PartRenderable getPartModelRenderable(DHDParts part) {
+    public @NotNull PartRenderable getPartModelRenderable(IDHDPartItem part) {
         return (poseStack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, alpha, assembled) -> {
 
         };

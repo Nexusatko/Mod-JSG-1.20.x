@@ -1,8 +1,8 @@
 package dev.tauri.jsg.common.blockentity.dialhomedevice;
 
+import dev.tauri.jsg.api.item.IDHDPartItem;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
 import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolPegasusEnum;
-import dev.tauri.jsg.common.dialhomedevice.DHDParts;
 import dev.tauri.jsg.common.dialhomedevice.manager.state.DHDAbstractStateManager;
 import dev.tauri.jsg.common.dialhomedevice.manager.state.DHDPegasusStateManager;
 import dev.tauri.jsg.common.registry.JSGBlockEntities;
@@ -11,12 +11,14 @@ import dev.tauri.jsg.common.registry.JSGSoundEvents;
 import dev.tauri.jsg.common.registry.tags.JSGBlockTags;
 import dev.tauri.jsg.core.common.sound.ISoundEvent;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.LinkedList;
 
 public class DHDPegasusBE extends DHDAbstractBE {
     public DHDPegasusBE(BlockPos pos, BlockState state) {
@@ -31,11 +33,6 @@ public class DHDPegasusBE extends DHDAbstractBE {
     @Override
     public SymbolType<SymbolPegasusEnum> getSymbolType() {
         return JSGSymbolTypes.PEGASUS.get();
-    }
-
-    @Override
-    public Item getControlCrystal() {
-        return JSGItems.CRYSTAL_CONTROL_PEGASUS_DHD.get();
     }
 
     @Override
@@ -54,8 +51,19 @@ public class DHDPegasusBE extends DHDAbstractBE {
     }
 
     @Override
-    @NotNull
-    public Item getPartItem(DHDParts part) {
-        return JSGItems.PEGASUS_DHD_PARTS.get(part).get();
+    public Item getControlCrystal() {
+        return JSGItems.PEGASUS_DHD_MAIN_CRYSTAL.get();
+    }
+
+    @Override
+    public LinkedList<IDHDPartItem> getAllParts() {
+        return Util.make(new LinkedList<>(), list -> {
+            list.addLast(JSGItems.PEGASUS_DHD_CONTROL_CRYSTALS.get());
+            list.addLast(JSGItems.PEGASUS_DHD_BUTTONS_CONSOLE.get());
+            list.addLast(JSGItems.PEGASUS_DHD_MAIN_CRYSTAL.get());
+            list.addLast(JSGItems.PEGASUS_DHD_ACTIVATION_BUTTON.get());
+            list.addLast(JSGItems.DHD_NAQUADAH_TANK.get());
+            list.addLast(JSGItems.PEGASUS_DHD_UPGRADES_COVER.get());
+        });
     }
 }

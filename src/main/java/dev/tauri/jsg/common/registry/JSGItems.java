@@ -5,12 +5,13 @@ import dev.tauri.jsg.api.JSGApi;
 import dev.tauri.jsg.api.dialhomedevice.StargateDHD;
 import dev.tauri.jsg.api.stargate.StargateUpgrade;
 import dev.tauri.jsg.api.stargate.iris.EnumIrisType;
-import dev.tauri.jsg.common.dialhomedevice.DHDParts;
 import dev.tauri.jsg.common.item.CartridgeItem;
 import dev.tauri.jsg.common.item.admincontroller.AdminControllerItem;
 import dev.tauri.jsg.common.item.linkable.dialer.UniverseDialerItem;
 import dev.tauri.jsg.common.item.linkable.gdo.GDOItem;
 import dev.tauri.jsg.common.item.stargate.IrisItem;
+import dev.tauri.jsg.common.item.stargate.dialhomedevice.part.DHDAbstractPartItem;
+import dev.tauri.jsg.common.item.stargate.dialhomedevice.part.DHDMilkyWayButtonsConsoleItem;
 import dev.tauri.jsg.core.common.integration.Integrations;
 import dev.tauri.jsg.core.common.item.JSGItem;
 import dev.tauri.jsg.core.common.item.JSGMusicDiscItem;
@@ -19,18 +20,20 @@ import dev.tauri.jsg.core.common.registry.CoreItems;
 import dev.tauri.jsg.core.common.registry.CoreTabs;
 import dev.tauri.jsg.core.common.registry.helper.CoreRegistryHelpers;
 import dev.tauri.jsg.core.common.sound.SoundEvent;
-import net.minecraft.Util;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class JSGItems {
@@ -44,20 +47,38 @@ public class JSGItems {
     public static final RegistryObject<JSGItem> ICON_WORMHOLE = Constants.JSG_ITEM_HELPER.builder("icon_wormhole").clearTooltip().buildGeneric();
 
     /**
-     * DHD power/control crystal
-     */
-    public static final RegistryObject<JSGItem> CRYSTAL_CONTROL_MILKYWAY_DHD = Constants.JSG_ITEM_HELPER.builder("crystal_control_dhd").setInTabs(List.of(CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get())).buildGeneric();
-    public static final RegistryObject<JSGItem> CRYSTAL_CONTROL_PEGASUS_DHD = Constants.JSG_ITEM_HELPER.builder("crystal_control_pegasus_dhd").setInTabs(List.of(CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get())).buildGeneric();
-
-    /**
      * DHD Parts
      */
-    public static final Map<DHDParts, RegistryObject<JSGItem>> MILKYWAY_DHD_PARTS = Util.make(new HashMap<>(), map -> {
-        Arrays.stream(DHDParts.values()).forEach(part -> map.put(part, Constants.JSG_ITEM_HELPER.builder("milkyway_dhd_" + part.name().toLowerCase()).setInTabs(List.of(CoreTabs.TAB_RESOURCES)).buildGeneric()));
-    });
-    public static final Map<DHDParts, RegistryObject<JSGItem>> PEGASUS_DHD_PARTS = Util.make(new HashMap<>(), map -> {
-        Arrays.stream(DHDParts.values()).forEach(part -> map.put(part, Constants.JSG_ITEM_HELPER.builder("pegasus_dhd_" + part.name().toLowerCase()).setInTabs(List.of(CoreTabs.TAB_RESOURCES)).buildGeneric()));
-    });
+    public static RegistryObject<DHDAbstractPartItem> MILKYWAY_DHD_CONTROL_CRYSTALS;
+    public static RegistryObject<DHDAbstractPartItem> MILKYWAY_DHD_BUTTONS_CONSOLE = null;
+    public static RegistryObject<DHDAbstractPartItem> MILKYWAY_DHD_MAIN_CRYSTAL;
+    public static RegistryObject<DHDAbstractPartItem> MILKYWAY_DHD_ACTIVATION_BUTTON = null;
+    public static RegistryObject<DHDAbstractPartItem> MILKYWAY_DHD_UPGRADES_COVER;
+
+    public static RegistryObject<DHDAbstractPartItem> PEGASUS_DHD_CONTROL_CRYSTALS;
+    public static RegistryObject<DHDAbstractPartItem> PEGASUS_DHD_BUTTONS_CONSOLE = null;
+    public static RegistryObject<DHDAbstractPartItem> PEGASUS_DHD_MAIN_CRYSTAL;
+    public static RegistryObject<DHDAbstractPartItem> PEGASUS_DHD_ACTIVATION_BUTTON = null;
+    public static RegistryObject<DHDAbstractPartItem> PEGASUS_DHD_UPGRADES_COVER;
+
+    public static RegistryObject<DHDAbstractPartItem> DHD_NAQUADAH_TANK;
+
+    static {
+        MILKYWAY_DHD_CONTROL_CRYSTALS = REGISTER.register("milkyway_dhd_control_crystals", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_BUTTONS_CONSOLE)));
+        MILKYWAY_DHD_BUTTONS_CONSOLE = REGISTER.register("milkyway_dhd_buttons_console", () -> new DHDMilkyWayButtonsConsoleItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_ACTIVATION_BUTTON)));
+        MILKYWAY_DHD_MAIN_CRYSTAL = REGISTER.register("milkyway_dhd_main_control_crystal", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.UNCOMMON), List.of(CoreTabs.TAB_RESOURCES, CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get()), true, 101).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_ACTIVATION_BUTTON)));
+        MILKYWAY_DHD_ACTIVATION_BUTTON = REGISTER.register("milkyway_dhd_activation_button", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 38).withPartsNeededBeforeAssembly(List.of(MILKYWAY_DHD_BUTTONS_CONSOLE)));
+        MILKYWAY_DHD_UPGRADES_COVER = REGISTER.register("milkyway_dhd_upgrades_cover", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), false, 108));
+
+        PEGASUS_DHD_CONTROL_CRYSTALS = REGISTER.register("pegasus_dhd_control_crystals", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(PEGASUS_DHD_BUTTONS_CONSOLE)));
+        PEGASUS_DHD_BUTTONS_CONSOLE = REGISTER.register("pegasus_dhd_buttons_console", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(PEGASUS_DHD_ACTIVATION_BUTTON)));
+        PEGASUS_DHD_MAIN_CRYSTAL = REGISTER.register("pegasus_dhd_main_control_crystal", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.UNCOMMON), List.of(CoreTabs.TAB_RESOURCES, CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get()), true, 101).withPartsNeededBeforeRemoval(List.of(PEGASUS_DHD_ACTIVATION_BUTTON)));
+        PEGASUS_DHD_ACTIVATION_BUTTON = REGISTER.register("pegasus_dhd_activation_button", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 38).withPartsNeededBeforeAssembly(List.of(PEGASUS_DHD_BUTTONS_CONSOLE)));
+        PEGASUS_DHD_UPGRADES_COVER = REGISTER.register("pegasus_dhd_upgrades_cover", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), false, 108));
+
+
+        DHD_NAQUADAH_TANK = REGISTER.register("dhd_naquadah_tank", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), false, 107).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_UPGRADES_COVER, PEGASUS_DHD_UPGRADES_COVER)));
+    }
 
     /**
      * These allow for dialing 8th glyph(cross dimension travel) and show different address spaces
@@ -74,8 +95,6 @@ public class JSGItems {
     public static final RegistryObject<JSGItem> HOLDER_CRYSTAL = Constants.JSG_ITEM_HELPER.builder("holder_crystal").clearTooltip().setInTabs(List.of(CoreTabs.TAB_RESOURCES)).buildGeneric();
     public static final RegistryObject<JSGItem> HOLDER_CRYSTAL_PEGASUS = Constants.JSG_ITEM_HELPER.builder("holder_crystal_pegasus").clearTooltip().setInTabs(List.of(CoreTabs.TAB_RESOURCES)).buildGeneric();
 
-    public static final RegistryObject<JSGItem> DHD_BRB = Constants.JSG_ITEM_HELPER.builder("dhd_brb").clearTooltip().setInTabs(List.of(CoreTabs.TAB_RESOURCES)).buildGeneric();
-    public static final RegistryObject<JSGItem> DHD_BBB = Constants.JSG_ITEM_HELPER.builder("dhd_bbb").clearTooltip().setInTabs(List.of(CoreTabs.TAB_RESOURCES)).buildGeneric();
     /**
      * TOOLS
      */

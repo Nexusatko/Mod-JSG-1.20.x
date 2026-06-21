@@ -413,13 +413,13 @@ public class JSGRecipeProvider extends RecipeProvider implements IConditionBuild
                 .pattern("CHN")
                 .pattern("III")
                 .define('P', CoreItemTags.PLATE_NAQUADAH_ALLOY)
-                .define('B', JSGItems.DHD_BRB.get())
+                .define('B', JSGItems.MILKYWAY_DHD_ACTIVATION_BUTTON.get())
                 .define('C', CoreItems.CIRCUIT_CONTROL_CRYSTAL.get())
                 .define('H', JSGItems.HOLDER_CRYSTAL.get())
                 .define('N', CoreItems.CIRCUIT_CONTROL_NAQUADAH.get())
                 .define('I', CoreItemTags.INGOT_NAQUADAH_ALLOY)
                 .unlockedBy("has_plate", has(CoreItemTags.PLATE_NAQUADAH_ALLOY))
-                .unlockedBy("has_button", has(JSGItems.DHD_BRB.get()))
+                .unlockedBy("has_button", has(JSGItems.MILKYWAY_DHD_ACTIVATION_BUTTON.get()))
                 .unlockedBy("has_crystal_circuit", has(CoreItems.CIRCUIT_CONTROL_CRYSTAL.get()))
                 .unlockedBy("has_crystal_holder", has(JSGItems.HOLDER_CRYSTAL.get()))
                 .unlockedBy("has_naquadah_circuit", has(CoreItems.CIRCUIT_CONTROL_NAQUADAH.get()))
@@ -432,20 +432,20 @@ public class JSGRecipeProvider extends RecipeProvider implements IConditionBuild
                 .pattern("CHN")
                 .pattern("III")
                 .define('P', CoreItemTags.PLATE_NAQUADAH_ALLOY)
-                .define('B', JSGItems.DHD_BBB.get())
+                .define('B', JSGItems.PEGASUS_DHD_ACTIVATION_BUTTON.get())
                 .define('C', CoreItems.CIRCUIT_CONTROL_CRYSTAL.get())
                 .define('H', JSGItems.HOLDER_CRYSTAL_PEGASUS.get())
                 .define('N', CoreItems.CIRCUIT_CONTROL_NAQUADAH.get())
                 .define('I', CoreItemTags.INGOT_NAQUADAH_ALLOY)
                 .unlockedBy("has_plate", has(CoreItemTags.PLATE_NAQUADAH_ALLOY))
-                .unlockedBy("has_button", has(JSGItems.DHD_BBB.get()))
+                .unlockedBy("has_button", has(JSGItems.PEGASUS_DHD_ACTIVATION_BUTTON.get()))
                 .unlockedBy("has_crystal_circuit", has(CoreItems.CIRCUIT_CONTROL_CRYSTAL.get()))
                 .unlockedBy("has_crystal_holder", has(JSGItems.HOLDER_CRYSTAL_PEGASUS.get()))
                 .unlockedBy("has_naquadah_circuit", has(CoreItems.CIRCUIT_CONTROL_NAQUADAH.get()))
                 .unlockedBy("has_naquadah_ingot", has(CoreItemTags.INGOT_NAQUADAH_ALLOY))
                 .save(pWriter);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JSGItems.CRYSTAL_CONTROL_MILKYWAY_DHD.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JSGItems.MILKYWAY_DHD_MAIN_CRYSTAL.get())
                 .group("jsg:control_crystal_dhd_milkyway")
                 .pattern(" BS")
                 .pattern("BCB")
@@ -458,7 +458,7 @@ public class JSGRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_circuit", has(CoreItems.CIRCUIT_CONTROL_NAQUADAH.get()))
                 .save(pWriter);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JSGItems.CRYSTAL_CONTROL_PEGASUS_DHD.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JSGItems.PEGASUS_DHD_MAIN_CRYSTAL.get())
                 .group("jsg:control_crystal_dhd_pegasus")
                 .pattern(" BS")
                 .pattern("BCB")
@@ -762,7 +762,7 @@ public class JSGRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_ingot", has(CoreItemTags.INGOT_NAQUADAH_ALLOY))
                 .save(pWriter);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JSGItems.DHD_BRB.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JSGItems.MILKYWAY_DHD_ACTIVATION_BUTTON.get())
                 .group("jsg:dhd_main_buttons")
                 .pattern("X#X")
                 .pattern("#G#")
@@ -775,7 +775,7 @@ public class JSGRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_pane", has(Tags.Items.GLASS_PANES_RED))
                 .save(pWriter);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JSGItems.DHD_BBB.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JSGItems.PEGASUS_DHD_ACTIVATION_BUTTON.get())
                 .group("jsg:dhd_main_buttons")
                 .pattern("X#X")
                 .pattern("#G#")

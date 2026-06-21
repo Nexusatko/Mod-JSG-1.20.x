@@ -4,10 +4,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.tauri.jsg.api.JSGApi;
+import dev.tauri.jsg.api.item.IDHDPartItem;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
 import dev.tauri.jsg.api.stargate.StargatePointOfOriginsDefaults;
 import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolMilkyWayEnum;
-import dev.tauri.jsg.common.dialhomedevice.DHDParts;
 import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.common.loader.ElementEnum;
 import dev.tauri.jsg.common.raycaster.RaycasterMilkyWayDHD;
@@ -40,12 +40,12 @@ public class DHDMilkyWayRenderer extends DHDAbstractRenderer<DHDMilkyWayRenderer
     @Override
     public List<RayCastedButton> getRaycasterButtons() {
         if (rendererState == null) return List.of();
-        if (!rendererState.isAssembled(DHDParts.BUTTON_CONSOLE_WITH_BUTTONS)) {
+        if (!rendererState.isAssembled(JSGItems.MILKYWAY_DHD_BUTTONS_CONSOLE.get())) {
             return RaycasterMilkyWayDHD.BUTTONS.stream()
                     .filter(btn -> btn.buttonId >= 100)
                     .toList();
         }
-        if (!rendererState.isAssembled(DHDParts.ACTIVATION_BUTTON)) {
+        if (!rendererState.isAssembled(JSGItems.MILKYWAY_DHD_ACTIVATION_BUTTON.get())) {
             return RaycasterMilkyWayDHD.BUTTONS.stream()
                     .filter(btn -> btn.buttonId != tileEntity.getSymbolType().getBRB().getId())
                     .toList();
@@ -60,10 +60,11 @@ public class DHDMilkyWayRenderer extends DHDAbstractRenderer<DHDMilkyWayRenderer
 
     @Override
     public void renderSymbols(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, DHDButtonsState buttonsState) {
+        if (!tileEntity.isAssembled(JSGItems.MILKYWAY_DHD_BUTTONS_CONSOLE.get())) return;
         CompoundTag compound = getNoteBookPage();
 
         for (SymbolMilkyWayEnum symbol : SymbolMilkyWayEnum.values()) {
-            if (symbol.brb() && !rendererState.isAssembled(DHDParts.BUTTON_CONSOLE_WITH_BUTTONS))
+            if (symbol.brb() && !rendererState.isAssembled(JSGItems.MILKYWAY_DHD_ACTIVATION_BUTTON.get()))
                 continue;
 
             poseStack.pushPose();
@@ -120,67 +121,72 @@ public class DHDMilkyWayRenderer extends DHDAbstractRenderer<DHDMilkyWayRenderer
     }
 
     @Override
-    public @NotNull PartRenderable getPartModelRenderable(DHDParts part) {
-        return switch (part) {
-            case CONTROL_CRYSTALS ->
-                    (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
-                        ElementEnum.MILKYWAY_DHD_CRYSTALS.bindTexture(rendererState.getBiomeOverlay())
-                                .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
-                    };
-            case BUTTON_CONSOLE_WITH_BUTTONS ->
-                    (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
-                        ElementEnum.MILKYWAY_DHD_BUTTON_CONSOLE.bindTexture(rendererState.getBiomeOverlay())
-                                .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
-                    };
-            case MAIN_CONTROL_CRYSTAL ->
-                    (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
-                        ElementEnum.MILKYWAY_DHD_CONTROL_CRYSTAL.bindTexture(rendererState.getBiomeOverlay())
-                                .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
-                    };
-            case ACTIVATION_BUTTON ->
-                    (poseStack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
-                        if (assembled) return;
-                        var symbol = tileEntity.getSymbolType().getBRB();
-                        var buttonsState = tileEntity.getStateManager().getButtonsState();
-                        poseStack.pushPose();
-                        // render symbol light emissive
-                        JSGApi.JSG_LOADERS_HOLDER.texture().getTexture(buttonsState.get(symbol).getTexture(rendererState.getBiomeOverlay())).bindTexture();
-                        symbol.getModel(tileEntity.getSymbolType().getPointOfOriginType(), tileEntity.getPointOfOrigin(), StargatePointOfOriginsDefaults.VARIANT_DHD_LIGHT)
-                                .render(poseStack, bufferSource, combinedLight, combinedOverlay, buttonsState.get(symbol).isActive(), r, g, b, a, false);
+    public @NotNull PartRenderable getPartModelRenderable(IDHDPartItem part) {
+        if (part == JSGItems.MILKYWAY_DHD_CONTROL_CRYSTALS.get()) {
+            return (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
+                ElementEnum.MILKYWAY_DHD_CRYSTALS.bindTexture(rendererState.getBiomeOverlay())
+                        .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
+            };
+        }
+        if (part == JSGItems.MILKYWAY_DHD_BUTTONS_CONSOLE.get()) {
+            return (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
+                ElementEnum.MILKYWAY_DHD_BUTTON_CONSOLE.bindTexture(rendererState.getBiomeOverlay())
+                        .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
+            };
+        }
+        if (part == JSGItems.MILKYWAY_DHD_MAIN_CRYSTAL.get()) {
+            return (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
+                ElementEnum.MILKYWAY_DHD_CONTROL_CRYSTAL.bindTexture(rendererState.getBiomeOverlay())
+                        .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
+            };
+        }
+        if (part == JSGItems.MILKYWAY_DHD_ACTIVATION_BUTTON.get()) {
+            return (poseStack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
+                if (assembled) return;
+                var symbol = tileEntity.getSymbolType().getBRB();
+                var buttonsState = tileEntity.getStateManager().getButtonsState();
+                poseStack.pushPose();
+                // render symbol light emissive
+                JSGApi.JSG_LOADERS_HOLDER.texture().getTexture(buttonsState.get(symbol).getTexture(rendererState.getBiomeOverlay())).bindTexture();
+                symbol.getModel(tileEntity.getSymbolType().getPointOfOriginType(), tileEntity.getPointOfOrigin(), StargatePointOfOriginsDefaults.VARIANT_DHD_LIGHT)
+                        .render(poseStack, bufferSource, combinedLight, combinedOverlay, buttonsState.get(symbol).isActive(), r, g, b, a, false);
 
-                        // render symbol base
-                        ElementEnum.MILKYWAY_DHD_BASE.bindTexture(rendererState.getBiomeOverlay());
-                        symbol.getModel(tileEntity.getSymbolType().getPointOfOriginType(), tileEntity.getPointOfOrigin(), StargatePointOfOriginsDefaults.VARIANT_DHD)
-                                .render(poseStack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
-                        poseStack.popPose();
-                    };
-            case NAQUADAH_TANK ->
-                    (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
-                        stack.pushPose();
-                        stack.translate(0, 0.252, -0.06);
-                        stack.mulPose(Axis.YP.rotationDegrees(180));
-                        ElementEnum.MILKYWAY_DHD_FLUID_TANK_BASE
-                                .bindTexture(rendererState.getBiomeOverlay())
-                                .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
-                        RenderSystem.enableBlend();
-                        TextureAtlasSprite sprite = BlockRenderer.getFluidTexture(new FluidStack(CoreFluids.MOLTEN_NAQUADAH_REFINED.still.get(), 1000), BlockRenderer.FluidTextureType.STILL);
-                        if (sprite != null) {
-                            ITexture.bindTextureWithMc(sprite.atlasLocation());
-                            ElementEnum.MILKYWAY_DHD_FLUID_TANK_FLUID
-                                    .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false, sprite);
-                        }
-                        ElementEnum.MILKYWAY_DHD_FLUID_TANK_GLASS
-                                .bindTexture(rendererState.getBiomeOverlay())
-                                .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
-                        RenderSystem.disableBlend();
-                        stack.popPose();
-                    };
-            case UPGRADES_COVER ->
-                    (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
-                        ElementEnum.MILKYWAY_DHD_UPGRADE_COVER.bindTexture(rendererState.getBiomeOverlay())
-                                .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
-                    };
-        };
+                // render symbol base
+                ElementEnum.MILKYWAY_DHD_BASE.bindTexture(rendererState.getBiomeOverlay());
+                symbol.getModel(tileEntity.getSymbolType().getPointOfOriginType(), tileEntity.getPointOfOrigin(), StargatePointOfOriginsDefaults.VARIANT_DHD)
+                        .render(poseStack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
+                poseStack.popPose();
+            };
+        }
+        if (part == JSGItems.DHD_NAQUADAH_TANK.get()) {
+            return (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
+                stack.pushPose();
+                stack.translate(0, 0.252, -0.06);
+                stack.mulPose(Axis.YP.rotationDegrees(180));
+                ElementEnum.MILKYWAY_DHD_FLUID_TANK_BASE
+                        .bindTexture(rendererState.getBiomeOverlay())
+                        .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
+                RenderSystem.enableBlend();
+                TextureAtlasSprite sprite = BlockRenderer.getFluidTexture(new FluidStack(CoreFluids.MOLTEN_NAQUADAH_REFINED.still.get(), 1000), BlockRenderer.FluidTextureType.STILL);
+                if (sprite != null) {
+                    ITexture.bindTextureWithMc(sprite.atlasLocation());
+                    ElementEnum.MILKYWAY_DHD_FLUID_TANK_FLUID
+                            .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false, sprite);
+                }
+                ElementEnum.MILKYWAY_DHD_FLUID_TANK_GLASS
+                        .bindTexture(rendererState.getBiomeOverlay())
+                        .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
+                RenderSystem.disableBlend();
+                stack.popPose();
+            };
+        }
+        if (part == JSGItems.MILKYWAY_DHD_UPGRADES_COVER.get()) {
+            return (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
+                ElementEnum.MILKYWAY_DHD_UPGRADE_COVER.bindTexture(rendererState.getBiomeOverlay())
+                        .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false);
+            };
+        }
+        throw new UnsupportedOperationException("Item " + part.toString() + " not supported as part of the DHD " + this.getClass().getCanonicalName());
     }
 
     @Override

@@ -175,7 +175,7 @@ public class JSGVillagers {
 
                 .setInput1(new ItemStack(Items.EMERALD,6))
                 .setInput2(new ItemStack(CoreItems.CRYSTAL_PEGASUS.get(),4))
-                .setOutput(new ItemStack(JSGItems.CRYSTAL_CONTROL_PEGASUS_DHD.get(),1))
+                .setOutput(new ItemStack(JSGItems.PEGASUS_DHD_MAIN_CRYSTAL.get(),1))
                 .setMaxUses(6)
                 .setXpPerTrade(20)
                 .setPriceMul(0.02f)
@@ -472,7 +472,7 @@ public class JSGVillagers {
 
                 .setInput1(new ItemStack(CoreItems.CRYSTAL_RED.get(),4))
                 .setInput2(new ItemStack(Items.EMERALD,3))
-                .setOutput(new ItemStack(JSGItems.CRYSTAL_CONTROL_MILKYWAY_DHD.get(),1))
+                .setOutput(new ItemStack(JSGItems.MILKYWAY_DHD_MAIN_CRYSTAL.get(),1))
                 .setMaxUses(5)
                 .setXpPerTrade(12)
                 .setPriceMul(0.02f)

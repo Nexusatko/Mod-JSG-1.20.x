@@ -1,6 +1,7 @@
 package dev.tauri.jsg.common.dialhomedevice.manager.state;
 
 import dev.tauri.jsg.api.dialhomedevice.manager.IDHDStateManager;
+import dev.tauri.jsg.api.item.IDHDPartItem;
 import dev.tauri.jsg.api.registry.JSGStateTypes;
 import dev.tauri.jsg.client.renderer.blockentity.dialhomedevice.DHDAbstractRendererState;
 import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
@@ -14,11 +15,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S extends DHDAbstractRendererState> extends AbstractDHDManager<DHD> implements IDHDStateManager {
     private PacketDistributor.TargetPoint targetPoint;
     protected DHDButtonsState buttonsState;
+    protected final List<IDHDPartItem> assembledParts = new ArrayList<>();
 
     public DHDAbstractStateManager(DHD dhd) {
         super(dhd);
@@ -32,11 +40,26 @@ public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S exten
         return buttonsState;
     }
 
+    @ParametersAreNonnullByDefault
+    public boolean isDHDPartAssembled(IDHDPartItem part) {
+        return assembledParts.contains(part);
+    }
+
+    public void disassemblePart(IDHDPartItem part) {
+        assembledParts.remove(part);
+        getAndSendState(CoreStateTypes.RENDERER_STATE.get());
+    }
+
+    public void assemblePart(IDHDPartItem part) {
+        assembledParts.add(part);
+        getAndSendState(CoreStateTypes.RENDERER_STATE.get());
+    }
+
     @Override
     public State getState(StateType stateType) {
         return stateType.stateSupplier()
                 .tryType(CoreStateTypes.BIOME_OVERRIDE_STATE, () -> new BiomeOverrideState(dhd.determineBiomeOverride()))
-                .tryType(CoreStateTypes.RENDERER_STATE, this::getRendererStateClient)
+                .tryType(CoreStateTypes.RENDERER_STATE, this::getRenderStateServer)
                 .tryType(JSGStateTypes.BUTTONS_STATE, this::getButtonsState)
                 .orElseGet(() -> null);
     }
@@ -60,12 +83,15 @@ public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S exten
         stateType.stateExecutor()
                 .tryType(CoreStateTypes.BIOME_OVERRIDE_STATE, () -> {
                     BiomeOverrideState overrideState = (BiomeOverrideState) state;
-
                     if (rendererStateClient != null) {
                         getRendererStateClient().biomeOverlay = overrideState.biomeOverride;
                     }
                 })
-                .tryType(CoreStateTypes.RENDERER_STATE, () -> setRendererStateClient(castState(state)))
+                .tryType(CoreStateTypes.RENDERER_STATE, () -> {
+                    setRendererStateClient(castState(state));
+                    assembledParts.clear();
+                    assembledParts.addAll(rendererStateClient.assembledParts);
+                })
                 .tryType(JSGStateTypes.BUTTONS_STATE, () -> {
                     buttonsState = (DHDButtonsState) state;
                 })
@@ -83,6 +109,12 @@ public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S exten
     protected S rendererStateClient = createRendererStateClient();
 
     public S getRendererStateClient() {
+        return rendererStateClient;
+    }
+
+    public S getRenderStateServer() {
+        rendererStateClient.assembledParts.clear();
+        rendererStateClient.assembledParts.addAll(assembledParts);
         return rendererStateClient;
     }
 
@@ -136,11 +168,20 @@ public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S exten
     public CompoundTag serializeNBT() {
         var compound = new CompoundTag();
         compound.put("buttonsState", buttonsState.serializeNBT());
+        var parts = new CompoundTag();
+        dhd.getAllParts().forEach(part -> parts.putBoolean(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(part.self())).toString(), isDHDPartAssembled(part)));
+        compound.put("parts", parts);
         return compound;
     }
 
     @Override
     public void deserializeNBT(CompoundTag compound) {
         buttonsState.deserializeNBT(compound.getCompound("buttonsState"));
+        var parts = compound.getCompound("parts");
+        assembledParts.clear();
+        dhd.getAllParts().forEach(part -> {
+            if (parts.getBoolean(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(part.self())).toString()))
+                assembledParts.add(part);
+        });
     }
 }

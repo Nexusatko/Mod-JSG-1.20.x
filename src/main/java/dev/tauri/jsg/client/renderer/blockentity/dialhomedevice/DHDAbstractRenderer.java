@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.tauri.jsg.api.config.JSGConfig;
 import dev.tauri.jsg.api.entity.StargateAddressData;
+import dev.tauri.jsg.api.item.IDHDPartItem;
 import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
-import dev.tauri.jsg.common.dialhomedevice.DHDParts;
 import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.core.client.renderer.BlockRenderer;
 import dev.tauri.jsg.core.client.renderer.IRaycasterButtonsRenderer;
@@ -84,8 +84,7 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
         poseStack.mulPose(Axis.YP.rotationDegrees(Objects.requireNonNull(level).getBlockState(tileEntity.getBlockPos()).getValue(JSGProperties.ROTATION_PROPERTY) * -22.5f));
 
         renderDHD(poseStack, bufferSource, combinedLight, combinedOverlay);
-        if (rendererState.isAssembled(DHDParts.BUTTON_CONSOLE_WITH_BUTTONS))
-            renderSymbols(poseStack, bufferSource, combinedLight, combinedOverlay, tileEntity.getStateManager().getButtonsState());
+        renderSymbols(poseStack, bufferSource, combinedLight, combinedOverlay, tileEntity.getStateManager().getButtonsState());
 
         var assemblyRenderTitleRunnable = renderAssembly(poseStack, bufferSource, combinedLight, combinedOverlay, showAssemblyHelper());
 
@@ -95,7 +94,10 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
 
         poseStack.popPose();
 
+        poseStack.pushPose();
+        poseStack.translate(0.5, 0.2, 0.5);
         assemblyRenderTitleRunnable.ifPresent(Runnable::run);
+        poseStack.popPose();
     }
 
     public abstract void renderSymbols(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, DHDButtonsState buttonsState);
@@ -189,15 +191,14 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
     }
 
     @NotNull
-    public abstract PartRenderable getPartModelRenderable(DHDParts part);
+    public abstract PartRenderable getPartModelRenderable(IDHDPartItem part);
 
     public abstract Item getNeededSchematic();
 
-    public boolean hasPartInHand(DHDParts part) {
+    public boolean hasPartInHand(IDHDPartItem part) {
         var player = Minecraft.getInstance().player;
         if (player == null) return false;
-        var item = tileEntity.getPartItem(part);
-        return player.getItemInHand(InteractionHand.MAIN_HAND).is(item) || player.getItemInHand(InteractionHand.OFF_HAND).is(item);
+        return player.getItemInHand(InteractionHand.MAIN_HAND).is(part.self()) || player.getItemInHand(InteractionHand.OFF_HAND).is(part.self());
     }
 
     public boolean showAssemblyHelper() {
@@ -215,12 +216,12 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
             stack.popPose();
         });
         if (!hasSchematic) return Optional.empty();
-        var nextPartOpt = DHDParts.getNextPart(rendererState::isAssembled);
+        var nextPartOpt = tileEntity.getNextPartToAssemble(rendererState::isAssembled);
         if (nextPartOpt.isEmpty()) return Optional.empty();
         var nextPart = nextPartOpt.get();
         var renderable = getPartModelRenderable(nextPart);
         var hasPart = hasPartInHand(nextPart);
-        var item = tileEntity.getPartItem(nextPart);
+        var item = nextPart.self();
         var r = hasPart ? 1f : 0.1f;
         var g = hasPart ? 1f : 0.1f;
         var b = hasPart ? 1f : 0.1f;
@@ -233,8 +234,9 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
         return Optional.of(() -> {
             stack.pushPose();
             stack.translate(0, 1.5, 0);
-            renderTitle(stack, bufferSource, "Needs a " + item.getDescription().getString());
-            stack.scale(0.7f, 0.7f, 0.7f);
+            renderTitle(stack, bufferSource, "Missing " + item.getDescription().getString());
+            //stack.scale(0.7f, 0.7f, 0.7f);
+            stack.translate(0, 0.3, 0);
             stack.mulPose(Axis.YP.rotationDegrees(JSGMinecraftHelper.getGUITicks() + partialTicks));
             Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(item), ItemDisplayContext.GROUND, combinedLight, combinedOverlay, stack, bufferSource, level, 0);
             stack.popPose();

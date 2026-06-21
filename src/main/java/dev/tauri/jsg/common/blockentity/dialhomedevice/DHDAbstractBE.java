@@ -5,13 +5,13 @@ import dev.tauri.jsg.api.config.JSGConfig;
 import dev.tauri.jsg.api.config.ingame.option.StargateConfigOptions;
 import dev.tauri.jsg.api.dialhomedevice.StargateDHD;
 import dev.tauri.jsg.api.integration.StargateComputerEvents;
+import dev.tauri.jsg.api.item.IDHDPartItem;
 import dev.tauri.jsg.api.stargate.Stargate;
 import dev.tauri.jsg.api.stargate.StargateClosedReasonEnum;
 import dev.tauri.jsg.api.stargate.result.StargateCloseResult;
 import dev.tauri.jsg.api.stargate.result.StargateOpenResult;
 import dev.tauri.jsg.common.advancements.JSGCriterions;
 import dev.tauri.jsg.common.blockentity.stargate.StargateAbstractBaseBE;
-import dev.tauri.jsg.common.dialhomedevice.DHDParts;
 import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.common.dialhomedevice.manager.DHDReactorManager;
 import dev.tauri.jsg.common.dialhomedevice.manager.state.DHDAbstractStateManager;
@@ -62,8 +62,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDHD, ILinkable<Stargate<?>>, BEStateProvider {
     // TODO: Refactor to use IUpgrade class
@@ -318,16 +320,40 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
     public void updateCrystal() {
     }
 
-    @NotNull
-    public abstract Item getPartItem(DHDParts part);
+    @Override
+    public abstract Item getControlCrystal();
 
     @ParametersAreNonnullByDefault
-    public void handleAssembleRequestFromClient(DHDParts part, boolean disassemble, ServerPlayer player, ItemStack stack) {
-
+    public void handleAssembleRequestFromClient(IDHDPartItem part, boolean disassemble, ServerPlayer player, ItemStack stack) {
+        var level = getLevel();
+        if (level == null || level.isClientSide()) return;
+        if (!getAllParts().contains(part)) return;
+        var hasPart = isAssembled(part);
+        if (disassemble == !hasPart) return;
+        if (disassemble)
+            getStateManager().disassemblePart(part);
+        else
+            getStateManager().assemblePart(part);
+        setChanged();
     }
 
-    public boolean isAssembled(DHDParts part) {
-        return false;
+    @ParametersAreNonnullByDefault
+    public boolean isAssembled(IDHDPartItem part) {
+        return getStateManager().isDHDPartAssembled(part);
+    }
+
+    public boolean isAssembled() {
+        return getAllParts().stream().filter(IDHDPartItem::isMandatory).allMatch(this::isAssembled);
+    }
+
+    /**
+     *
+     * @return all parts of the DHD - needs correct order
+     */
+    public abstract LinkedList<IDHDPartItem> getAllParts();
+
+    public Optional<IDHDPartItem> getNextPartToAssemble(Predicate<IDHDPartItem> isAssembledPredicate) {
+        return getAllParts().stream().filter((part) -> !isAssembledPredicate.test(part)).findFirst();
     }
 
     @Override

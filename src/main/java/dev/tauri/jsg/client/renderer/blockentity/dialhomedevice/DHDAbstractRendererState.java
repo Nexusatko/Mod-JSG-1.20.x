@@ -1,15 +1,16 @@
 package dev.tauri.jsg.client.renderer.blockentity.dialhomedevice;
 
-import dev.tauri.jsg.common.dialhomedevice.DHDParts;
+import dev.tauri.jsg.api.item.IDHDPartItem;
 import dev.tauri.jsg.core.common.entity.BiomeOverlayInstance;
 import dev.tauri.jsg.core.common.entity.State;
 import dev.tauri.jsg.core.common.registry.CoreBiomeOverlays;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class DHDAbstractRendererState extends State {
     public DHDAbstractRendererState() {
@@ -17,19 +18,15 @@ public abstract class DHDAbstractRendererState extends State {
     }
 
     public BiomeOverlayInstance biomeOverlay = CoreBiomeOverlays.NORMAL.get();
-    public final List<DHDParts> assembledParts = new ArrayList<>();
+    public final List<IDHDPartItem> assembledParts = new ArrayList<>();
 
     public BiomeOverlayInstance getBiomeOverlay() {
         if (biomeOverlay == null) return CoreBiomeOverlays.NORMAL.get();
         return biomeOverlay;
     }
 
-    public boolean isAssembled(DHDParts part) {
+    public boolean isAssembled(IDHDPartItem part) {
         return assembledParts.contains(part);
-    }
-
-    public boolean isAssembled() {
-        return Arrays.stream(DHDParts.values()).filter(DHDParts::isMandatory).allMatch(this::isAssembled);
     }
 
     @Override
@@ -41,7 +38,7 @@ public abstract class DHDAbstractRendererState extends State {
         } else
             buf.writeBoolean(false);
         buf.writeInt(assembledParts.size());
-        assembledParts.forEach(p -> buf.writeInt(p.ordinal()));
+        assembledParts.forEach(p -> buf.writeResourceLocation(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(p.self()))));
     }
 
     @Override
@@ -53,6 +50,6 @@ public abstract class DHDAbstractRendererState extends State {
         assembledParts.clear();
         var size = buf.readInt();
         for (int i = 0; i < size; i++)
-            assembledParts.add(DHDParts.values()[buf.readInt()]);
+            assembledParts.add((IDHDPartItem) ForgeRegistries.ITEMS.getValue(buf.readResourceLocation()));
     }
 }
