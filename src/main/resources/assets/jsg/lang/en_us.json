@@ -71,8 +71,8 @@
   "gui.jsg.ingame_config.enable_bury_state.comment": "When the inner space of the stargate is filled with blocks, should the gate become undialable?",
   "gui.jsg.ingame_config.allow_rig.title": "Random Incoming Generator",
   "gui.jsg.ingame_config.allow_rig.comment": "Allow spawning random incoming wormholes with mobs waves",
-  "gui.jsg.ingame_config.max_capacitors.title": "Enabled Capacitor Slots",
-  "gui.jsg.ingame_config.max_capacitors.comment": "Number of enabled capacitor slots",
+  "gui.jsg.ingame_config.max_energy_crystals.title": "Enabled Energy Crystals Slots",
+  "gui.jsg.ingame_config.max_energy_crystals.comment": "Number of enabled energy crystals slots",
   "gui.jsg.ingame_config.dhd_oc_press_sound.title": "DHD Button Sound when dialing",
   "gui.jsg.ingame_config.dhd_oc_press_sound.comment": "Play DHD button press sound when dialing via other method than DHD itself",
   "gui.jsg.ingame_config.allow_incoming_animation.title": "Incoming Animations",
@@ -544,7 +544,7 @@
 
   "_comment611": "===>>> General Stargate GUI <<<<<<<<<<<<<<<<<<<<<<",
 
-  "gui.stargate.capacitors": "Capacitors",
+  "gui.stargate.energy_crystals": "Energy Crystals",
 
   "_comment613": "===>>> Address Tab <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
 

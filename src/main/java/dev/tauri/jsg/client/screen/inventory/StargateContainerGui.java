@@ -356,7 +356,7 @@ public class StargateContainerGui extends TabbedContainerScreen<StargateContaine
     @Override
     protected void renderLabels(@NotNull GuiGraphics graphics, int mouseX, int mouseY) {
         RenderSystem.disableDepthTest();
-        String caps = I18n.format("gui.stargate.capacitors");
+        String caps = I18n.format("gui.stargate.energy_crystals");
         graphics.drawString(font, caps, this.imageWidth - 8 - font.width(caps), 16, 4210752, false);
 
         String energyPercent = String.format("%.2f", JSGEnergyStorage.getEnergyPercent(energyStored, maxEnergyStored) * 100) + " %";

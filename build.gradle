@@ -109,6 +109,7 @@ allprojects {
     repositories {
         gradlePluginPortal()
         mavenCentral()
+        mavenLocal()
         maven {
             name = 'MinecraftForge'
             url = 'https://maven.minecraftforge.net/'
@@ -156,6 +157,7 @@ allprojects {
 
         compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
         compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
+        runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 
         compileOnly fg.deobf("maven.modrinth:stellarview:k9iMuxYs")
 
