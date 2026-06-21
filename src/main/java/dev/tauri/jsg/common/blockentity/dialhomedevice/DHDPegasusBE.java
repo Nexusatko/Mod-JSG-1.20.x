@@ -41,6 +41,11 @@ public class DHDPegasusBE extends DHDAbstractBE {
     }
 
     @Override
+    public IDHDPartItem getFluidTankItemPart() {
+        return JSGItems.DHD_NAQUADAH_TANK.get();
+    }
+
+    @Override
     public ISoundEvent getButtonPressSound() {
         return JSGSoundEvents.DHD_PEGASUS_PRESS;
     }
