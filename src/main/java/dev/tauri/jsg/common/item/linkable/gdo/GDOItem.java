@@ -1,11 +1,11 @@
 package dev.tauri.jsg.common.item.linkable.gdo;
 
 import dev.tauri.jsg.api.config.JSGConfig;
+import dev.tauri.jsg.api.stargate.Stargate;
 import dev.tauri.jsg.api.stargate.iris.codesender.CodeSender;
 import dev.tauri.jsg.client.renderer.item.GarageDoorOpenerBEWLR;
 import dev.tauri.jsg.client.screen.gui.GDOVirtualGui;
 import dev.tauri.jsg.client.screen.provider.GDOVirtualGuiProvider;
-import dev.tauri.jsg.common.blockentity.stargate.StargateAbstractBaseBE;
 import dev.tauri.jsg.common.registry.tags.JSGBlockTags;
 import dev.tauri.jsg.core.common.helper.ItemHelper;
 import dev.tauri.jsg.core.common.helper.LinkingHelper;
@@ -67,7 +67,7 @@ public class GDOItem extends JSGItem {
         if (signal <= 0) return false;
         if (compound.getDouble("battery_percentage") <= 0) return false;
         BlockPos tilePos = BlockPos.of(compound.getLong("linked_gate_pos"));
-        if (sender.getWorld() == null || !(sender.getWorld().getBlockEntity(tilePos) instanceof StargateAbstractBaseBE gateTile))
+        if (sender.getWorld() == null || !(sender.getWorld().getBlockEntity(tilePos) instanceof Stargate<?> gateTile))
             return false;
         return gateTile.sendIrisCode(sender, stack.getOrCreateTag().getString("entered_code"));
     }
@@ -107,7 +107,7 @@ public class GDOItem extends JSGItem {
                 if (targetPos == null)
                     break;
 
-                var gateTile = (StargateAbstractBaseBE) world.getBlockEntity(targetPos);
+                var gateTile = (Stargate<?>) world.getBlockEntity(targetPos);
                 if (gateTile == null || !gateTile.isMerged()) {
                     blacklist.add(targetPos);
                     continue;
