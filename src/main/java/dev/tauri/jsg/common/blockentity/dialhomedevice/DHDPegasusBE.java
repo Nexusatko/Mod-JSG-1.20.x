@@ -2,6 +2,7 @@ package dev.tauri.jsg.common.blockentity.dialhomedevice;
 
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
 import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolPegasusEnum;
+import dev.tauri.jsg.common.dialhomedevice.DHDParts;
 import dev.tauri.jsg.common.dialhomedevice.manager.state.DHDAbstractStateManager;
 import dev.tauri.jsg.common.dialhomedevice.manager.state.DHDPegasusStateManager;
 import dev.tauri.jsg.common.registry.JSGBlockEntities;
@@ -15,6 +16,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 public class DHDPegasusBE extends DHDAbstractBE {
     public DHDPegasusBE(BlockPos pos, BlockState state) {
@@ -49,5 +51,11 @@ public class DHDPegasusBE extends DHDAbstractBE {
     @Override
     public ISoundEvent getBRBPressSound() {
         return JSGSoundEvents.DHD_PEGASUS_PRESS_BRB;
+    }
+
+    @Override
+    @NotNull
+    public Item getPartItem(DHDParts part) {
+        return JSGItems.PEGASUS_DHD_PARTS.get(part).get();
     }
 }

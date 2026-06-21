@@ -5,6 +5,7 @@ import dev.tauri.jsg.api.JSGApi;
 import dev.tauri.jsg.api.dialhomedevice.StargateDHD;
 import dev.tauri.jsg.api.stargate.StargateUpgrade;
 import dev.tauri.jsg.api.stargate.iris.EnumIrisType;
+import dev.tauri.jsg.common.dialhomedevice.DHDParts;
 import dev.tauri.jsg.common.item.CartridgeItem;
 import dev.tauri.jsg.common.item.admincontroller.AdminControllerItem;
 import dev.tauri.jsg.common.item.linkable.dialer.UniverseDialerItem;
@@ -18,6 +19,7 @@ import dev.tauri.jsg.core.common.registry.CoreItems;
 import dev.tauri.jsg.core.common.registry.CoreTabs;
 import dev.tauri.jsg.core.common.registry.helper.CoreRegistryHelpers;
 import dev.tauri.jsg.core.common.sound.SoundEvent;
+import net.minecraft.Util;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
@@ -27,10 +29,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("unused")
 public class JSGItems {
@@ -48,6 +48,16 @@ public class JSGItems {
      */
     public static final RegistryObject<JSGItem> CRYSTAL_CONTROL_MILKYWAY_DHD = Constants.JSG_ITEM_HELPER.builder("crystal_control_dhd").setInTabs(List.of(CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get())).buildGeneric();
     public static final RegistryObject<JSGItem> CRYSTAL_CONTROL_PEGASUS_DHD = Constants.JSG_ITEM_HELPER.builder("crystal_control_pegasus_dhd").setInTabs(List.of(CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get())).buildGeneric();
+
+    /**
+     * DHD Parts
+     */
+    public static final Map<DHDParts, RegistryObject<JSGItem>> MILKYWAY_DHD_PARTS = Util.make(new HashMap<>(), map -> {
+        Arrays.stream(DHDParts.values()).forEach(part -> map.put(part, Constants.JSG_ITEM_HELPER.builder("milkyway_dhd_" + part.name().toLowerCase()).setInTabs(List.of(CoreTabs.TAB_RESOURCES)).buildGeneric()));
+    });
+    public static final Map<DHDParts, RegistryObject<JSGItem>> PEGASUS_DHD_PARTS = Util.make(new HashMap<>(), map -> {
+        Arrays.stream(DHDParts.values()).forEach(part -> map.put(part, Constants.JSG_ITEM_HELPER.builder("pegasus_dhd_" + part.name().toLowerCase()).setInTabs(List.of(CoreTabs.TAB_RESOURCES)).buildGeneric()));
+    });
 
     /**
      * These allow for dialing 8th glyph(cross dimension travel) and show different address spaces

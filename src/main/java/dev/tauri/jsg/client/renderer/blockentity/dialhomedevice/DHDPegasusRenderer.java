@@ -1,27 +1,25 @@
 package dev.tauri.jsg.client.renderer.blockentity.dialhomedevice;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.tauri.jsg.api.JSGApi;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
 import dev.tauri.jsg.api.stargate.StargatePointOfOriginsDefaults;
 import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolPegasusEnum;
+import dev.tauri.jsg.common.dialhomedevice.DHDParts;
 import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.common.loader.ElementEnum;
 import dev.tauri.jsg.common.raycaster.RaycasterPegasusDHD;
 import dev.tauri.jsg.common.registry.JSGBlocks;
+import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.common.registry.JSGRaycasters;
-import dev.tauri.jsg.core.client.renderer.BlockRenderer;
-import dev.tauri.jsg.core.client.texture.ITexture;
 import dev.tauri.jsg.core.common.raycaster.Raycaster;
 import dev.tauri.jsg.core.common.raycaster.util.RayCastedButton;
-import dev.tauri.jsg.core.common.registry.CoreFluids;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -32,6 +30,17 @@ public class DHDPegasusRenderer extends DHDAbstractRenderer<DHDPegasusRendererSt
 
     @Override
     public List<RayCastedButton> getRaycasterButtons() {
+        if (rendererState == null) return List.of();
+        if (!rendererState.isAssembled(DHDParts.BUTTON_CONSOLE_WITH_BUTTONS)) {
+            return RaycasterPegasusDHD.BUTTONS.stream()
+                    .filter(btn -> btn.buttonId >= 100)
+                    .toList();
+        }
+        if (!rendererState.isAssembled(DHDParts.ACTIVATION_BUTTON)) {
+            return RaycasterPegasusDHD.BUTTONS.stream()
+                    .filter(btn -> btn.buttonId != tileEntity.getSymbolType().getBRB().getId())
+                    .toList();
+        }
         return RaycasterPegasusDHD.BUTTONS;
     }
 
@@ -45,6 +54,8 @@ public class DHDPegasusRenderer extends DHDAbstractRenderer<DHDPegasusRendererSt
         CompoundTag compound = getNoteBookPage();
 
         for (SymbolPegasusEnum symbol : SymbolPegasusEnum.values()) {
+            if (symbol.brb() && !rendererState.isAssembled(DHDParts.BUTTON_CONSOLE_WITH_BUTTONS))
+                continue;
             poseStack.pushPose();
             var btnColor = getColorByAddress(rendererState, compound, JSGSymbolTypes.PEGASUS.get(), symbol);
             var btnTex = buttonsState.get(symbol).getTexture(rendererState.getBiomeOverlay());
@@ -60,8 +71,10 @@ public class DHDPegasusRenderer extends DHDAbstractRenderer<DHDPegasusRendererSt
     @Override
     public void renderDHD(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
         ElementEnum.PEGASUS_DHD_BASE.bindTexture(rendererState.getBiomeOverlay()).render(poseStack, bufferSource, combinedLight, combinedOverlay);
-        ElementEnum.PEGASUS_DHD_BUTTON_CONSOLE.render(poseStack, bufferSource, combinedLight, combinedOverlay);
         ElementEnum.PEGASUS_DHD_CRYSTAL_HOLDER.render(poseStack, bufferSource, combinedLight, combinedOverlay);
+
+        /*
+        ElementEnum.PEGASUS_DHD_BUTTON_CONSOLE.render(poseStack, bufferSource, combinedLight, combinedOverlay);
         ElementEnum.PEGASUS_DHD_UPGRADE_COVER.render(poseStack, bufferSource, combinedLight, combinedOverlay);
         ElementEnum.PEGASUS_DHD_UPGRADE_CRYSTAL.bindTexture(rendererState.getBiomeOverlay()).render(poseStack, bufferSource, combinedLight, combinedOverlay);
 
@@ -77,11 +90,23 @@ public class DHDPegasusRenderer extends DHDAbstractRenderer<DHDPegasusRendererSt
             ElementEnum.PEGASUS_DHD_FLUID_TANK_FLUID.render(poseStack, bufferSource, combinedLight, combinedOverlay, sprite);
         }
         ElementEnum.PEGASUS_DHD_FLUID_TANK_GLASS.bindTexture(rendererState.getBiomeOverlay()).render(poseStack, bufferSource, combinedLight, combinedOverlay);
-        RenderSystem.disableBlend();
+        RenderSystem.disableBlend();*/
     }
 
     @Override
     public Block getDHDBlock() {
         return JSGBlocks.DHD_PEGASUS.get();
+    }
+
+    @Override
+    public @NotNull PartRenderable getPartModelRenderable(DHDParts part) {
+        return (poseStack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, alpha, assembled) -> {
+
+        };
+    }
+
+    @Override
+    public Item getNeededSchematic() {
+        return JSGItems.SCHEMATIC_PEGASUS.get();
     }
 }

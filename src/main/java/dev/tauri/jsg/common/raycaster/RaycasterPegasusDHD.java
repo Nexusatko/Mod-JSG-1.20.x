@@ -414,10 +414,10 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
 
             //DHD Glyph crystal - Top left slot
             new RayCastedButton(102, List.of(
-                    new Vector3f(0.127088f, 0.04991f, 0.396972f),
+                    new Vector3f(0.127088f, 0.058796f, 0.396972f),
                     new Vector3f(0.127088f, 0.058796f, 0.461906f),
                     new Vector3f(0.11727f, 0.058796f, 0.461906f),
-                    new Vector3f(0.11727f, 0.04991f, 0.396972f)
+                    new Vector3f(0.11727f, 0.058796f, 0.396972f)
             )),
 
             //Efficiency crystal - Top right slot

@@ -5,17 +5,22 @@ import com.mojang.math.Axis;
 import dev.tauri.jsg.api.config.JSGConfig;
 import dev.tauri.jsg.api.entity.StargateAddressData;
 import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
+import dev.tauri.jsg.common.dialhomedevice.DHDParts;
 import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.core.client.renderer.BlockRenderer;
 import dev.tauri.jsg.core.client.renderer.IRaycasterButtonsRenderer;
 import dev.tauri.jsg.core.client.renderer.LinkableRenderer;
+import dev.tauri.jsg.core.common.blockstate.JSGProperties;
 import dev.tauri.jsg.core.common.config.values.JSGConfigValue;
 import dev.tauri.jsg.core.common.entity.NotebookPageType;
+import dev.tauri.jsg.core.common.helper.JSGMinecraftHelper;
 import dev.tauri.jsg.core.common.item.notebook.NotebookItem;
 import dev.tauri.jsg.core.common.symbol.SymbolInterface;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
 import dev.tauri.jsg.core.common.util.vectors.Vector3f;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -23,11 +28,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
@@ -53,34 +64,38 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
         tileEntity = te;
         rendererState = (S) te.getStateManager().getRendererStateClient();
         this.partialTicks = partialTicks;
+        if (rendererState == null || te.getLevel() == null) return;
 
-        if (rendererState != null && te.getLevel() != null) {
-            this.level = te.getLevel();
-            level.updateSkyBrightness();
-            @SuppressWarnings("null")
-            BlockState state = te.getLevel().getBlockState(te.getBlockPos());
-            if (state.getBlock() != getDHDBlock()) return;
-            renderLink(te.getBlockPos(), te, poseStack, bufferSource);
-            renderRaycasterButtons(te, poseStack, bufferSource);
+        this.level = te.getLevel();
+        level.updateSkyBrightness();
+        @SuppressWarnings("null")
+        BlockState state = te.getLevel().getBlockState(te.getBlockPos());
+        if (state.getBlock() != getDHDBlock()) return;
+        renderLink(te.getBlockPos(), te, poseStack, bufferSource);
+        renderRaycasterButtons(te, poseStack, bufferSource);
 
-            poseStack.pushPose();
+        poseStack.pushPose();
 
-            if (state.getValue(dev.tauri.jsg.core.common.blockstate.JSGProperties.SNOWY)) {
-                BlockRenderer.renderBlock(level, te.getBlockPos(), Blocks.SNOW.defaultBlockState(), new BlockPos(0, 0, 0), poseStack, bufferSource, combinedLight, combinedOverlay);
-            }
+        if (state.getValue(JSGProperties.SNOWY)) {
+            BlockRenderer.renderBlock(level, te.getBlockPos(), Blocks.SNOW.defaultBlockState(), new BlockPos(0, 0, 0), poseStack, bufferSource, combinedLight, combinedOverlay);
+        }
 
-            poseStack.translate(0.5, 0, 0.5);
-            poseStack.mulPose(Axis.YP.rotationDegrees(Objects.requireNonNull(level).getBlockState(tileEntity.getBlockPos()).getValue(dev.tauri.jsg.core.common.blockstate.JSGProperties.ROTATION_PROPERTY) * -22.5f));
+        poseStack.translate(0.5, 0, 0.5);
+        poseStack.mulPose(Axis.YP.rotationDegrees(Objects.requireNonNull(level).getBlockState(tileEntity.getBlockPos()).getValue(JSGProperties.ROTATION_PROPERTY) * -22.5f));
 
-            renderDHD(poseStack, bufferSource, combinedLight, combinedOverlay);
+        renderDHD(poseStack, bufferSource, combinedLight, combinedOverlay);
+        if (rendererState.isAssembled(DHDParts.BUTTON_CONSOLE_WITH_BUTTONS))
             renderSymbols(poseStack, bufferSource, combinedLight, combinedOverlay, tileEntity.getStateManager().getButtonsState());
 
-            for (var symbol : tileEntity.getSymbolType().getValues()) {
-                Optional.ofNullable(tileEntity.getStateManager().getButtonsState().get(symbol)).ifPresent(s -> s.update(partialTicks));
-            }
+        var assemblyRenderTitleRunnable = renderAssembly(poseStack, bufferSource, combinedLight, combinedOverlay, showAssemblyHelper());
 
-            poseStack.popPose();
+        for (var symbol : tileEntity.getSymbolType().getValues()) {
+            Optional.ofNullable(tileEntity.getStateManager().getButtonsState().get(symbol)).ifPresent(s -> s.update(partialTicks));
         }
+
+        poseStack.popPose();
+
+        assemblyRenderTitleRunnable.ifPresent(Runnable::run);
     }
 
     public abstract void renderSymbols(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, DHDButtonsState buttonsState);
@@ -151,5 +166,82 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
                 compound = item.getTag();
         }
         return compound;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @ParametersAreNonnullByDefault
+    public void renderTitle(PoseStack stack, MultiBufferSource bufferSource, String title) {
+        var player = Minecraft.getInstance().player;
+        if (player == null) return;
+        stack.pushPose();
+        stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+        stack.translate(0, 0, -0.1);
+        var scale = 0.2f;
+        stack.scale(-0.025f * scale, -0.025f * scale, 0.025f * scale);
+        Matrix4f matrix4f = stack.last().pose();
+        float backgroundOpacityConfig = Minecraft.getInstance().options.getBackgroundOpacity(0.25f);
+        int backgroundOpacity = (int) (backgroundOpacityConfig * 255.0f) << 24;
+        Font font = Minecraft.getInstance().font;
+        float x = (float) (-font.width(title) / 2);
+        font.drawInBatch(title, x, 0, 553648127, false, matrix4f, bufferSource, Font.DisplayMode.SEE_THROUGH, backgroundOpacity, LightTexture.FULL_BRIGHT);
+        font.drawInBatch(title, x, 0, -1, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT);
+        stack.popPose();
+    }
+
+    @NotNull
+    public abstract PartRenderable getPartModelRenderable(DHDParts part);
+
+    public abstract Item getNeededSchematic();
+
+    public boolean hasPartInHand(DHDParts part) {
+        var player = Minecraft.getInstance().player;
+        if (player == null) return false;
+        var item = tileEntity.getPartItem(part);
+        return player.getItemInHand(InteractionHand.MAIN_HAND).is(item) || player.getItemInHand(InteractionHand.OFF_HAND).is(item);
+    }
+
+    public boolean showAssemblyHelper() {
+        var player = Minecraft.getInstance().player;
+        if (player == null) return false;
+        var item = getNeededSchematic();
+        return player.getItemInHand(InteractionHand.MAIN_HAND).is(item) || player.getItemInHand(InteractionHand.OFF_HAND).is(item);
+    }
+
+    public Optional<Runnable> renderAssembly(PoseStack stack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, boolean hasSchematic) {
+        rendererState.assembledParts.forEach(part -> {
+            var renderable = getPartModelRenderable(part);
+            stack.pushPose();
+            renderable.render(stack, bufferSource, combinedLight, combinedOverlay, partialTicks, 1, 1, 1, 1, true);
+            stack.popPose();
+        });
+        if (!hasSchematic) return Optional.empty();
+        var nextPartOpt = DHDParts.getNextPart(rendererState::isAssembled);
+        if (nextPartOpt.isEmpty()) return Optional.empty();
+        var nextPart = nextPartOpt.get();
+        var renderable = getPartModelRenderable(nextPart);
+        var hasPart = hasPartInHand(nextPart);
+        var item = tileEntity.getPartItem(nextPart);
+        var r = hasPart ? 1f : 0.1f;
+        var g = hasPart ? 1f : 0.1f;
+        var b = hasPart ? 1f : 0.1f;
+        var a = (float) (Math.sin((JSGMinecraftHelper.getGUITicks() + partialTicks) / 4f) / 2f + 0.5f) / 1.2f;
+
+        stack.pushPose();
+        renderable.render(stack, bufferSource, combinedLight, combinedOverlay, partialTicks, r, g, b, a, false);
+        stack.popPose();
+
+        return Optional.of(() -> {
+            stack.pushPose();
+            stack.translate(0, 1.5, 0);
+            renderTitle(stack, bufferSource, "Needs a " + item.getDescription().getString());
+            stack.scale(0.7f, 0.7f, 0.7f);
+            stack.mulPose(Axis.YP.rotationDegrees(JSGMinecraftHelper.getGUITicks() + partialTicks));
+            Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(item), ItemDisplayContext.GROUND, combinedLight, combinedOverlay, stack, bufferSource, level, 0);
+            stack.popPose();
+        });
+    }
+
+    public interface PartRenderable {
+        void render(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, float partialTick, float r, float g, float b, float alpha, boolean assembled);
     }
 }

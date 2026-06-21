@@ -11,6 +11,7 @@ import dev.tauri.jsg.api.stargate.result.StargateCloseResult;
 import dev.tauri.jsg.api.stargate.result.StargateOpenResult;
 import dev.tauri.jsg.common.advancements.JSGCriterions;
 import dev.tauri.jsg.common.blockentity.stargate.StargateAbstractBaseBE;
+import dev.tauri.jsg.common.dialhomedevice.DHDParts;
 import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.common.dialhomedevice.manager.DHDReactorManager;
 import dev.tauri.jsg.common.dialhomedevice.manager.state.DHDAbstractStateManager;
@@ -59,6 +60,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -314,6 +316,18 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
 
     // TODO(Mine): Update client about this change
     public void updateCrystal() {
+    }
+
+    @NotNull
+    public abstract Item getPartItem(DHDParts part);
+
+    @ParametersAreNonnullByDefault
+    public void handleAssembleRequestFromClient(DHDParts part, boolean disassemble, ServerPlayer player, ItemStack stack) {
+
+    }
+
+    public boolean isAssembled(DHDParts part) {
+        return false;
     }
 
     @Override

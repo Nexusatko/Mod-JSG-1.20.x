@@ -2,6 +2,7 @@ package dev.tauri.jsg.common.raycaster;
 
 import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
 import dev.tauri.jsg.common.packet.JSGPacketHandler;
+import dev.tauri.jsg.common.packet.packets.stargate.DHDAssemblyClickToServer;
 import dev.tauri.jsg.common.packet.packets.stargate.DHDButtonClickedToServer;
 import dev.tauri.jsg.core.common.raycaster.Raycaster;
 import dev.tauri.jsg.core.common.symbol.SymbolInterface;
@@ -35,13 +36,20 @@ public abstract class RaycasterDHD extends Raycaster {
 
 
     @Override
-    protected boolean buttonClicked(Level world, Player player, int button, BlockPos pos, InteractionHand hand) {
-        if (button != -1 && button < 100) {
-            if (world.isClientSide) {
+    protected boolean buttonClicked(Level world, Player player, int buttonId, BlockPos pos, InteractionHand hand) {
+        if (world.isClientSide) {
+            if (buttonId != -1 && buttonId < 100) {
                 var dhdTile = (DHDAbstractBE) world.getBlockEntity(pos);
                 if (dhdTile != null) {
-                    SymbolInterface symbol = dhdTile.getSymbolType().valueOf(button);
+                    SymbolInterface symbol = dhdTile.getSymbolType().valueOf(buttonId);
                     JSGPacketHandler.sendToServer(new DHDButtonClickedToServer(pos, symbol, isSneaking && symbol.brb()));
+                    return true;
+                }
+            }
+            if (buttonId >= 100) {
+                var dhdTile = (DHDAbstractBE) world.getBlockEntity(pos);
+                if (dhdTile != null) {
+                    JSGPacketHandler.sendToServer(new DHDAssemblyClickToServer(pos, buttonId));
                     return true;
                 }
             }
