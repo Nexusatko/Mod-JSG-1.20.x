@@ -17,6 +17,7 @@ import dev.tauri.jsg.core.common.helper.JSGMinecraftHelper;
 import dev.tauri.jsg.core.common.item.notebook.NotebookItem;
 import dev.tauri.jsg.core.common.symbol.SymbolInterface;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
+import dev.tauri.jsg.core.common.util.I18n;
 import dev.tauri.jsg.core.common.util.vectors.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -234,7 +235,7 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
         return Optional.of(() -> {
             stack.pushPose();
             stack.translate(0, 1.5, 0);
-            renderTitle(stack, bufferSource, "Missing " + item.getDescription().getString());
+            renderTitle(stack, bufferSource, I18n.format("item.jsg.dhd.assembly_helper.needed", item.getDescription().getString()));
             //stack.scale(0.7f, 0.7f, 0.7f);
             stack.translate(0, 0.3, 0);
             stack.mulPose(Axis.YP.rotationDegrees(JSGMinecraftHelper.getGUITicks() + partialTicks));

@@ -47,6 +47,11 @@ public abstract class RaycasterDHD extends Raycaster {
                         .filter(p -> dhdTile.getAllParts().contains(p))
                         .anyMatch(part -> !dhdTile.isAssembled(part)))
                     return false;
+                var neededRemovedBefore = dhdPart.getPartsNeededRemovedBeforeAssembly();
+                if (!neededRemovedBefore.isEmpty() && neededRemovedBefore.stream()
+                        .filter(p -> dhdTile.getAllParts().contains(p))
+                        .anyMatch(dhdTile::isAssembled))
+                    return false;
                 return dhdPart.getRaycasterButtonID() == buttonId;
             }
             if (item.is(CoreItems.JSG_SCREWDRIVER.get())) {
@@ -94,8 +99,12 @@ public abstract class RaycasterDHD extends Raycaster {
                         if (part.getPartsNeededAssembledBeforeAssembly().stream()
                                 .filter(p -> dhdTile.getAllParts().contains(p))
                                 .allMatch(dhdTile::isAssembled)) {
-                            JSGPacketHandler.sendToServer(new DHDAssemblyClickToServer(pos, part, false));
-                            return true;
+                            if (part.getPartsNeededRemovedBeforeAssembly().stream()
+                                    .filter(p -> dhdTile.getAllParts().contains(p))
+                                    .noneMatch(dhdTile::isAssembled)) {
+                                JSGPacketHandler.sendToServer(new DHDAssemblyClickToServer(pos, part, false));
+                                return true;
+                            }
                         }
                     }
                 }

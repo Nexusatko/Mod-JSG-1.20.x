@@ -12,6 +12,7 @@ import dev.tauri.jsg.common.item.linkable.gdo.GDOItem;
 import dev.tauri.jsg.common.item.stargate.IrisItem;
 import dev.tauri.jsg.common.item.stargate.dialhomedevice.part.DHDAbstractPartItem;
 import dev.tauri.jsg.common.item.stargate.dialhomedevice.part.DHDMilkyWayButtonsConsoleItem;
+import dev.tauri.jsg.common.item.stargate.dialhomedevice.part.DHDPegasusButtonsConsoleItem;
 import dev.tauri.jsg.core.common.integration.Integrations;
 import dev.tauri.jsg.core.common.item.JSGItem;
 import dev.tauri.jsg.core.common.item.JSGMusicDiscItem;
@@ -64,15 +65,15 @@ public class JSGItems {
     public static RegistryObject<DHDAbstractPartItem> DHD_NAQUADAH_TANK;
 
     static {
-        MILKYWAY_DHD_CONTROL_CRYSTALS = REGISTER.register("milkyway_dhd_control_crystals", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_BUTTONS_CONSOLE)));
+        MILKYWAY_DHD_CONTROL_CRYSTALS = REGISTER.register("milkyway_dhd_control_crystals", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_BUTTONS_CONSOLE)).withPartsNeededRemovedBeforeAssembly(List.of(MILKYWAY_DHD_BUTTONS_CONSOLE)));
         MILKYWAY_DHD_BUTTONS_CONSOLE = REGISTER.register("milkyway_dhd_buttons_console", () -> new DHDMilkyWayButtonsConsoleItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_ACTIVATION_BUTTON)));
-        MILKYWAY_DHD_MAIN_CRYSTAL = REGISTER.register("milkyway_dhd_main_control_crystal", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.UNCOMMON), List.of(CoreTabs.TAB_RESOURCES, CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get()), true, 101).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_ACTIVATION_BUTTON)));
+        MILKYWAY_DHD_MAIN_CRYSTAL = REGISTER.register("milkyway_dhd_main_control_crystal", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.UNCOMMON), List.of(CoreTabs.TAB_RESOURCES, CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get()), true, 101).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_ACTIVATION_BUTTON)).withPartsNeededRemovedBeforeAssembly(List.of(MILKYWAY_DHD_ACTIVATION_BUTTON)));
         MILKYWAY_DHD_ACTIVATION_BUTTON = REGISTER.register("milkyway_dhd_activation_button", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 38).withPartsNeededBeforeAssembly(List.of(MILKYWAY_DHD_BUTTONS_CONSOLE)));
         MILKYWAY_DHD_UPGRADES_COVER = REGISTER.register("milkyway_dhd_upgrades_cover", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), false, 108));
 
-        PEGASUS_DHD_CONTROL_CRYSTALS = REGISTER.register("pegasus_dhd_control_crystals", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(PEGASUS_DHD_BUTTONS_CONSOLE)));
-        PEGASUS_DHD_BUTTONS_CONSOLE = REGISTER.register("pegasus_dhd_buttons_console", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(PEGASUS_DHD_ACTIVATION_BUTTON)));
-        PEGASUS_DHD_MAIN_CRYSTAL = REGISTER.register("pegasus_dhd_main_control_crystal", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.UNCOMMON), List.of(CoreTabs.TAB_RESOURCES, CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get()), true, 101).withPartsNeededBeforeRemoval(List.of(PEGASUS_DHD_ACTIVATION_BUTTON)));
+        PEGASUS_DHD_CONTROL_CRYSTALS = REGISTER.register("pegasus_dhd_control_crystals", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(PEGASUS_DHD_BUTTONS_CONSOLE)).withPartsNeededRemovedBeforeAssembly(List.of(PEGASUS_DHD_BUTTONS_CONSOLE)));
+        PEGASUS_DHD_BUTTONS_CONSOLE = REGISTER.register("pegasus_dhd_buttons_console", () -> new DHDPegasusButtonsConsoleItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(PEGASUS_DHD_ACTIVATION_BUTTON)));
+        PEGASUS_DHD_MAIN_CRYSTAL = REGISTER.register("pegasus_dhd_main_control_crystal", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.UNCOMMON), List.of(CoreTabs.TAB_RESOURCES, CoreTabs.TAB_UPGRADES, CoreTabs.TAB_TRANSPORTATION.get()), true, 101).withPartsNeededBeforeRemoval(List.of(PEGASUS_DHD_ACTIVATION_BUTTON)).withPartsNeededRemovedBeforeAssembly(List.of(PEGASUS_DHD_ACTIVATION_BUTTON)));
         PEGASUS_DHD_ACTIVATION_BUTTON = REGISTER.register("pegasus_dhd_activation_button", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 38).withPartsNeededBeforeAssembly(List.of(PEGASUS_DHD_BUTTONS_CONSOLE)));
         PEGASUS_DHD_UPGRADES_COVER = REGISTER.register("pegasus_dhd_upgrades_cover", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), false, 108));
 

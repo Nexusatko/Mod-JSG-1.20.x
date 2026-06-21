@@ -133,12 +133,22 @@
 
   "_comment113": ">>> DHD Components <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
 
-  "item.jsg.dhd_brb": "Bright Red Button (BRB)",
-  "item.jsg.dhd_bbb": "Bright Blue Button (BBB)",
+  "item.jsg.dhd.assembly_helper.needed": "Missing %s",
+
+  "item.jsg.milkyway_dhd_buttons_console": "Milky Way DHD Buttons Console",
+  "item.jsg.milkyway_dhd_control_crystals": "Milky Way DHD Control Crystals",
+  "item.jsg.milkyway_dhd_main_control_crystal": "Milky Way DHD Control Crystal",
+  "item.jsg.milkyway_dhd_activation_button": "Bright Red Button (BRB)",
+  "item.jsg.milkyway_dhd_upgrades_cover": "Milky Way Upgrades Cover Plate",
+
+  "item.jsg.pegasus_dhd_buttons_console": "Pegasus DHD Buttons Console",
+  "item.jsg.pegasus_dhd_control_crystals": "Pegasus DHD Control Crystals",
+  "item.jsg.pegasus_dhd_main_control_crystal": "Pegasus DHD Control Crystal",
+  "item.jsg.pegasus_dhd_activation_button": "Bright Blue Button (BBB)",
+  "item.jsg.pegasus_dhd_upgrades_cover": "Pegasus Upgrades Cover Plate",
+
   "item.jsg.holder_crystal": "Milky Way Crystal Holder",
   "item.jsg.holder_crystal_pegasus": "Pegasus Crystal Holder",
-  "item.jsg.crystal_control_dhd": "Milky Way DHD Control Crystal",
-  "item.jsg.crystal_control_pegasus_dhd": "Pegasus DHD Control Crystal",
 
   "_comment114": ">>> Handheld devices <<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
 

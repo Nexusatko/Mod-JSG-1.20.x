@@ -40,6 +40,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -47,11 +48,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -330,10 +334,20 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
         if (!getAllParts().contains(part)) return;
         var hasPart = isAssembled(part);
         if (disassemble == !hasPart) return;
-        if (disassemble)
+        if (disassemble) {
+            var eventSucceed = ForgeEventFactory.onEntityDestroyBlock(player, getBlockPos(), getBlockState());
+            if (!eventSucceed) return;
             getStateManager().disassemblePart(part);
-        else
+            player.getInventory().add(new ItemStack(part.self()));
+            level.playSound(null, getBlockPos(), part.getDisassembleSound(), SoundSource.BLOCKS, 1, 1);
+        } else {
+            var eventCanceled = ForgeEventFactory.onBlockPlace(player, BlockSnapshot.create(level.dimension(), level, getBlockPos()), Direction.UP);
+            if (eventCanceled) return;
             getStateManager().assemblePart(part);
+            stack.shrink(1);
+            level.playSound(null, getBlockPos(), part.getAssembleSound(), SoundSource.BLOCKS, 1, 1);
+        }
+        level.gameEvent(GameEvent.BLOCK_CHANGE, getBlockPos(), GameEvent.Context.of(player));
         setChanged();
     }
 
@@ -457,8 +471,10 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
 
     @Override
     public boolean hasControlCrystal() {
-        return !getItemStackHandler().getStackInSlot(0).isEmpty();
+        return isAssembled((IDHDPartItem) getControlCrystal());
     }
+
+    public abstract IDHDPartItem getFluidTankItemPart();
 
 
     // -----------------------------------------------------------------------------
@@ -469,8 +485,9 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
         if (capability == ForgeCapabilities.ITEM_HANDLER) {
             return LazyOptional.of(this::getItemStackHandler).cast();
         }
-        if (capability == ForgeCapabilities.FLUID_HANDLER && (facing == null || facing == Direction.DOWN)) {
-            return LazyOptional.of(() -> getReactorManager().getTank()).cast();
+        if (capability == ForgeCapabilities.FLUID_HANDLER) {
+            if (isAssembled(getFluidTankItemPart()))
+                return LazyOptional.of(() -> getReactorManager().getTank()).cast();
         }
         return super.getCapability(capability, facing);
     }

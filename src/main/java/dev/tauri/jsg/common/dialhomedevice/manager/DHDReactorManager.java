@@ -35,6 +35,7 @@ public class DHDReactorManager extends AbstractDHDManager<DHDAbstractBE> impleme
         return state;
     }
 
+    // TODO: Link to assembled tank from item
     @Override
     public FluidTank getTank() {
         return tank;

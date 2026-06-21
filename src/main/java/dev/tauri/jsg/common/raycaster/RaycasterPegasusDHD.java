@@ -362,6 +362,16 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //DHD Immersive Slots - New Functions!!!
+            //Main DHD crystal
+            new RayCastedButton(101, List.of(
+                    new Vector3f(0.035586f, -0.073145f, 0.820082f),
+                    new Vector3f(0.063976f, -0.118672f, 0.847439f),
+                    new Vector3f(0.035587f, -0.164197f, 0.874798f),
+                    new Vector3f(-0.035394f, -0.164193f, 0.874799f),
+                    new Vector3f(-0.063782f, -0.118601f, 0.847402f),
+                    new Vector3f(-0.035393f, -0.073144f, 0.820084f)
+            )),
+
             //Button Console
             new RayCastedButton(100, List.of(
                     new Vector3f(-0.000998f, -0.542341f, 1.25871f),
@@ -402,16 +412,6 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
                     new Vector3f(0.273094f, -0.482858f, 1.22294f),
                     new Vector3f(0.185993f, -0.515601f, 1.24263f),
                     new Vector3f(0.09379f, -0.53561f, 1.25466f)
-            )),
-
-            //Main DHD crystal
-            new RayCastedButton(101, List.of(
-                    new Vector3f(0.035586f, -0.073145f, 0.820082f),
-                    new Vector3f(0.063976f, -0.118672f, 0.847439f),
-                    new Vector3f(0.035587f, -0.164197f, 0.874798f),
-                    new Vector3f(-0.035394f, -0.164193f, 0.874799f),
-                    new Vector3f(-0.063782f, -0.118601f, 0.847402f),
-                    new Vector3f(-0.035393f, -0.073144f, 0.820084f)
             )),
 
             //DHD Glyph crystal - Top left slot

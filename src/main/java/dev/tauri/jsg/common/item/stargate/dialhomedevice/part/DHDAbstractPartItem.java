@@ -21,6 +21,7 @@ public class DHDAbstractPartItem extends JSGItem implements IDHDPartItem {
     public final int raycasterId;
     protected List<Supplier<? extends IDHDPartItem>> partsNeededBeforeAssembly = new ArrayList<>();
     protected List<Supplier<? extends IDHDPartItem>> partsNeededBeforeRemoval = new ArrayList<>();
+    protected List<Supplier<? extends IDHDPartItem>> partsNeededRemovedBeforeAssembly = new ArrayList<>();
 
     public DHDAbstractPartItem(Properties properties, boolean mandatory, int raycasterId) {
         super(properties);
@@ -50,6 +51,11 @@ public class DHDAbstractPartItem extends JSGItem implements IDHDPartItem {
         return this;
     }
 
+    public DHDAbstractPartItem withPartsNeededRemovedBeforeAssembly(List<Supplier<? extends IDHDPartItem>> parts) {
+        this.partsNeededRemovedBeforeAssembly = parts;
+        return this;
+    }
+
     @Override
     @ParametersAreNonnullByDefault
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
@@ -74,5 +80,10 @@ public class DHDAbstractPartItem extends JSGItem implements IDHDPartItem {
     @Override
     public List<? extends IDHDPartItem> getPartsNeededToRemoveBeforeRemoval() {
         return partsNeededBeforeRemoval.stream().map(Supplier::get).toList();
+    }
+
+    @Override
+    public List<? extends IDHDPartItem> getPartsNeededRemovedBeforeAssembly() {
+        return partsNeededRemovedBeforeAssembly.stream().map(Supplier::get).toList();
     }
 }
