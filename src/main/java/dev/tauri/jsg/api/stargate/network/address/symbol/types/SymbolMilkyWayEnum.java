@@ -55,7 +55,8 @@ public enum SymbolMilkyWayEnum implements SymbolInterface {
     LYNX(35, 34, "Lynx", "35.obj"),
     ORION(36, 29, "Orion", "36.obj"),
     PISCISAUSTRINUS(37, 15, "Piscis Austrinus", "37.obj"),
-    BRB(38, -1, "Bright Red Button", "brb.obj");
+    AQUILA(38, 12, "Aquila", null),
+    BRB(39, -1, "Bright Red Button", "brb.obj");
 
     public static final float ANGLE_PER_GLYPH = 9.2307692f;
 
@@ -79,8 +80,13 @@ public enum SymbolMilkyWayEnum implements SymbolInterface {
         this.translationKey = "glyph.jsg.milkyway." + englishName.toLowerCase().replace(" ", "_");
         this.iconResource = JSGMapping.rl(JSGApi.MOD_ID, "textures/gui/symbol/milkyway/" + englishName.toLowerCase().replaceAll(" ", "_") + ".png");
 
-        this.modelResource = JSGApi.JSG_LOADERS_HOLDER.model().getModelResource("milkyway/dhd/buttons/" + model.split("\\.")[0] + "_base.obj");
-        this.modelResourceLight = JSGApi.JSG_LOADERS_HOLDER.model().getModelResource("milkyway/dhd/buttons/" + model);
+        if (model == null) {
+            this.modelResource = null;
+            this.modelResourceLight = null;
+        } else {
+            this.modelResource = JSGApi.JSG_LOADERS_HOLDER.model().getModelResource("milkyway/dhd/buttons/" + model.split("\\.")[0] + "_base.obj");
+            this.modelResourceLight = JSGApi.JSG_LOADERS_HOLDER.model().getModelResource("milkyway/dhd/buttons/" + model);
+        }
     }
 
     public boolean brb() {
@@ -154,8 +160,8 @@ public enum SymbolMilkyWayEnum implements SymbolInterface {
         var id = this.getId();
         while (true) {
             id += (previous ? -1 : 1);
-            if (id < 0) id = 37;
-            id = id % 38;
+            if (id < 0) id = 38;
+            id = id % 39;
             var symbol = JSGSymbolTypes.MILKYWAY.get().valueOf(id);
             if (symbol != null && symbol.isValidForAddress()) return symbol;
         }
