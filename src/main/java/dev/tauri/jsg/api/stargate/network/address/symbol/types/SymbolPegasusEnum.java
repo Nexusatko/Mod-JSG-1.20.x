@@ -19,7 +19,7 @@ import java.util.Objects;
 
 public enum SymbolPegasusEnum implements SymbolInterface {
     ROEHI(37, "Roehi", "37.obj", 11),
-    ONCEEL(36, "Once El", "36.obj", 35),
+    ONCE_EL(36, "Once El", "36.obj", 35),
     BASELAI(35, "Baselai", "35.obj", 33),
     SANDOVI(34, "Sandovi", "34.obj", 10),
     ILLUME(33, "Illume", "33.obj", 25),
@@ -27,7 +27,7 @@ public enum SymbolPegasusEnum implements SymbolInterface {
     SIBBRON(31, "Sibbron", "31.obj", 0), //36
     GILLTIN(30, "Gilltin", "30.obj", 9),
     // no texture exist, but it is showing ROEHI because while rendering pegasus gate idle cycle is going through 0 - 35
-    UNKNOW2(29, "Unknow2", "29.obj", 11),
+    UNKNOWN2(29, "Unknown2", "29.obj", 11),
     RAMNON(28, "Ramnon", "28.obj", 24),
     OLAVII(27, "Olavii", "27.obj", 14),
     HACEMILL(26, "Hacemill", "26.obj", 16),
@@ -38,8 +38,8 @@ public enum SymbolPegasusEnum implements SymbolInterface {
     ELENAMI(21, "Elenami", "21.obj", 7),
     TAHNAN(20, "Tahnan", "20.obj", 32),
     ZEO(19, "Zeo", "19.obj", 4),
-    // same as UNKNOW2
-    UNKNOW1(18, "Unknow1", "18.obj", 35),
+    // same as UNKNOWN2
+    UNKNOWN1(18, "Unknown1", "18.obj", 35),
     ROBANDUS(17, "Robandus", "17.obj", 1),
     RECKTIC(16, "Recktic", "16.obj", 6),
     ZAMILLOZ(15, "Zamilloz", "15.obj", 19),
@@ -48,7 +48,7 @@ public enum SymbolPegasusEnum implements SymbolInterface {
     ACJESIS(12, "Acjesis", "12.obj", 29),
     LENCHAN(11, "Lenchan", "11.obj", 22),
     ALURA(10, "Alura", "10.obj", 21),
-    CAPO(9, "Ca Po", "9.obj", 28),
+    CA_PO(9, "Ca Po", "9.obj", 28),
     LAYLOX(8, "Laylox", "8.obj", 34),
     ECRUMIG(7, "Ecrumig", "7.obj", 20),
     AVONIV(6, "Avoniv", "6.obj", 23),
@@ -164,7 +164,7 @@ public enum SymbolPegasusEnum implements SymbolInterface {
 
     @Override
     public boolean isValidForAddress() {
-        return !brb() && !origin() && this != UNKNOW1 && this != UNKNOW2;
+        return !brb() && !origin() && this != UNKNOWN1 && this != UNKNOWN2;
     }
 
 
@@ -182,7 +182,7 @@ public enum SymbolPegasusEnum implements SymbolInterface {
 
     @Override
     public boolean canBePressed() {
-        return !(this == UNKNOW1 || this == UNKNOW2);
+        return !(this == UNKNOWN1 || this == UNKNOWN2);
     }
 
     @SuppressWarnings("all")

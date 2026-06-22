@@ -10,11 +10,13 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
+import static dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolPegasusEnum.*;
+
 public class RaycasterPegasusDHD extends RaycasterDHD {
     public static final List<RayCastedButton> BUTTONS = List.of(
             //Outer ring
             //Danami
-            new RayCastedButton(0, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(DANAMI.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.331697f, 0.355341f, 0.790171f),
                     new Vector3f(0.227268f, 0.244546f, 0.870042f),
                     new Vector3f(0.124619f, 0.292153f, 0.841415f),
@@ -22,7 +24,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Arami
-            new RayCastedButton(1, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ARAMI.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.454873f, 0.242572f, 0.857983f),
                     new Vector3f(0.311907f, 0.167156f, 0.916579f),
                     new Vector3f(0.232858f, 0.240746f, 0.872328f),
@@ -30,7 +32,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Setas
-            new RayCastedButton(2, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(SETAS.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.528648f, 0.101636f, 0.942732f),
                     new Vector3f(0.362638f, 0.070406f, 0.974758f),
                     new Vector3f(0.315754f, 0.162006f, 0.919676f),
@@ -38,7 +40,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Aldeni
-            new RayCastedButton(3, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ALDENI.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.545028f, -0.052191f, 1.03523f),
                     new Vector3f(0.373963f, -0.035218f, 1.03827f),
                     new Vector3f(0.364325f, 0.064465f, 0.978331f),
@@ -46,7 +48,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Aaxel
-            new RayCastedButton(4, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(AAXEL.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.502237f, -0.202242f, 1.12546f),
                     new Vector3f(0.344656f, -0.13827f, 1.10024f),
                     new Vector3f(0.373308f, -0.041307f, 1.04193f),
@@ -54,7 +56,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Bydo
-            new RayCastedButton(5, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(BYDO.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.404913f, -0.332256f, 1.20364f),
                     new Vector3f(0.277891f, -0.227584f, 1.15395f),
                     new Vector3f(0.341729f, -0.143847f, 1.1036f),
@@ -62,7 +64,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Avoniv
-            new RayCastedButton(6, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(AVONIV.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.263602f, -0.428143f, 1.2613f),
                     new Vector3f(0.180905f, -0.29348f, 1.19357f),
                     new Vector3f(0.27301f, -0.232044f, 1.15663f),
@@ -70,7 +72,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Ecrumig
-            new RayCastedButton(7, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ECRUMIG.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.093618f, -0.479514f, 1.29219f),
                     new Vector3f(0.064206f, -0.328818f, 1.21482f),
                     new Vector3f(0.174598f, -0.29634f, 1.19529f),
@@ -78,7 +80,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Laylox
-            new RayCastedButton(8, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(LAYLOX.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.08662f, -0.4808f, 1.29297f),
                     new Vector3f(-0.059558f, -0.329769f, 1.21539f),
                     new Vector3f(0.057158f, -0.329769f, 1.21539f),
@@ -86,7 +88,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Ca po
-            new RayCastedButton(9, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(CA_PO.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.257579f, -0.431863f, 1.26354f),
                     new Vector3f(-0.176976f, -0.296228f, 1.19523f),
                     new Vector3f(-0.066585f, -0.328706f, 1.21476f),
@@ -94,7 +96,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Alura
-            new RayCastedButton(10, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ALURA.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.400733f, -0.338006f, 1.2071f),
                     new Vector3f(-0.275325f, -0.231832f, 1.1565f),
                     new Vector3f(-0.18322f, -0.293268f, 1.19344f),
@@ -102,7 +104,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Lenchan
-            new RayCastedButton(11, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(LENCHAN.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.50057f, -0.209399f, 1.12977f),
                     new Vector3f(-0.343946f, -0.143557f, 1.10342f),
                     new Vector3f(-0.280108f, -0.227294f, 1.15377f),
@@ -110,7 +112,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Acjesis
-            new RayCastedButton(12, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ACJESIS.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.546271f, -0.05998f, 1.03991f),
                     new Vector3f(-0.375403f, -0.040971f, 1.04173f),
                     new Vector3f(-0.346751f, -0.137935f, 1.10004f),
@@ -118,7 +120,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Dawnre
-            new RayCastedButton(13, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(DAWNRE.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.532883f, 0.09406f, 0.947285f),
                     new Vector3f(-0.366287f, 0.06481f, 0.978122f),
                     new Vector3f(-0.375926f, -0.034873f, 1.03806f),
@@ -126,7 +128,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Subido
-            new RayCastedButton(14, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(SUBIDO.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.461856f, 0.236029f, 0.861916f),
                     new Vector3f(-0.317587f, 0.162322f, 0.919485f),
                     new Vector3f(-0.364472f, 0.070723f, 0.974566f),
@@ -134,7 +136,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Zamilloz
-            new RayCastedButton(15, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ZAMILLOZ.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.340889f, 0.350541f, 0.793056f),
                     new Vector3f(-0.23458f, 0.241f, 0.872173f),
                     new Vector3f(-0.313629f, 0.16741f, 0.916425f),
@@ -142,7 +144,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Recktic
-            new RayCastedButton(16, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(RECKTIC.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.183089f, 0.425188f, 0.748169f),
                     new Vector3f(-0.12626f, 0.292317f, 0.841315f),
                     new Vector3f(-0.228909f, 0.244711f, 0.869942f),
@@ -150,7 +152,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Robandus
-            new RayCastedButton(17, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ROBANDUS.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.005557f, 0.45188f, 0.732118f),
                     new Vector3f(-0.004366f, 0.310712f, 0.830254f),
                     new Vector3f(-0.11949f, 0.294249f, 0.840154f),
@@ -158,7 +160,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Unknown 1
-            new RayCastedButton(18, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(UNKNOWN1.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.172469f, 0.427726f, 0.746644f),
                     new Vector3f(0.117893f, 0.294192f, 0.840188f),
                     new Vector3f(0.002769f, 0.310656f, 0.830288f),
@@ -167,7 +169,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
 
             //Inner Ring
             //Zeo
-            new RayCastedButton(19, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ZEO.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.056602f, -0.29104f, 1.22707f),
                     new Vector3f(-0.030412f, -0.137358f, 1.16711f),
                     new Vector3f(0.027995f, -0.137357f, 1.16711f),
@@ -176,7 +178,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Tahnan
-            new RayCastedButton(20, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(TAHNAN.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.165358f, -0.259584f, 1.20816f),
                     new Vector3f(-0.087789f, -0.12074f, 1.15711f),
                     new Vector3f(-0.032546f, -0.136992f, 1.16689f),
@@ -184,7 +186,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Elenami
-            new RayCastedButton(21, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ELENAMI.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.256303f, -0.19957f, 1.17207f),
                     new Vector3f(-0.135761f, -0.089056f, 1.13806f),
                     new Vector3f(-0.089669f, -0.1198f, 1.15655f),
@@ -192,7 +194,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Hamlinto
-            new RayCastedButton(22, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(HAMLINTO.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.319583f, -0.1175f, 1.12272f),
                     new Vector3f(-0.16913f, -0.04574f, 1.11202f),
                     new Vector3f(-0.137183f, -0.087644f, 1.13722f),
@@ -200,7 +202,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Salma
-            new RayCastedButton(23, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(SALMA.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.348338f, -0.022268f, 1.06545f),
                     new Vector3f(-0.184278f, 0.004514f, 1.0818f),
                     new Vector3f(-0.16994f, -0.044009f, 1.11098f),
@@ -208,7 +210,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Abrin
-            new RayCastedButton(24, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ABRIN.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.339454f, 0.075805f, 1.00648f),
                     new Vector3f(-0.179565f, 0.05626f, 1.05068f),
                     new Vector3f(-0.184389f, 0.006377f, 1.08068f),
@@ -216,7 +218,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Poco Re
-            new RayCastedButton(25, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(POCORE.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.293893f, 0.166092f, 0.952186f),
                     new Vector3f(-0.155502f, 0.103892f, 1.02204f),
                     new Vector3f(-0.178964f, 0.058053f, 1.0496f),
@@ -224,7 +226,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Hacemill
-            new RayCastedButton(26, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(HACEMILL.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.216592f, 0.238809f, 0.90846f),
                     new Vector3f(-0.114696f, 0.142246f, 0.998974f),
                     new Vector3f(-0.154254f, 0.10542f, 1.02112f),
@@ -232,7 +234,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Olavii
-            new RayCastedButton(27, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(OLAVII.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.115929f, 0.286076f, 0.880037f),
                     new Vector3f(-0.061569f, 0.167168f, 0.983988f),
                     new Vector3f(-0.112937f, 0.143345f, 0.998314f),
@@ -240,7 +242,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Ramnon
-            new RayCastedButton(28, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(RAMNON.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(-0.00281f, 0.302771f, 0.869998f),
                     new Vector3f(-0.001878f, 0.175956f, 0.978704f),
                     new Vector3f(-0.059489f, 0.167717f, 0.983658f),
@@ -248,7 +250,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Unknown 2
-            new RayCastedButton(29, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(UNKNOWN2.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.110504f, 0.287085f, 0.87943f),
                     new Vector3f(0.057908f, 0.167658f, 0.983694f),
                     new Vector3f(0.000297f, 0.175897f, 0.97874f),
@@ -256,7 +258,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Gilltin
-            new RayCastedButton(30, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(GILLTIN.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.211736f, 0.240717f, 0.907313f),
                     new Vector3f(0.111311f, 0.143173f, 0.998417f),
                     new Vector3f(0.059943f, 0.166996f, 0.984092f),
@@ -264,7 +266,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Sibbron
-            new RayCastedButton(31, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(SIBBRON.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.289915f, 0.168693f, 0.950624f),
                     new Vector3f(0.152543f, 0.105154f, 1.02128f),
                     new Vector3f(0.112985f, 0.141981f, 0.999134f),
@@ -272,7 +274,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Amiwill
-            new RayCastedButton(32, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(AMIWILL.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.336568f, 0.078816f, 1.00467f),
                     new Vector3f(0.177137f, 0.057723f, 1.0498f),
                     new Vector3f(0.153675f, 0.103562f, 1.02224f),
@@ -280,7 +282,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Illume
-            new RayCastedButton(33, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ILLUME.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.346641f, -0.019172f, 1.06359f),
                     new Vector3f(0.182427f, 0.006017f, 1.08089f),
                     new Vector3f(0.177604f, 0.055901f, 1.0509f),
@@ -288,7 +290,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Sandovi
-            new RayCastedButton(34, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(SANDOVI.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.319042f, -0.114655f, 1.12101f),
                     new Vector3f(0.16784f, -0.044359f, 1.11119f),
                     new Vector3f(0.182179f, 0.004165f, 1.08201f),
@@ -296,7 +298,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Baselai
-            new RayCastedButton(35, JSGSymbolTypes.PEGASUS, List.of( //pokracovat tady (continue here)
+            new RayCastedButton(BASELAI.id, JSGSymbolTypes.PEGASUS, List.of( //pokracovat tady (continue here)
                     new Vector3f(0.256762f, -0.197284f, 1.1707f),
                     new Vector3f(0.134957f, -0.087946f, 1.1374f),
                     new Vector3f(0.166903f, -0.046042f, 1.1122f),
@@ -304,7 +306,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Once El
-            new RayCastedButton(36, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ONCE_EL.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.166549f, -0.258106f, 1.20727f),
                     new Vector3f(0.087341f, -0.120022f, 1.15668f),
                     new Vector3f(0.133433f, -0.089277f, 1.1382f),
@@ -312,7 +314,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Roehi
-            new RayCastedButton(37, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(ROEHI.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0.05818f, -0.290529f, 1.22677f),
                     new Vector3f(0.030152f, -0.137109f, 1.16696f),
                     new Vector3f(0.085395f, -0.120856f, 1.15719f),
@@ -320,7 +322,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Big Blue Button
-            new RayCastedButton(38, JSGSymbolTypes.PEGASUS, List.of(
+            new RayCastedButton(BBB.id, JSGSymbolTypes.PEGASUS, List.of(
                     new Vector3f(0f, -0.134298f, 1.15577f),
                     new Vector3f(-0.027319f, -0.132555f, 1.15473f),
                     new Vector3f(-0.056276f, -0.126536f, 1.1511f),
@@ -363,7 +365,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
 
             //DHD Immersive Slots - New Functions!!!
             //Main DHD crystal
-            new RayCastedButton(101, List.of(
+            new RayCastedButton(CONTROL_CRYSTAL_IMM_BUTTON_ID, List.of(
                     new Vector3f(0.035586f, -0.073145f, 0.820082f),
                     new Vector3f(0.063976f, -0.118672f, 0.847439f),
                     new Vector3f(0.035587f, -0.164197f, 0.874798f),
@@ -373,7 +375,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Button Console
-            new RayCastedButton(100, List.of(
+            new RayCastedButton(BUTTONS_IMM_BUTTON_ID, List.of(
                     new Vector3f(-0.000998f, -0.542341f, 1.25871f),
                     new Vector3f(-0.095786f, -0.53561f, 1.25466f),
                     new Vector3f(-0.187988f, -0.515601f, 1.24263f),
@@ -415,7 +417,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //DHD Glyph crystal - Top left slot
-            new RayCastedButton(102, List.of(
+            new RayCastedButton(UPGRADE_SLOT_TL_IMM_BUTTON_ID, List.of(
                     new Vector3f(0.127088f, 0.058796f, 0.396972f),
                     new Vector3f(0.127088f, 0.058796f, 0.461906f),
                     new Vector3f(0.11727f, 0.058796f, 0.461906f),
@@ -423,7 +425,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Efficiency crystal - Top right slot
-            new RayCastedButton(103, List.of(
+            new RayCastedButton(UPGRADE_SLOT_TR_IMM_BUTTON_ID, List.of(
                     new Vector3f(-0.115337f, 0.058793f, 0.396972f),
                     new Vector3f(-0.115337f, 0.058796f, 0.461906f),
                     new Vector3f(-0.125155f, 0.058796f, 0.461906f),
@@ -431,7 +433,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Capacity crystal - Middle left slot
-            new RayCastedButton(104, List.of(
+            new RayCastedButton(UPGRADE_SLOT_ML_IMM_BUTTON_ID, List.of(
                     new Vector3f(0.083992f, 0.058793f, 0.266573f),
                     new Vector3f(0.083992f, 0.058796f, 0.331507f),
                     new Vector3f(0.074174f, 0.058796f, 0.331507f),
@@ -439,7 +441,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Avenger Virus crystal - Middle right slot
-            new RayCastedButton(105, List.of(
+            new RayCastedButton(UPGRADE_SLOT_MR_IMM_BUTTON_ID, List.of(
                     new Vector3f(-0.072241f, 0.058793f, 0.266573f),
                     new Vector3f(-0.072241f, 0.058796f, 0.331507f),
                     new Vector3f(-0.082059f, 0.058796f, 0.331507f),
@@ -447,7 +449,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Redirect crystal slot - Bottom slot
-            new RayCastedButton(106, List.of(
+            new RayCastedButton(UPGRADE_SLOT_B_IMM_BUTTON_ID, List.of(
                     new Vector3f(0.005876f, 0.058793f, 0.123055f),
                     new Vector3f(0.005876f, 0.058796f, 0.187989f),
                     new Vector3f(-0.003942f, 0.058796f, 0.187989f),
@@ -455,7 +457,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Naqudah tank
-            new RayCastedButton(107, List.of(
+            new RayCastedButton(FLUID_TANK_IMM_BUTTON_ID, List.of(
                     new Vector3f(0.046942f, 0.058796f, 0.251592f),
                     new Vector3f(0.046942f, 0.058796f, 0.476907f),
                     new Vector3f(-0.046942f, 0.058796f, 0.476907f),
@@ -463,7 +465,7 @@ public class RaycasterPegasusDHD extends RaycasterDHD {
             )),
 
             //Upgrade area cover
-            new RayCastedButton(108, List.of(
+            new RayCastedButton(UPGRADE_COVER_IMM_BUTTON_ID, List.of(
                     new Vector3f(0.055437f, 0.213666f, 0.135635f),
                     new Vector3f(0.076547f, 0.204962f, 0.208602f),
                     new Vector3f(0.100799f, 0.196163f, 0.281762f),

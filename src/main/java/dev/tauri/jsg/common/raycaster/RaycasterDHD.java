@@ -17,6 +17,17 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 public abstract class RaycasterDHD extends Raycaster {
+
+    public static final int CONTROL_CRYSTAL_IMM_BUTTON_ID = 101;
+    public static final int BUTTONS_IMM_BUTTON_ID = 100;
+    public static final int UPGRADE_SLOT_TL_IMM_BUTTON_ID = 102;
+    public static final int UPGRADE_SLOT_TR_IMM_BUTTON_ID = 103;
+    public static final int UPGRADE_SLOT_ML_IMM_BUTTON_ID = 104;
+    public static final int UPGRADE_SLOT_MR_IMM_BUTTON_ID = 105;
+    public static final int UPGRADE_SLOT_B_IMM_BUTTON_ID = 106;
+    public static final int FLUID_TANK_IMM_BUTTON_ID = 107;
+    public static final int UPGRADE_COVER_IMM_BUTTON_ID = 108;
+
     private boolean isSneaking = false;
 
     @Override

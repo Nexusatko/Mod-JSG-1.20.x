@@ -82,13 +82,13 @@ public class StargateReservedAddresses {
                             SymbolMilkyWayEnum.CANCER,
                             SymbolMilkyWayEnum.SCUTUM,
                             SymbolMilkyWayEnum.ERIDANUS,
-                            SymbolMilkyWayEnum.CANISMINOR,
-                            SymbolMilkyWayEnum.SERPENSCAPUT
+                            SymbolMilkyWayEnum.CANIS_MINOR,
+                            SymbolMilkyWayEnum.SERPENS_CAPUT
                     )
                     .setAddress(JSGSymbolTypes.PEGASUS.get(),
                             SymbolPegasusEnum.BYDO,
                             SymbolPegasusEnum.ZEO,
-                            SymbolPegasusEnum.ONCEEL,
+                            SymbolPegasusEnum.ONCE_EL,
                             SymbolPegasusEnum.DAWNRE,
                             SymbolPegasusEnum.RAMNON,
                             SymbolPegasusEnum.GILLTIN,
@@ -110,12 +110,12 @@ public class StargateReservedAddresses {
             new AddressesBuilder()
                     .setAddress(JSGSymbolTypes.MILKYWAY.get(),
                             SymbolMilkyWayEnum.TAURUS,
-                            SymbolMilkyWayEnum.SERPENSCAPUT,
+                            SymbolMilkyWayEnum.SERPENS_CAPUT,
                             SymbolMilkyWayEnum.CAPRICORNUS,
                             SymbolMilkyWayEnum.MONOCEROS,
                             SymbolMilkyWayEnum.SAGITTARIUS,
                             SymbolMilkyWayEnum.ORION,
-                            SymbolMilkyWayEnum.CANISMINOR,
+                            SymbolMilkyWayEnum.CANIS_MINOR,
                             SymbolMilkyWayEnum.AURIGA
                     )
                     .setAddress(JSGSymbolTypes.PEGASUS.get(),
@@ -144,7 +144,7 @@ public class StargateReservedAddresses {
                     .setAddress(JSGSymbolTypes.MILKYWAY.get(),
                             SymbolMilkyWayEnum.LYNX,
                             SymbolMilkyWayEnum.VIRGO,
-                            SymbolMilkyWayEnum.CANISMINOR,
+                            SymbolMilkyWayEnum.CANIS_MINOR,
                             SymbolMilkyWayEnum.ERIDANUS,
                             SymbolMilkyWayEnum.CENTAURUS,
                             SymbolMilkyWayEnum.EQUULEUS,
@@ -177,17 +177,17 @@ public class StargateReservedAddresses {
                     .setAddress(JSGSymbolTypes.MILKYWAY.get(),
                             SymbolMilkyWayEnum.MICROSCOPIUM,
                             SymbolMilkyWayEnum.PISCES,
-                            SymbolMilkyWayEnum.PISCISAUSTRINUS,
+                            SymbolMilkyWayEnum.PISCIS_AUSTRINUS,
                             SymbolMilkyWayEnum.SCUTUM,
                             SymbolMilkyWayEnum.ORION,
-                            SymbolMilkyWayEnum.SERPENSCAPUT,
+                            SymbolMilkyWayEnum.SERPENS_CAPUT,
                             SymbolMilkyWayEnum.GEMINI,
                             SymbolMilkyWayEnum.NORMA
                     )
                     .setAddress(JSGSymbolTypes.PEGASUS.get(),
                             SymbolPegasusEnum.OLAVII,
                             SymbolPegasusEnum.BASELAI,
-                            SymbolPegasusEnum.CAPO,
+                            SymbolPegasusEnum.CA_PO,
                             SymbolPegasusEnum.ZAMILLOZ,
                             SymbolPegasusEnum.TAHNAN,
                             SymbolPegasusEnum.ILLUME,
