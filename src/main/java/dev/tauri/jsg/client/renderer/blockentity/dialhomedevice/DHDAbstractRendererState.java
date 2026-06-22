@@ -1,5 +1,6 @@
 package dev.tauri.jsg.client.renderer.blockentity.dialhomedevice;
 
+import dev.tauri.jsg.api.dialhomedevice.DHDReactorState;
 import dev.tauri.jsg.api.item.IDHDPartItem;
 import dev.tauri.jsg.core.common.entity.BiomeOverlayInstance;
 import dev.tauri.jsg.core.common.entity.State;
@@ -21,6 +22,7 @@ public abstract class DHDAbstractRendererState extends State {
     public final List<IDHDPartItem> assembledParts = new ArrayList<>();
     public int naquadahAmount;
     public int naquadahMaxAmount;
+    public DHDReactorState reactorState = DHDReactorState.NO_CRYSTAL;
 
     public BiomeOverlayInstance getBiomeOverlay() {
         if (biomeOverlay == null) return CoreBiomeOverlays.NORMAL.get();
@@ -43,6 +45,7 @@ public abstract class DHDAbstractRendererState extends State {
         assembledParts.forEach(p -> buf.writeResourceLocation(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(p.self()))));
         buf.writeInt(naquadahAmount);
         buf.writeInt(naquadahMaxAmount);
+        buf.writeInt(reactorState.ordinal());
     }
 
     @Override
@@ -57,5 +60,6 @@ public abstract class DHDAbstractRendererState extends State {
             assembledParts.add((IDHDPartItem) ForgeRegistries.ITEMS.getValue(buf.readResourceLocation()));
         naquadahAmount = buf.readInt();
         naquadahMaxAmount = buf.readInt();
+        reactorState = DHDReactorState.values()[buf.readInt()];
     }
 }

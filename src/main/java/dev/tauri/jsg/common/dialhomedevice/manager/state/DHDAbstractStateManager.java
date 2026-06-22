@@ -117,6 +117,7 @@ public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S exten
         rendererStateClient.assembledParts.addAll(assembledParts);
         rendererStateClient.naquadahAmount = dhd.getReactorManager().getTank().getFluidAmount();
         rendererStateClient.naquadahMaxAmount = dhd.getReactorManager().getTank().getCapacity();
+        rendererStateClient.reactorState = dhd.getReactorManager().getState();
         return rendererStateClient;
     }
 

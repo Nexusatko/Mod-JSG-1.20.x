@@ -121,6 +121,11 @@ public class DHDMilkyWayRenderer extends DHDAbstractRenderer<DHDMilkyWayRenderer
     }
 
     @Override
+    protected IDHDPartItem getUpgradesCover(){
+        return JSGItems.MILKYWAY_DHD_UPGRADES_COVER.get();
+    }
+
+    @Override
     public @NotNull PartRenderable getPartModelRenderable(IDHDPartItem part) {
         if (part == JSGItems.MILKYWAY_DHD_CONTROL_CRYSTALS.get()) {
             return (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {

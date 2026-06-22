@@ -13,8 +13,6 @@ import dev.tauri.jsg.core.common.util.RotationUtil;
 import dev.tauri.jsg.core.common.util.math.MathHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,7 +37,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -142,13 +139,8 @@ public abstract class DHDAbstractBlock extends TickableBEBlock implements IHighl
         var playerRot = player.getYRot();
         var dhdRot = ((float) state.getValue(JSGProperties.ROTATION_PROPERTY)) * 22.5f;
         boolean backActivation = RotationUtil.getClosestAngleDistance(playerRot, dhdRot, false) >= (180 - 45);
-        if (!backActivation || player.isShiftKeyDown()) return InteractionResult.FAIL;
+        if (!backActivation || player.isShiftKeyDown()) return InteractionResult.sidedSuccess(level.isClientSide());
         if (!(level.getBlockEntity(pos) instanceof DHDAbstractBE dhd)) return InteractionResult.FAIL;
-        if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, null)) {
-            if (!level.isClientSide())
-                level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS, 1, 1);
-            return InteractionResult.sidedSuccess(level.isClientSide());
-        }
         dhd.tryInsertUpgrade(player, hand);
         return InteractionResult.sidedSuccess(level.isClientSide());
     }

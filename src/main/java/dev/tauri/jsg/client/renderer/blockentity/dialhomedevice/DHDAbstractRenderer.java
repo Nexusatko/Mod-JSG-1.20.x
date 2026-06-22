@@ -19,6 +19,7 @@ import dev.tauri.jsg.core.common.symbol.SymbolInterface;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
 import dev.tauri.jsg.core.common.util.I18n;
 import dev.tauri.jsg.core.common.util.vectors.Vector3f;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
@@ -44,10 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> implements LinkableRenderer, BlockEntityRenderer<DHDAbstractBE>, IRaycasterButtonsRenderer {
@@ -106,10 +104,12 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
         renderNaquadahTankTooltip(poseStack, bufferSource, combinedLight, combinedOverlay);
     }
 
+    protected abstract IDHDPartItem getUpgradesCover();
+
     public void renderNaquadahTankTooltip(PoseStack stack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
         if (!Optional.ofNullable(Minecraft.getInstance().player).map(LocalPlayer::isShiftKeyDown).orElse(false))
             return;
-        if (!tileEntity.isAssembled(tileEntity.getFluidTankItemPart()))
+        if (tileEntity.isAssembled(getUpgradesCover()))
             return;
 
         var btn = getRaycaster().getRaycastedButton(level, tileEntity.getBlockPos(), Minecraft.getInstance().player, InteractionHand.MAIN_HAND);
@@ -119,7 +119,7 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
         stack.pushPose();
         stack.translate(0.5, 0, 0.5);
         stack.mulPose(Axis.YP.rotationDegrees(Objects.requireNonNull(level).getBlockState(tileEntity.getBlockPos()).getValue(JSGProperties.ROTATION_PROPERTY) * -22.5f));
-        stack.translate(0, 0.55, -0.2);
+        stack.translate(0, 0.4, -0.4);
         //stack.mulPose(Axis.YN.rotationDegrees(Objects.requireNonNull(level).getBlockState(tileEntity.getBlockPos()).getValue(JSGProperties.ROTATION_PROPERTY) * -22.5f));
 
         var scale = 0.1f;
@@ -129,9 +129,12 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
         int backgroundOpacity = (int) (backgroundOpacityConfig * 255.0f) << 24;
         Font font = Minecraft.getInstance().font;
         AtomicInteger i = new AtomicInteger(0);
-        List.of(
-                Component.literal(rendererState.naquadahAmount + "mB/" + rendererState.naquadahMaxAmount + "mB")
-        ).forEach(component -> {
+        Util.make(new ArrayList<Component>(), list -> {
+            list.add(Component.translatable("gui.dhd.reactorStatus", I18n.format("gui.dhd.reactor." + rendererState.reactorState.name().toLowerCase())));
+            if (!tileEntity.isAssembled(tileEntity.getFluidTankItemPart()))
+                return;
+            list.add(Component.literal(rendererState.naquadahAmount + "mB/" + rendererState.naquadahMaxAmount + "mB"));
+        }).forEach(component -> {
             var xOffset = font.width(component) / 2;
             font.drawInBatch(component, -xOffset, i.get() * 10, -1, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, backgroundOpacity, LightTexture.FULL_BRIGHT);
             //font.drawInBatch(component, 0, i.get() * 10, -1, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT);

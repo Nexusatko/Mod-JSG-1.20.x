@@ -26,6 +26,9 @@ public class DHDReactorManager extends AbstractDHDManager<DHDAbstractBE> impleme
     protected Predicate<FluidTank> canStartOrContinueReaction;
     protected Function<FluidTank, Integer> energyFromOneMb;
 
+    protected int lastAmount = 0;
+    protected DHDReactorState lastState = null;
+
     public DHDReactorManager(DHDAbstractBE dhd, Supplier<FluidTank> tankSupplier, Predicate<FluidTank> canStartOrContinueReaction, Function<FluidTank, Integer> energyFromOneMb) {
         super(dhd);
         this.tank = tankSupplier.get();
@@ -43,14 +46,16 @@ public class DHDReactorManager extends AbstractDHDManager<DHDAbstractBE> impleme
         return tank;
     }
 
-    protected int lastAmount = 0;
-
     @Override
     public void tick(@NotNull Level level) {
         if (level.isClientSide()) return;
 
         if (lastAmount != getTank().getFluidAmount() && level.getGameTime() % 20 == 0) {
             lastAmount = getTank().getFluidAmount();
+            dhd.getStateManager().getAndSendState(CoreStateTypes.RENDERER_STATE.get());
+        }
+        if (state != lastState) {
+            lastState = state;
             dhd.getStateManager().getAndSendState(CoreStateTypes.RENDERER_STATE.get());
         }
 

@@ -591,17 +591,14 @@
 
   "_comment617": "===>>> General DHD GUI <<<<<<<<<<<<<<<<<<<<<<<<<<<",
 
-  "gui.dhd.crystalStatus": "Control crystal:",
-  "gui.dhd.linkStatus": "Subspace link status:",
-  "gui.dhd.reactorStatus": "Cold fusion reactor:",
+  "gui.dhd.reactorStatus": "Cold fusion reactor: %s",
 
-  "gui.dhd.no_crystal": "Crystal missing",
-  "gui.dhd.crystal_ok": "In place",
-  "gui.dhd.not_linked": "Not linked",
-  "gui.dhd.linked": "Linked",
-  "gui.dhd.no_fuel": "No fuel",
-  "gui.dhd.standby": "Stand-by",
-  "gui.dhd.running": "Running",
+  "gui.dhd.reactor.online": "Running",
+  "gui.dhd.reactor.not_linked": "Not linked",
+  "gui.dhd.reactor.no_fuel": "No fuel",
+  "gui.dhd.reactor.standby": "Stand-by",
+  "gui.dhd.reactor.no_crystal": "Crystal missing",
+  "gui.dhd.reactor.no_fluid_tank": "Fluid tank missing",
 
   "_comment618": ">>> GDO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
 

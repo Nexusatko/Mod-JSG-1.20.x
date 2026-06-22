@@ -5,6 +5,7 @@ import dev.tauri.jsg.common.blockentity.dialhomedevice.DHDAbstractBE;
 import dev.tauri.jsg.common.packet.JSGPacketHandler;
 import dev.tauri.jsg.common.packet.packets.stargate.DHDAssemblyClickToServer;
 import dev.tauri.jsg.common.packet.packets.stargate.DHDButtonClickedToServer;
+import dev.tauri.jsg.common.packet.packets.stargate.DHDFluidInsertionToServer;
 import dev.tauri.jsg.core.common.raycaster.Raycaster;
 import dev.tauri.jsg.core.common.registry.CoreItems;
 import dev.tauri.jsg.core.common.symbol.SymbolInterface;
@@ -13,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 public abstract class RaycasterDHD extends Raycaster {
     private boolean isSneaking = false;
@@ -37,6 +39,7 @@ public abstract class RaycasterDHD extends Raycaster {
         if (dhdTile != null) {
             if (!dhdTile.isAssembled(getDHDButtonsConsolePart()) && buttonId < 100) return false;
             var item = player.getItemInHand(hand);
+            var fluidCap = item.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
             if (item.getItem() instanceof IDHDPartItem dhdPart) {
                 if (dhdTile.isAssembled(dhdPart))
                     return false;
@@ -54,7 +57,7 @@ public abstract class RaycasterDHD extends Raycaster {
                     return false;
                 return dhdPart.getRaycasterButtonID() == buttonId;
             }
-            if (item.is(CoreItems.JSG_SCREWDRIVER.get())) {
+            if (item.is(CoreItems.JSG_SCREWDRIVER.get()) || (fluidCap.isPresent() && buttonId == dhdTile.getFluidTankItemPart().getRaycasterButtonID())) {
                 return dhdTile.getAllParts().stream()
                         .filter(dhdTile::isAssembled)
                         .filter(dhdPart -> dhdPart.getPartsNeededToRemoveBeforeRemoval().stream()
@@ -81,18 +84,7 @@ public abstract class RaycasterDHD extends Raycaster {
             var dhdTile = (DHDAbstractBE) world.getBlockEntity(pos);
             if (dhdTile != null) {
                 var item = player.getItemInHand(hand);
-                if (item.is(CoreItems.JSG_SCREWDRIVER.get())) {
-                    var part = dhdTile.getAllParts().stream()
-                            .filter(dhdPart -> dhdPart.getRaycasterButtonID() == buttonId)
-                            .filter(dhdPart -> dhdPart.getPartsNeededToRemoveBeforeRemoval().stream()
-                                    .filter(p -> dhdTile.getAllParts().contains(p))
-                                    .noneMatch(dhdTile::isAssembled))
-                            .findFirst();
-                    if (part.isPresent()) {
-                        JSGPacketHandler.sendToServer(new DHDAssemblyClickToServer(pos, part.get(), true));
-                        return true;
-                    }
-                }
+                var fluidCap = item.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
                 if (item.getItem() instanceof IDHDPartItem part) {
                     if (!dhdTile.getAllParts().contains(part)) return false;
                     if (part.getRaycasterButtonID() == buttonId) {
@@ -106,6 +98,23 @@ public abstract class RaycasterDHD extends Raycaster {
                                 return true;
                             }
                         }
+                    }
+                }
+                if (item.is(CoreItems.JSG_SCREWDRIVER.get()) || (fluidCap.isPresent() && buttonId == dhdTile.getFluidTankItemPart().getRaycasterButtonID())) {
+                    var part = dhdTile.getAllParts().stream()
+                            .filter(dhdPart -> dhdPart.getRaycasterButtonID() == buttonId)
+                            .filter(dhdPart -> dhdPart.getPartsNeededToRemoveBeforeRemoval().stream()
+                                    .filter(p -> dhdTile.getAllParts().contains(p))
+                                    .noneMatch(dhdTile::isAssembled))
+                            .findFirst();
+                    if (part.isPresent()) {
+                        if (part.get() == dhdTile.getFluidTankItemPart() && fluidCap.isPresent()) {
+                            if (!player.isShiftKeyDown())
+                                JSGPacketHandler.sendToServer(new DHDFluidInsertionToServer(pos, hand));
+                            return false; // do not cancel click event
+                        }
+                        JSGPacketHandler.sendToServer(new DHDAssemblyClickToServer(pos, part.get(), true));
+                        return true;
                     }
                 }
                 if (dhdTile.isAssembled() && buttonId != -1 && buttonId < 100) {

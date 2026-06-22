@@ -110,7 +110,7 @@ public class JSGConfig {
         ));
 
         public static final JSGConfigValue.IntValue energyPerNaquadah = C_DHD.add(new JSGConfigValue.IntValue(BUILDER,
-                "Energy per 1mB Naquadah", 10240, 1, 50000,
+                "Energy per 1mB Naquadah", Integer.MAX_VALUE / 256, 1, Integer.MAX_VALUE,
                 "SIDE: SERVER"
         ));
 
@@ -190,7 +190,7 @@ public class JSGConfig {
         ));
 
         public static final JSGConfigValue.IntValue universeGateNearbyReach = C_SG.add(new JSGConfigValue.IntValue(BUILDER,
-                "Mechanics.Universe dialer nearby radius", 1024, 5, Integer.MAX_VALUE,
+                "Mechanics.Universe dialer nearby radius", 1024 * 16, 5, Integer.MAX_VALUE,
                 "SIDE: SERVER/CLIENT"
         ));
 

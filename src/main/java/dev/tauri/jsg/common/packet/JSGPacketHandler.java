@@ -41,6 +41,7 @@ public class JSGPacketHandler {
         // to server
         HANDLER.registerPacketToServer(DHDButtonClickedToServer.class);
         HANDLER.registerPacketToServer(DHDAssemblyClickToServer.class);
+        HANDLER.registerPacketToServer(DHDFluidInsertionToServer.class);
         HANDLER.registerPacketToServer(SaveIrisCodeToServer.class);
         HANDLER.registerPacketToServer(UniverseDialerActionPacketToServer.class);
         HANDLER.registerPacketToServer(GDOCodeKeyPressedToServer.class);

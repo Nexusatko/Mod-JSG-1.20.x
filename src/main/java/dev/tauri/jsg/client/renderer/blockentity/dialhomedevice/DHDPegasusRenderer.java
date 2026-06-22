@@ -88,6 +88,11 @@ public class DHDPegasusRenderer extends DHDAbstractRenderer<DHDPegasusRendererSt
     }
 
     @Override
+    protected IDHDPartItem getUpgradesCover() {
+        return JSGItems.PEGASUS_DHD_UPGRADES_COVER.get();
+    }
+
+    @Override
     public @NotNull PartRenderable getPartModelRenderable(IDHDPartItem part) {
         if (part == JSGItems.PEGASUS_DHD_CONTROL_CRYSTALS.get()) {
             return (stack, bufferSource, combinedLight, combinedOverlay, partialTick, r, g, b, a, assembled) -> {
