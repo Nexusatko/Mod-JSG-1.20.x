@@ -320,7 +320,7 @@ public class RaycasterMilkyWayDHD extends RaycasterDHD {
             )),
 
             //Big Red Button
-            new RayCastedButton(38, JSGSymbolTypes.MILKYWAY, List.of(
+            new RayCastedButton(39, JSGSymbolTypes.MILKYWAY, List.of(
                     new Vector3f(0.029669f, -0.098437f, 1.21005f),
                     new Vector3f(0f, -0.10080f, 1.21148f),
                     new Vector3f(-0.027319f, -0.099059f, 1.21043f),

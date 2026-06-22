@@ -29,6 +29,7 @@ public class DHDMilkyWayBEWLR extends DHDAbstractBEWLR {
 
             // render symbols
             for (SymbolMilkyWayEnum symbol : SymbolMilkyWayEnum.values()) {
+                if (symbol == SymbolMilkyWayEnum.AQUILA) continue; // skip rendering Aquila as it doesn't have a model
                 stack.pushPose();
 
                 if (symbol.origin()) {

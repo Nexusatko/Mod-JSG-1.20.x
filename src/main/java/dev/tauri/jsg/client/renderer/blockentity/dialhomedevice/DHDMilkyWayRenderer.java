@@ -8,6 +8,7 @@ import dev.tauri.jsg.api.item.IDHDPartItem;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
 import dev.tauri.jsg.api.stargate.StargatePointOfOriginsDefaults;
 import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolMilkyWayEnum;
+import dev.tauri.jsg.client.renderer.blockentity.dialhomedevice.DHDAbstractRenderer.PartRenderable;
 import dev.tauri.jsg.common.dialhomedevice.animation.DHDButtonsState;
 import dev.tauri.jsg.common.loader.ElementEnum;
 import dev.tauri.jsg.common.raycaster.RaycasterMilkyWayDHD;
@@ -64,6 +65,7 @@ public class DHDMilkyWayRenderer extends DHDAbstractRenderer<DHDMilkyWayRenderer
         CompoundTag compound = getNoteBookPage();
 
         for (SymbolMilkyWayEnum symbol : SymbolMilkyWayEnum.values()) {
+            if (symbol == SymbolMilkyWayEnum.AQUILA) continue; // skip rendering Aquila as it doesn't have a model
             if (symbol.brb() && !rendererState.isAssembled(JSGItems.MILKYWAY_DHD_ACTIVATION_BUTTON.get()))
                 continue;
 
