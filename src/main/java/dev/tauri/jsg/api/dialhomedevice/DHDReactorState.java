@@ -5,5 +5,6 @@ public enum DHDReactorState {
     NOT_LINKED,
     NO_FUEL,
     STANDBY,
-    NO_CRYSTAL
+    NO_CRYSTAL,
+    NO_FLUID_TANK
 }

@@ -133,9 +133,13 @@ public class DHDPegasusRenderer extends DHDAbstractRenderer<DHDPegasusRendererSt
                 RenderSystem.enableBlend();
                 TextureAtlasSprite sprite = BlockRenderer.getFluidTexture(new FluidStack(CoreFluids.MOLTEN_NAQUADAH_REFINED.still.get(), 1000), BlockRenderer.FluidTextureType.STILL);
                 if (sprite != null) {
+                    stack.pushPose();
+                    float height = assembled ? (rendererState.naquadahAmount / (float) rendererState.naquadahMaxAmount) : 1f;
+                    stack.scale(1, height, 1);
                     ITexture.bindTextureWithMc(sprite.atlasLocation());
                     ElementEnum.PEGASUS_DHD_FLUID_TANK_FLUID
                             .render(stack, bufferSource, combinedLight, combinedOverlay, false, r, g, b, a, false, sprite);
+                    stack.popPose();
                 }
                 ElementEnum.PEGASUS_DHD_FLUID_TANK_GLASS
                         .bindTexture(rendererState.getBiomeOverlay())

@@ -138,7 +138,7 @@ public abstract class DHDAbstractBlock extends TickableBEBlock implements IHighl
     @ParametersAreNonnullByDefault
     @SuppressWarnings("deprecation")
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.FAIL;
+        //if (level.isClientSide) return InteractionResult.FAIL;
         var playerRot = player.getYRot();
         var dhdRot = ((float) state.getValue(JSGProperties.ROTATION_PROPERTY)) * 22.5f;
         boolean backActivation = RotationUtil.getClosestAngleDistance(playerRot, dhdRot, false) >= (180 - 45);

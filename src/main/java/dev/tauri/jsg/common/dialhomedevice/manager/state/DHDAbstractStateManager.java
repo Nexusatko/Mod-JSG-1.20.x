@@ -115,6 +115,8 @@ public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S exten
     public S getRenderStateServer() {
         rendererStateClient.assembledParts.clear();
         rendererStateClient.assembledParts.addAll(assembledParts);
+        rendererStateClient.naquadahAmount = dhd.getReactorManager().getTank().getFluidAmount();
+        rendererStateClient.naquadahMaxAmount = dhd.getReactorManager().getTank().getCapacity();
         return rendererStateClient;
     }
 
@@ -164,24 +166,41 @@ public abstract class DHDAbstractStateManager<DHD extends DHDAbstractBE, S exten
         }
     }
 
+    public CompoundTag serializeAssemblyToNBT() {
+        var compound = new CompoundTag();
+        dhd.getAllParts().forEach(part -> compound.putBoolean(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(part.self())).toString(), isDHDPartAssembled(part)));
+        return compound;
+    }
+
+    public void deserializeAssemblyFromNBT(CompoundTag compound) {
+        assembledParts.clear();
+        dhd.getAllParts().forEach(part -> {
+            if (compound.isEmpty() || compound.getBoolean(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(part.self())).toString()))
+                assembledParts.add(part);
+        });
+
+        // OLD versions compat
+        var stackHandler = dhd.getItemStackHandler();
+        if (!stackHandler.getStackInSlot(0).isEmpty() && !isDHDPartAssembled((IDHDPartItem) dhd.getControlCrystal())) {
+
+        }
+
+        var level = dhd.getLevel();
+        if (level != null && !level.isClientSide())
+            getAndSendState(CoreStateTypes.RENDERER_STATE.get());
+    }
+
     @Override
     public CompoundTag serializeNBT() {
         var compound = new CompoundTag();
         compound.put("buttonsState", buttonsState.serializeNBT());
-        var parts = new CompoundTag();
-        dhd.getAllParts().forEach(part -> parts.putBoolean(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(part.self())).toString(), isDHDPartAssembled(part)));
-        compound.put("parts", parts);
+        compound.put("parts", serializeAssemblyToNBT());
         return compound;
     }
 
     @Override
     public void deserializeNBT(CompoundTag compound) {
         buttonsState.deserializeNBT(compound.getCompound("buttonsState"));
-        var parts = compound.getCompound("parts");
-        assembledParts.clear();
-        dhd.getAllParts().forEach(part -> {
-            if (parts.getBoolean(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(part.self())).toString()))
-                assembledParts.add(part);
-        });
+        deserializeAssemblyFromNBT(compound.getCompound("parts"));
     }
 }

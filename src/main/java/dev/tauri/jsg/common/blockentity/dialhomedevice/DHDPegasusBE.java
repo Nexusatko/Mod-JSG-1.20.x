@@ -1,5 +1,6 @@
 package dev.tauri.jsg.common.blockentity.dialhomedevice;
 
+import dev.tauri.jsg.api.item.IDHDFluidTank;
 import dev.tauri.jsg.api.item.IDHDPartItem;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
 import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolPegasusEnum;
@@ -41,7 +42,7 @@ public class DHDPegasusBE extends DHDAbstractBE {
     }
 
     @Override
-    public IDHDPartItem getFluidTankItemPart() {
+    public IDHDFluidTank getFluidTankItemPart() {
         return JSGItems.DHD_NAQUADAH_TANK.get();
     }
 

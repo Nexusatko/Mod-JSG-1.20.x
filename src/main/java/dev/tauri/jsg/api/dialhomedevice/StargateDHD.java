@@ -1,5 +1,7 @@
 package dev.tauri.jsg.api.dialhomedevice;
 
+import dev.tauri.jsg.api.item.IDHDFluidTank;
+import dev.tauri.jsg.api.item.IDHDPartItem;
 import dev.tauri.jsg.api.stargate.Stargate;
 import dev.tauri.jsg.common.dialhomedevice.manager.DHDReactorManager;
 import dev.tauri.jsg.common.dialhomedevice.manager.state.DHDAbstractStateManager;
@@ -13,14 +15,21 @@ import dev.tauri.jsg.core.common.symbol.pointoforigin.PointOfOrigin;
 import dev.tauri.jsg.core.common.util.IUpgrade;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public interface StargateDHD extends ILinkableBE<Stargate<?>>, ITickable, IPreparable, IUpgradable {
     private BlockEntity self() {
@@ -57,13 +66,43 @@ public interface StargateDHD extends ILinkableBE<Stargate<?>>, ITickable, IPrepa
 
     ItemStackHandler getItemStackHandler();
 
-    boolean hasControlCrystal();
+    default boolean hasControlCrystal() {
+        return isAssembled((IDHDPartItem) getControlCrystal());
+    }
+
+    IDHDFluidTank getFluidTankItemPart();
 
     void clearSymbols();
 
     void activateSymbol(SymbolInterface symbol);
 
     void pushSymbolButton(SymbolInterface symbol, @Nullable ServerPlayer player, boolean force);
+
+    @ParametersAreNonnullByDefault
+    boolean isAssembled(IDHDPartItem part);
+
+    boolean isAssembled();
+
+    /**
+     * Called before assembling/disassembling part
+     *
+     * @param part    the part
+     * @param stack   if {@param removed} is true then contains stack being added to the player, otherwise contains stack that player used to assemble this {@param part}
+     * @param removed true if part is being removed, otherwise false
+     * @return If succeed - true if part should be assembled/disassembled
+     */
+    default boolean onPartAssembled(IDHDPartItem part, ItemStack stack, boolean removed) {
+        return true;
+    }
+
+    default Optional<IDHDPartItem> getNextPartToAssemble(Predicate<IDHDPartItem> isAssembledPredicate) {
+        return getAllParts().stream().filter((part) -> !isAssembledPredicate.test(part)).findFirst();
+    }
+
+    /**
+     * @return all parts of the DHD - needs correct order
+     */
+    LinkedList<IDHDPartItem> getAllParts();
 
     default Optional<Stargate<?>> getStargate() {
         if (!isLinked()) {
@@ -79,5 +118,31 @@ public interface StargateDHD extends ILinkableBE<Stargate<?>>, ITickable, IPrepa
 
     enum DHDUpgradeEnum implements IUpgrade {
         CHEVRON_UPGRADE
+    }
+
+    default void setDHDChanged() {
+        self().setChanged();
+    }
+
+    default ItemStack getDropBlock(ServerPlayer player, BlockState blockState) {
+        var stack = new ItemStack(blockState.getBlock());
+        var tag = stack.getOrCreateTag();
+        tag.put("parts", getStateManager().serializeAssemblyToNBT());
+        stack.setTag(tag);
+        return stack;
+    }
+
+    default void updateFromItemStack(ItemStack stack) {
+        var tag = stack.getOrCreateTag();
+        if (!tag.contains("parts")) return;
+        getStateManager().deserializeAssemblyFromNBT(tag.getCompound("parts"));
+        setDHDChanged();
+    }
+
+    @ParametersAreNonnullByDefault
+    static boolean isPartAssembledOnStack(ItemStack stack, IDHDPartItem part) {
+        var tag = stack.getOrCreateTag();
+        if (!tag.contains("parts")) return true;
+        return tag.getCompound("parts").getBoolean(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(part.self())).toString());
     }
 }

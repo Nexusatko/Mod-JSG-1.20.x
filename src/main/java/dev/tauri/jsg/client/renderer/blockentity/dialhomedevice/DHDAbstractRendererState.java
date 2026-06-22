@@ -19,6 +19,8 @@ public abstract class DHDAbstractRendererState extends State {
 
     public BiomeOverlayInstance biomeOverlay = CoreBiomeOverlays.NORMAL.get();
     public final List<IDHDPartItem> assembledParts = new ArrayList<>();
+    public int naquadahAmount;
+    public int naquadahMaxAmount;
 
     public BiomeOverlayInstance getBiomeOverlay() {
         if (biomeOverlay == null) return CoreBiomeOverlays.NORMAL.get();
@@ -39,6 +41,8 @@ public abstract class DHDAbstractRendererState extends State {
             buf.writeBoolean(false);
         buf.writeInt(assembledParts.size());
         assembledParts.forEach(p -> buf.writeResourceLocation(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(p.self()))));
+        buf.writeInt(naquadahAmount);
+        buf.writeInt(naquadahMaxAmount);
     }
 
     @Override
@@ -51,5 +55,7 @@ public abstract class DHDAbstractRendererState extends State {
         var size = buf.readInt();
         for (int i = 0; i < size; i++)
             assembledParts.add((IDHDPartItem) ForgeRegistries.ITEMS.getValue(buf.readResourceLocation()));
+        naquadahAmount = buf.readInt();
+        naquadahMaxAmount = buf.readInt();
     }
 }

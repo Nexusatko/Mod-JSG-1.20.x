@@ -11,6 +11,7 @@ import dev.tauri.jsg.common.item.linkable.dialer.UniverseDialerItem;
 import dev.tauri.jsg.common.item.linkable.gdo.GDOItem;
 import dev.tauri.jsg.common.item.stargate.IrisItem;
 import dev.tauri.jsg.common.item.stargate.dialhomedevice.part.DHDAbstractPartItem;
+import dev.tauri.jsg.common.item.stargate.dialhomedevice.part.DHDFluidTankItem;
 import dev.tauri.jsg.common.item.stargate.dialhomedevice.part.DHDMilkyWayButtonsConsoleItem;
 import dev.tauri.jsg.common.item.stargate.dialhomedevice.part.DHDPegasusButtonsConsoleItem;
 import dev.tauri.jsg.core.common.integration.Integrations;
@@ -62,7 +63,7 @@ public class JSGItems {
     public static RegistryObject<DHDAbstractPartItem> PEGASUS_DHD_ACTIVATION_BUTTON = null;
     public static RegistryObject<DHDAbstractPartItem> PEGASUS_DHD_UPGRADES_COVER;
 
-    public static RegistryObject<DHDAbstractPartItem> DHD_NAQUADAH_TANK;
+    public static RegistryObject<DHDFluidTankItem> DHD_NAQUADAH_TANK;
 
     static {
         MILKYWAY_DHD_CONTROL_CRYSTALS = REGISTER.register("milkyway_dhd_control_crystals", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), true, 100).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_BUTTONS_CONSOLE)).withPartsNeededRemovedBeforeAssembly(List.of(MILKYWAY_DHD_BUTTONS_CONSOLE)));
@@ -78,7 +79,7 @@ public class JSGItems {
         PEGASUS_DHD_UPGRADES_COVER = REGISTER.register("pegasus_dhd_upgrades_cover", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), false, 108));
 
 
-        DHD_NAQUADAH_TANK = REGISTER.register("dhd_naquadah_tank", () -> new DHDAbstractPartItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), false, 107).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_UPGRADES_COVER, PEGASUS_DHD_UPGRADES_COVER)));
+        DHD_NAQUADAH_TANK = REGISTER.register("dhd_naquadah_tank", () -> (DHDFluidTankItem) (new DHDFluidTankItem(new Item.Properties().rarity(Rarity.COMMON), List.of(CoreTabs.TAB_RESOURCES), false, 107).withPartsNeededBeforeRemoval(List.of(MILKYWAY_DHD_UPGRADES_COVER, PEGASUS_DHD_UPGRADES_COVER))));
     }
 
     /**

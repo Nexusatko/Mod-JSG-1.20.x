@@ -58,6 +58,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -66,10 +67,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDHD, ILinkable<Stargate<?>>, BEStateProvider {
     // TODO: Refactor to use IUpgrade class
@@ -337,12 +336,17 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
         if (disassemble) {
             var eventSucceed = ForgeEventFactory.onEntityDestroyBlock(player, getBlockPos(), getBlockState());
             if (!eventSucceed) return;
+            var newStack = new ItemStack(part.self());
+            var result = onPartAssembled(part, newStack, true);
+            if (!result) return;
             getStateManager().disassemblePart(part);
-            player.getInventory().add(new ItemStack(part.self()));
+            player.getInventory().add(newStack);
             level.playSound(null, getBlockPos(), part.getDisassembleSound(), SoundSource.BLOCKS, 1, 1);
         } else {
             var eventCanceled = ForgeEventFactory.onBlockPlace(player, BlockSnapshot.create(level.dimension(), level, getBlockPos()), Direction.UP);
             if (eventCanceled) return;
+            var result = onPartAssembled(part, stack, false);
+            if (!result) return;
             getStateManager().assemblePart(part);
             stack.shrink(1);
             level.playSound(null, getBlockPos(), part.getAssembleSound(), SoundSource.BLOCKS, 1, 1);
@@ -351,28 +355,40 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
         setChanged();
     }
 
+    @Override
     @ParametersAreNonnullByDefault
     public boolean isAssembled(IDHDPartItem part) {
         return getStateManager().isDHDPartAssembled(part);
     }
 
+    @Override
     public boolean isAssembled() {
         return getAllParts().stream().filter(IDHDPartItem::isMandatory).allMatch(this::isAssembled);
     }
 
-    /**
-     *
-     * @return all parts of the DHD - needs correct order
-     */
-    public abstract LinkedList<IDHDPartItem> getAllParts();
-
-    public Optional<IDHDPartItem> getNextPartToAssemble(Predicate<IDHDPartItem> isAssembledPredicate) {
-        return getAllParts().stream().filter((part) -> !isAssembledPredicate.test(part)).findFirst();
+    @Override
+    public boolean onPartAssembled(IDHDPartItem part, ItemStack stack, boolean removed) {
+        if (part != getFluidTankItemPart()) return true;
+        var stackTank = getFluidTankItemPart().getTank(stack);
+        var dhdTank = getReactorManager().getTank();
+        if (removed) {
+            stackTank.setCapacity(dhdTank.getCapacity());
+            stackTank.setFluid(dhdTank.getFluid());
+            return true;
+        }
+        dhdTank.setCapacity(stackTank.getCapacity());
+        dhdTank.setFluid(stackTank.getFluid());
+        return true;
     }
 
     @Override
     public ItemStackHandler getItemStackHandler() {
         return itemStackHandler;
+    }
+
+    @Override
+    public IItemHandler getItemHandler() {
+        return getItemStackHandler();
     }
 
     public abstract TagKey<Block> getLinkableBlocks();
@@ -444,17 +460,6 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
                 lastPos = getBlockPos();
                 this.updateLinkStatus(level, getBlockPos());
             }
-
-            // Fluid upgrades
-            double newFluidCapacity = JSGConfig.DialHomeDevice.fluidCapacity.get();
-            if (hasUpgrade(CommonUpgrade.CAPACITY_UPGRADE))
-                newFluidCapacity *= JSGConfig.DialHomeDevice.capacityUpgradeMultiplier.get();
-
-            if (getReactorManager().getTank().getCapacity() != newFluidCapacity) {
-                getReactorManager().getTank().setCapacity((int) newFluidCapacity);
-                setChanged();
-                JSG.logger.debug("DHD at {} set itself new capacity! ({}mb)", getBlockPos().toShortString(), newFluidCapacity);
-            }
         }
     }
 
@@ -469,22 +474,11 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
         return BiomeOverlayInstance.getBiomeOverlayByItem(stack);
     }
 
-    @Override
-    public boolean hasControlCrystal() {
-        return isAssembled((IDHDPartItem) getControlCrystal());
-    }
-
-    public abstract IDHDPartItem getFluidTankItemPart();
-
-
     // -----------------------------------------------------------------------------
     // Capabilities
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
-        if (capability == ForgeCapabilities.ITEM_HANDLER) {
-            return LazyOptional.of(this::getItemStackHandler).cast();
-        }
         if (capability == ForgeCapabilities.FLUID_HANDLER) {
             if (isAssembled(getFluidTankItemPart()))
                 return LazyOptional.of(() -> getReactorManager().getTank()).cast();
@@ -528,10 +522,6 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
         }
 
         itemStackHandler.deserializeNBT(compound.getCompound("itemStackHandler"));
-
-        if (compound.getBoolean("hasUpgrade") || compound.getBoolean("insertAnimation")) {
-            itemStackHandler.setStackInSlot(1, new ItemStack(JSGItems.CRYSTAL_GLYPH_DHD.get()));
-        }
     }
 
     @Nonnull

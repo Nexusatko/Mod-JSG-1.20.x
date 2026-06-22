@@ -21,12 +21,14 @@ import dev.tauri.jsg.core.common.util.I18n;
 import dev.tauri.jsg.core.common.util.vectors.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -46,6 +48,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> implements LinkableRenderer, BlockEntityRenderer<DHDAbstractBE>, IRaycasterButtonsRenderer {
 
@@ -99,6 +102,42 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
         poseStack.translate(0.5, 0.2, 0.5);
         assemblyRenderTitleRunnable.ifPresent(Runnable::run);
         poseStack.popPose();
+
+        renderNaquadahTankTooltip(poseStack, bufferSource, combinedLight, combinedOverlay);
+    }
+
+    public void renderNaquadahTankTooltip(PoseStack stack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
+        if (!Optional.ofNullable(Minecraft.getInstance().player).map(LocalPlayer::isShiftKeyDown).orElse(false))
+            return;
+        if (!tileEntity.isAssembled(tileEntity.getFluidTankItemPart()))
+            return;
+
+        var btn = getRaycaster().getRaycastedButton(level, tileEntity.getBlockPos(), Minecraft.getInstance().player, InteractionHand.MAIN_HAND);
+        if (btn == null) return;
+        if (btn.buttonId != tileEntity.getFluidTankItemPart().getRaycasterButtonID()) return;
+
+        stack.pushPose();
+        stack.translate(0.5, 0, 0.5);
+        stack.mulPose(Axis.YP.rotationDegrees(Objects.requireNonNull(level).getBlockState(tileEntity.getBlockPos()).getValue(JSGProperties.ROTATION_PROPERTY) * -22.5f));
+        stack.translate(0, 0.55, -0.2);
+        //stack.mulPose(Axis.YN.rotationDegrees(Objects.requireNonNull(level).getBlockState(tileEntity.getBlockPos()).getValue(JSGProperties.ROTATION_PROPERTY) * -22.5f));
+
+        var scale = 0.1f;
+        stack.scale(-0.025f * scale, -0.025f * scale, 0.025f * scale);
+        Matrix4f matrix4f = stack.last().pose();
+        float backgroundOpacityConfig = Minecraft.getInstance().options.getBackgroundOpacity(0.25f);
+        int backgroundOpacity = (int) (backgroundOpacityConfig * 255.0f) << 24;
+        Font font = Minecraft.getInstance().font;
+        AtomicInteger i = new AtomicInteger(0);
+        List.of(
+                Component.literal(rendererState.naquadahAmount + "mB/" + rendererState.naquadahMaxAmount + "mB")
+        ).forEach(component -> {
+            var xOffset = font.width(component) / 2;
+            font.drawInBatch(component, -xOffset, i.get() * 10, -1, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, backgroundOpacity, LightTexture.FULL_BRIGHT);
+            //font.drawInBatch(component, 0, i.get() * 10, -1, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT);
+            i.getAndIncrement();
+        });
+        stack.popPose();
     }
 
     public abstract void renderSymbols(PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, DHDButtonsState buttonsState);
