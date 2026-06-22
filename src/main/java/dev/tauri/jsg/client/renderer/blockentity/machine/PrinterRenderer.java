@@ -13,6 +13,7 @@ import dev.tauri.jsg.core.client.renderer.IRaycasterButtonsRenderer;
 import dev.tauri.jsg.core.client.renderer.item.PageRenderer;
 import dev.tauri.jsg.core.client.screen.util.GuiHelper;
 import dev.tauri.jsg.core.client.texture.ITexture;
+import dev.tauri.jsg.core.common.blockstate.JSGProperties;
 import dev.tauri.jsg.core.common.raycaster.Raycaster;
 import dev.tauri.jsg.core.common.raycaster.util.RayCastedButton;
 import dev.tauri.jsg.core.common.util.I18n;
@@ -66,7 +67,7 @@ public class PrinterRenderer implements BlockEntityRenderer<PrinterBE>, IRaycast
 
         stack.pushPose();
         RenderSystem.enableDepthTest();
-        var direction = level.getBlockState(tile.getBlockPos()).getValue(dev.tauri.jsg.core.common.blockstate.JSGProperties.FACING_HORIZONTAL_PROPERTY).getOpposite();
+        var direction = level.getBlockState(tile.getBlockPos()).getValue(JSGProperties.FACING_HORIZONTAL_PROPERTY).getOpposite();
         stack.translate(0.5f, 0.5f, 0.5f);
         stack.mulPose(Axis.YN.rotationDegrees(direction.toYRot()));
 
@@ -287,7 +288,7 @@ public class PrinterRenderer implements BlockEntityRenderer<PrinterBE>, IRaycast
         stack.scale(0.02f, 0.02f, 0.02f);
         stack.scale(0.8f, 0.8f, 0.8f);
 
-        title = I18n.format("gui.stargate." + tile.address.getSymbolType().getId() + "_address");
+        title = I18n.format("gui.stargate." + tile.address.getSymbolType().getId().toString().replace(':', '.') + "_address");
         width = Minecraft.getInstance().font.width(title);
         stack.translate(-width, 0, 0);
         PageRenderer.renderText(stack, source, light, title, 0x0, false);
