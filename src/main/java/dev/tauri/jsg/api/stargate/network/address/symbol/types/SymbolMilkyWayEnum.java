@@ -84,9 +84,9 @@ public enum SymbolMilkyWayEnum implements SymbolInterface {
             this.modelResource = null;
             this.modelResourceLight = null;
         } else {
-        this.modelResource = JSGApi.JSG_LOADERS_HOLDER.model().getModelResource("milkyway/dhd/buttons/" + model.split("\\.")[0] + "_base.obj");
-        this.modelResourceLight = JSGApi.JSG_LOADERS_HOLDER.model().getModelResource("milkyway/dhd/buttons/" + model);
-    }
+            this.modelResource = JSGApi.JSG_LOADERS_HOLDER.model().getModelResource("milkyway/dhd/buttons/" + model.split("\\.")[0] + "_base.obj");
+            this.modelResourceLight = JSGApi.JSG_LOADERS_HOLDER.model().getModelResource("milkyway/dhd/buttons/" + model);
+        }
     }
 
     public boolean brb() {
@@ -160,8 +160,8 @@ public enum SymbolMilkyWayEnum implements SymbolInterface {
         var id = this.getId();
         while (true) {
             id += (previous ? -1 : 1);
-            if (id < 0) id = 37;
-            id = id % 38;
+            if (id < 0) id = 38;
+            id = id % 39;
             var symbol = JSGSymbolTypes.MILKYWAY.get().valueOf(id);
             if (symbol != null && symbol.isValidForAddress()) return symbol;
         }
