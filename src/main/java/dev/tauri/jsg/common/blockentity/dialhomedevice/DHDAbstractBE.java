@@ -51,11 +51,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -334,8 +336,8 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
         var hasPart = isAssembled(part);
         if (disassemble == !hasPart) return;
         if (disassemble) {
-            var eventSucceed = ForgeEventFactory.onEntityDestroyBlock(player, getBlockPos(), getBlockState());
-            if (!eventSucceed) return;
+            var eventCancel = MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(level, getBlockPos(), getBlockState(), player));
+            if (eventCancel) return;
             var newStack = new ItemStack(part.self());
             var result = onPartAssembled(part, newStack, true);
             if (!result) return;
