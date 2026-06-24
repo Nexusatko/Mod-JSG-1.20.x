@@ -13,7 +13,6 @@ import dev.tauri.jsg.core.common.item.IUpgradeItem;
 import dev.tauri.jsg.core.common.menu.JSGContainer;
 import dev.tauri.jsg.core.common.packet.JSGCorePacketHandler;
 import dev.tauri.jsg.core.common.packet.packets.StateUpdatePacketToClient;
-import dev.tauri.jsg.core.common.power.general.LargeEnergyStorage;
 import dev.tauri.jsg.core.common.registry.CoreStateTypes;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
 import dev.tauri.jsg.core.common.util.CreativeItemsChecker;
@@ -235,7 +234,7 @@ public class StargateContainer extends JSGContainer implements OpenTabHolderInte
     public void broadcastChanges() {
         super.broadcastChanges();
 
-        LargeEnergyStorage energyStorage = (LargeEnergyStorage) gateTile.getStargateCapability(ForgeCapabilities.ENERGY, null).resolve().orElseThrow();
+        var energyStorage = gateTile.getEnergyManager().getStorage();
 
         if (lastEnergyStored != Objects.requireNonNull(energyStorage).getTrueEnergyStored()
                 || lastEnergySecondsToClose != gateTile.getEnergyManager().getSecondsToClose()

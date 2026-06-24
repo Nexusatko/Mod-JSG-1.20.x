@@ -491,7 +491,7 @@ public abstract class StargateAbstractBaseBE<S extends StargateAbstractRendererS
         if (computerCaps.isPresent())
             return computerCaps;
         if (capability == ForgeCapabilities.ENERGY) {
-            return LazyOptional.of(() -> getEnergyManager().getStorage()).cast();
+            return LazyOptional.of(() -> getEnergyManager().getStorageForCaps()).cast();
         }
         return super.getCapability(capability, facing);
     }

@@ -24,7 +24,6 @@ import dev.tauri.jsg.core.common.item.IUpgradeItem;
 import dev.tauri.jsg.core.common.packet.JSGCorePacketHandler;
 import dev.tauri.jsg.core.common.packet.packets.SaveConfigToServer;
 import dev.tauri.jsg.core.common.power.JSGEnergyStorage;
-import dev.tauri.jsg.core.common.power.general.LargeEnergyStorage;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
 import dev.tauri.jsg.core.common.util.I18n;
 import dev.tauri.jsg.core.mapping.JSGMapping;
@@ -324,7 +323,7 @@ public class StargateContainerGui extends TabbedContainerScreen<StargateContaine
         irisTab.setVisible(hasIrisUpgrade);
         configTab.setVisible(menu.hasCreative);
 
-        LargeEnergyStorage energyStorageInternal = (LargeEnergyStorage) menu.gateTile.getStargateCapability(ForgeCapabilities.ENERGY, null).resolve().orElseThrow();
+        var energyStorageInternal = menu.gateTile.getEnergyManager().getStorage();
         energyStorageInternal.clearStorages();
         energyStoredInternally = energyStorageInternal.getTrueEnergyStored();
 

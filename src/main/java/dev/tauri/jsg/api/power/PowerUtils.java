@@ -7,7 +7,7 @@ import dev.tauri.jsg.core.common.power.general.SmallEnergyStorage;
 
 public class PowerUtils {
     public static LargeEnergyStorage getLarge(Runnable onChanged) {
-        return new LargeEnergyStorage(JSGConfig.Stargate.stargateEnergyStorage.get(), Long.MAX_VALUE, 0) {
+        return new LargeEnergyStorage(JSGConfig.Stargate.stargateEnergyStorage.get(), Long.MAX_VALUE, Long.MAX_VALUE) {
             @Override
             public void onEnergyChanged() {
                 onChanged.run();
@@ -20,7 +20,7 @@ public class PowerUtils {
     }
 
     public static SmallEnergyStorage getSmall(long capacity, Runnable onChanged) {
-        return new SmallEnergyStorage(capacity, Long.MAX_VALUE, 0) {
+        return new SmallEnergyStorage(capacity, Long.MAX_VALUE, Long.MAX_VALUE) {
             @Override
             public void onEnergyChanged() {
                 onChanged.run();

@@ -1,6 +1,7 @@
 package dev.tauri.jsg.common.blockentity.stargate;
 
 import dev.tauri.jsg.JSG;
+import dev.tauri.jsg.api.stargate.Stargate;
 import dev.tauri.jsg.common.config.JSGConfigUtil;
 import dev.tauri.jsg.common.multistructure.mergehelper.StargateAbstractMergeHelper;
 import dev.tauri.jsg.core.common.blockentity.CamouflageBE;
@@ -10,7 +11,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -72,11 +72,12 @@ public abstract class StargateAbstractMemberBE extends CamouflageBE implements I
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
+        var level = getLevel();
         if (capability == ForgeCapabilities.ENERGY) {
             if (basePos != null && level != null) {
-                BlockEntity tile = level.getBlockEntity(basePos);
-                if (tile instanceof StargateAbstractBaseBE<?, ?> baseTile)
-                    return LazyOptional.of(() -> baseTile.getEnergyManager().getStorage()).cast();
+                var tile = level.getBlockEntity(basePos);
+                if (tile instanceof Stargate<?> baseTile)
+                    return LazyOptional.of(() -> baseTile.getEnergyManager().getStorageForCaps()).cast();
             }
         }
         return super.getCapability(capability, facing);
