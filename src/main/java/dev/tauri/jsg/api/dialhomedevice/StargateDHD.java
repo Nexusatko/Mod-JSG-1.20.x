@@ -134,7 +134,7 @@ public interface StargateDHD extends ILinkableBE<Stargate<?>>, ITickable, IPrepa
 
     default void updateFromItemStack(ItemStack stack) {
         var tag = stack.getOrCreateTag();
-        if (!tag.contains("parts")) return;
+        //if (!tag.contains("parts")) return;
         getStateManager().deserializeAssemblyFromNBT(tag.getCompound("parts"));
         setDHDChanged();
     }

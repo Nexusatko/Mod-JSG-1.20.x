@@ -7,14 +7,10 @@ import dev.tauri.jsg.core.common.block.util.IItemBlock;
 import dev.tauri.jsg.core.common.blockentity.ILinkable;
 import dev.tauri.jsg.core.common.blockstate.JSGProperties;
 import dev.tauri.jsg.core.common.helper.BlockPosHelper;
-import dev.tauri.jsg.core.common.helper.ItemHandlerHelper;
 import dev.tauri.jsg.core.common.util.JSGAxisAlignedBB;
-import dev.tauri.jsg.core.common.util.RotationUtil;
 import dev.tauri.jsg.core.common.util.math.MathHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -32,11 +28,9 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -82,6 +76,7 @@ public abstract class DHDAbstractBlock extends TickableBEBlock implements IHighl
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         // Server side
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof DHDAbstractBE dhd) {
+            dhd.updateFromItemStack(itemStack);
             dhd.updateLinkStatus(level, pos);
         }
     }
@@ -131,20 +126,6 @@ public abstract class DHDAbstractBlock extends TickableBEBlock implements IHighl
         return true;
     }
 
-    @NotNull
-    @ParametersAreNonnullByDefault
-    @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        //if (level.isClientSide) return InteractionResult.FAIL;
-        var playerRot = player.getYRot();
-        var dhdRot = ((float) state.getValue(JSGProperties.ROTATION_PROPERTY)) * 22.5f;
-        boolean backActivation = RotationUtil.getClosestAngleDistance(playerRot, dhdRot, false) >= (180 - 45);
-        if (!backActivation || player.isShiftKeyDown()) return InteractionResult.sidedSuccess(level.isClientSide());
-        if (!(level.getBlockEntity(pos) instanceof DHDAbstractBE dhd)) return InteractionResult.FAIL;
-        dhd.tryInsertUpgrade(player, hand);
-        return InteractionResult.sidedSuccess(level.isClientSide());
-    }
-
     @Override
     @ParametersAreNonnullByDefault
     @SuppressWarnings("all")
@@ -152,9 +133,8 @@ public abstract class DHDAbstractBlock extends TickableBEBlock implements IHighl
         super.playerWillDestroy(level, pos, blockState, player);
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof DHDAbstractBE dhdTile) {
-                ItemHandlerHelper.dropInventoryItems(level, pos, dhdTile.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().get());
-                if (dhdTile.getLinkedDevice() instanceof ILinkable<?> linkable) linkable.setLinkedDevice(null);
+            if (blockEntity instanceof ILinkable<?> linkable && linkable.getLinkedDevice() instanceof ILinkable<?> targetLinkable) {
+                targetLinkable.setLinkedDevice(null);
             }
         }
     }
@@ -166,9 +146,8 @@ public abstract class DHDAbstractBlock extends TickableBEBlock implements IHighl
         super.wasExploded(level, pos, explosion);
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof DHDAbstractBE dhdTile) {
-                ItemHandlerHelper.dropInventoryItems(level, pos, dhdTile.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().get());
-                if (dhdTile.getLinkedDevice() instanceof ILinkable<?> linkable) linkable.setLinkedDevice(null);
+            if (blockEntity instanceof ILinkable<?> linkable && linkable.getLinkedDevice() instanceof ILinkable<?> targetLinkable) {
+                targetLinkable.setLinkedDevice(null);
             }
         }
     }

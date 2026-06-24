@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 public class DHDReactorManager extends AbstractDHDManager<DHDAbstractBE> implements IDHDReactorManager {
     protected final FluidTank tank;
-    protected DHDReactorState state;
+    protected DHDReactorState state = DHDReactorState.NO_CRYSTAL;
     protected Predicate<FluidTank> canStartOrContinueReaction;
     protected Function<FluidTank, Integer> energyFromOneMb;
 

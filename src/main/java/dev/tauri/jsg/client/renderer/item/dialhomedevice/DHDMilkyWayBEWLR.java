@@ -3,11 +3,13 @@ package dev.tauri.jsg.client.renderer.item.dialhomedevice;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.api.JSGApi;
+import dev.tauri.jsg.api.dialhomedevice.StargateDHD;
 import dev.tauri.jsg.api.stargate.StargatePointOfOriginsDefaults;
 import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolMilkyWayEnum;
 import dev.tauri.jsg.api.stargate.type.StargateTypes;
 import dev.tauri.jsg.common.loader.ElementEnum;
 import dev.tauri.jsg.common.registry.JSGBlocks;
+import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.core.mapping.JSGMapping;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
@@ -24,12 +26,29 @@ public class DHDMilkyWayBEWLR extends DHDAbstractBEWLR {
         if (Block.byItem(itemStack.getItem()) == JSGBlocks.DHD_MILKYWAY.get()) {
             // render DHD
             ElementEnum.MILKYWAY_DHD_BASE.bindTexture().render(stack, bufferSource, light);
-            ElementEnum.MILKYWAY_DHD_BUTTON_CONSOLE.render(stack, bufferSource, light);
-            ElementEnum.MILKYWAY_DHD_UPGRADE_COVER.render(stack, bufferSource, light);
+            ElementEnum.MILKYWAY_DHD_CRYSTAL_HOLDER.render(stack, bufferSource, light, overlay);
+            if (StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.MILKYWAY_DHD_BUTTONS_CONSOLE.get())) {
+                ElementEnum.MILKYWAY_DHD_BUTTON_CONSOLE.bindTexture().render(stack, bufferSource, light);
+            } else {
+                if (StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.MILKYWAY_DHD_MAIN_CRYSTAL.get()))
+                    ElementEnum.MILKYWAY_DHD_CONTROL_CRYSTAL.bindTexture().render(stack, bufferSource, light, overlay);
+                if (StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.MILKYWAY_DHD_CONTROL_CRYSTALS.get()))
+                    ElementEnum.MILKYWAY_DHD_CRYSTALS.bindTexture().render(stack, bufferSource, light, overlay);
+            }
+            if (StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.MILKYWAY_DHD_UPGRADES_COVER.get()))
+                ElementEnum.MILKYWAY_DHD_UPGRADE_COVER.bindTexture().render(stack, bufferSource, light);
+            //else {
+                // TODO: Make tanks and upgrades render
+            //}
 
+
+            if (!StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.MILKYWAY_DHD_BUTTONS_CONSOLE.get()))
+                return;
             // render symbols
             for (SymbolMilkyWayEnum symbol : SymbolMilkyWayEnum.values()) {
                 if (symbol == SymbolMilkyWayEnum.AQUILA) continue; // skip rendering Aquila as it doesn't have a model
+                if (symbol.brb() && !StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.MILKYWAY_DHD_ACTIVATION_BUTTON.get()))
+                    continue;
                 stack.pushPose();
 
                 if (symbol.origin()) {

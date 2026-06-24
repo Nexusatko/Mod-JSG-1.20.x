@@ -3,10 +3,12 @@ package dev.tauri.jsg.client.renderer.item.dialhomedevice;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.api.JSGApi;
+import dev.tauri.jsg.api.dialhomedevice.StargateDHD;
 import dev.tauri.jsg.api.stargate.StargatePointOfOriginsDefaults;
 import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolPegasusEnum;
 import dev.tauri.jsg.common.loader.ElementEnum;
 import dev.tauri.jsg.common.registry.JSGBlocks;
+import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.core.common.registry.CoreBiomeOverlays;
 import dev.tauri.jsg.core.mapping.JSGMapping;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -24,11 +26,27 @@ public class DHDPegasusBEWLR extends DHDAbstractBEWLR {
         if (Block.byItem(itemStack.getItem()) == JSGBlocks.DHD_PEGASUS.get()) {
             // render DHD
             ElementEnum.PEGASUS_DHD_BASE.bindTexture().render(stack, bufferSource, light);
-            ElementEnum.PEGASUS_DHD_BUTTON_CONSOLE.render(stack, bufferSource, light);
-            ElementEnum.PEGASUS_DHD_UPGRADE_COVER.render(stack, bufferSource, light);
+            ElementEnum.PEGASUS_DHD_CRYSTAL_HOLDER.bindTexture().render(stack, bufferSource, light);
+            if (StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.PEGASUS_DHD_BUTTONS_CONSOLE.get())) {
+                ElementEnum.PEGASUS_DHD_BUTTON_CONSOLE.bindTexture().render(stack, bufferSource, light);
+            } else {
+                if (StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.PEGASUS_DHD_MAIN_CRYSTAL.get()))
+                    ElementEnum.PEGASUS_DHD_CONTROL_CRYSTAL.bindTexture().render(stack, bufferSource, light, overlay);
+                if (StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.PEGASUS_DHD_CONTROL_CRYSTALS.get()))
+                    ElementEnum.PEGASUS_DHD_CRYSTALS.bindTexture().render(stack, bufferSource, light, overlay);
+            }
+            if (StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.PEGASUS_DHD_UPGRADES_COVER.get()))
+                ElementEnum.PEGASUS_DHD_UPGRADE_COVER.bindTexture().render(stack, bufferSource, light);
+            //else {
+            // TODO: Make tanks and upgrades render
+            //}
 
+            if (!StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.PEGASUS_DHD_BUTTONS_CONSOLE.get()))
+                return;
             // render symbols
             for (SymbolPegasusEnum symbol : SymbolPegasusEnum.values()) {
+                if (symbol.brb() && !StargateDHD.isPartAssembledOnStack(itemStack, JSGItems.PEGASUS_DHD_ACTIVATION_BUTTON.get()))
+                    continue;
                 stack.pushPose();
                 JSGApi.JSG_LOADERS_HOLDER.texture().getTexture(symbol.brb() ? BRB_TEX : SYMBOLS_TEX).bindTexture();
                 symbol.getModel(symbol.getSymbolType().getPointOfOriginType(), null, StargatePointOfOriginsDefaults.VARIANT_DHD_LIGHT).render(stack, bufferSource, light);
