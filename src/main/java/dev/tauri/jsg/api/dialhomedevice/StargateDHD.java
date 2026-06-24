@@ -13,6 +13,7 @@ import dev.tauri.jsg.core.common.symbol.SymbolInterface;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
 import dev.tauri.jsg.core.common.symbol.pointoforigin.PointOfOrigin;
 import dev.tauri.jsg.core.common.util.IUpgrade;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -128,6 +129,8 @@ public interface StargateDHD extends ILinkableBE<Stargate<?>>, ITickable, IPrepa
         var stack = new ItemStack(blockState.getBlock());
         var tag = stack.getOrCreateTag();
         tag.put("parts", getStateManager().serializeAssemblyToNBT());
+        tag.put("itemHandler", getItemStackHandler().serializeNBT());
+        tag.put("tank", getReactorManager().getTank().writeToNBT(new CompoundTag()));
         stack.setTag(tag);
         return stack;
     }
@@ -136,6 +139,8 @@ public interface StargateDHD extends ILinkableBE<Stargate<?>>, ITickable, IPrepa
         var tag = stack.getOrCreateTag();
         //if (!tag.contains("parts")) return;
         getStateManager().deserializeAssemblyFromNBT(tag.getCompound("parts"));
+        getItemStackHandler().deserializeNBT(tag.getCompound("itemHandler"));
+        getReactorManager().getTank().readFromNBT(tag.getCompound("tank"));
         setDHDChanged();
     }
 

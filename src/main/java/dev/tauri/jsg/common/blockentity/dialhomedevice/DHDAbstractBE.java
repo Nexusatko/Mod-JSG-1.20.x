@@ -526,6 +526,11 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
         itemStackHandler.deserializeNBT(compound.getCompound("itemStackHandler"));
     }
 
+    @Override
+    public CompoundTag serializeNBT() {
+        return super.serializeNBT();
+    }
+
     @Nonnull
     @Override
     public AABB getRenderBoundingBox() {

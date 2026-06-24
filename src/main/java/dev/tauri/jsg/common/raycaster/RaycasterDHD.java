@@ -120,8 +120,10 @@ public abstract class RaycasterDHD extends Raycaster {
                             .findFirst();
                     if (part.isPresent()) {
                         if (part.get() == dhdTile.getFluidTankItemPart() && fluidCap.isPresent()) {
-                            if (!player.isShiftKeyDown())
+                            if (!player.isShiftKeyDown()) {
                                 JSGPacketHandler.sendToServer(new DHDFluidInsertionToServer(pos, hand));
+                                player.swing(hand);
+                            }
                             return false; // do not cancel click event
                         }
                         JSGPacketHandler.sendToServer(new DHDAssemblyClickToServer(pos, part.get(), true));

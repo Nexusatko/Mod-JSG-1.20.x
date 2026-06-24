@@ -9,8 +9,11 @@ import dev.tauri.jsg.core.common.blockstate.JSGProperties;
 import dev.tauri.jsg.core.common.helper.BlockPosHelper;
 import dev.tauri.jsg.core.common.util.JSGAxisAlignedBB;
 import dev.tauri.jsg.core.common.util.math.MathHelper;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -28,6 +31,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -76,11 +80,19 @@ public abstract class DHDAbstractBlock extends TickableBEBlock implements IHighl
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         // Server side
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof DHDAbstractBE dhd) {
-            dhd.updateFromItemStack(itemStack);
+            if (itemStack.getTagElement("BlockEntityTag") == null)
+                dhd.updateFromItemStack(itemStack);
             dhd.updateLinkStatus(level, pos);
         }
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
+    @ParametersAreNonnullByDefault
+    @MethodsReturnNonnullByDefault
+    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        return InteractionResult.CONSUME;
+    }
 
     @Override
     protected void createBlockStateDefinition(@NotNull StateDefinition.Builder<Block, BlockState> builder) {
