@@ -1,10 +1,10 @@
 package dev.tauri.jsg.client.listener;
 
 import dev.tauri.jsg.JSG;
+import dev.tauri.jsg.client.item.tooltip.ClientStargateInventoryTooltip;
 import dev.tauri.jsg.client.renderer.StargateWormholeEffect;
 import dev.tauri.jsg.common.entity.client.JSGEntityModelLayer;
 import dev.tauri.jsg.common.entity.client.MastadgeModel;
-import dev.tauri.jsg.common.item.tooltips.ClientStargateInventoryTooltip;
 import dev.tauri.jsg.common.item.tooltips.ServerStargateInventoryTooltip;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;

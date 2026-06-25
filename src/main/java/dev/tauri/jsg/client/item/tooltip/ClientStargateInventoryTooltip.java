@@ -1,8 +1,9 @@
-package dev.tauri.jsg.common.item.tooltips;
+package dev.tauri.jsg.client.item.tooltip;
 
 import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.api.config.ingame.option.StargateConfigOptions;
 import dev.tauri.jsg.api.power.PowerUtils;
+import dev.tauri.jsg.common.item.tooltips.ServerStargateInventoryTooltip;
 import dev.tauri.jsg.core.client.screen.util.GuiHelper;
 import dev.tauri.jsg.core.client.texture.ITexture;
 import dev.tauri.jsg.core.common.config.ingame.BEConfig;
