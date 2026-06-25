@@ -556,6 +556,11 @@
   "_comment611": "===>>> General Stargate GUI <<<<<<<<<<<<<<<<<<<<<<",
 
   "gui.stargate.energy_crystals": "Energy Crystals",
+  "gui.stargate.jsg.milkyway.title": "Milky Way",
+  "gui.stargate.jsg.pegasus.title": "Pegasus",
+  "gui.stargate.jsg.universe.title": "Universe",
+  "gui.stargate.jsg.tollan.title": "Tollan",
+  "gui.stargate.jsg.movie.title": "Movie",
 
   "_comment613": "===>>> Address Tab <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
 

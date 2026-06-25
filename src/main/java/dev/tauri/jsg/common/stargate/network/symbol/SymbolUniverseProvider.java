@@ -9,7 +9,6 @@ import dev.tauri.jsg.api.stargate.type.StargateTypes;
 import dev.tauri.jsg.common.registry.JSGBlocks;
 import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.core.client.model.IModelLoader;
-import dev.tauri.jsg.core.client.screen.tab.ITab;
 import dev.tauri.jsg.core.client.screen.tab.tabs.TabAddress;
 import dev.tauri.jsg.core.client.texture.ITextureLoader;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
@@ -60,26 +59,12 @@ public class SymbolUniverseProvider extends SymbolType<SymbolUniverseEnum> {
     }
 
     @Override
-    public int[] getAncientTitlePos() {
-        return new int[]{330, 36};
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public ITab.ITabBuilder finalizeAddressTab(ITab.ITabBuilder builder) {
-        return builder.setTexture(JSGApi.rl("textures/gui/container_stargate.png"), 512)
-                .setBackgroundTextureLocation(176, 0)
-                .setIconRenderPos(0, 6)
-                .setIconSize(22, 22)
-                .setIconTextureLocation(304, 44);
-    }
-
-    @Override
     @OnlyIn(Dist.CLIENT)
     public TabAddress.SymbolCoords getSymbolCoords(int symbol) {
         return new TabAddress.SymbolCoords(24 + 16 * (symbol % 6), 20 + 45 * (symbol / 6));
     }
 
+    @Override
     public float getAnglePerGlyph() {
         return ANGLE_PER_SECTION;
     }
@@ -112,6 +97,7 @@ public class SymbolUniverseProvider extends SymbolType<SymbolUniverseEnum> {
         return closest;
     }
 
+    @Override
     public float getAngleOfNearest(float angle) {
         int end = 38;
         int current = 0;
@@ -132,6 +118,7 @@ public class SymbolUniverseProvider extends SymbolType<SymbolUniverseEnum> {
         return getAngleByAngIndex(temp);
     }
 
+    @Override
     public float getAngleByAngIndex(int index) {
         if (index < 0) index = 0;
         if (index > 36) index = 36;
@@ -173,6 +160,7 @@ public class SymbolUniverseProvider extends SymbolType<SymbolUniverseEnum> {
         return 42;
     }
 
+    @Override
     public SymbolUniverseEnum getRandomSymbol(Random random) {
         int id;
         do {
@@ -190,6 +178,7 @@ public class SymbolUniverseProvider extends SymbolType<SymbolUniverseEnum> {
         return stargateAddress.get(stargateAddress.getSize() - 1).origin();
     }
 
+    @Override
     public int getMinimalSymbolCountTo(SymbolType<?> symbolType, boolean localDial) {
         if (JSGConfig.Stargate.useStrictSevenSymbolsUniGate.get())
             localDial = true;
@@ -205,14 +194,17 @@ public class SymbolUniverseProvider extends SymbolType<SymbolUniverseEnum> {
         return symbolType.getMinimalSymbolCountTo(JSGSymbolTypes.UNIVERSE.get(), localDial);
     }
 
+    @Override
     public SymbolUniverseEnum getOrigin() {
         return G17;
     }
 
+    @Override
     public int getMaxSymbolsDisplay(boolean hasUpgrade) {
         return hasUpgrade ? 8 : 6;
     }
 
+    @Override
     public SymbolUniverseEnum getTopSymbol() {
         return TOP_CHEVRON;
     }
@@ -228,10 +220,12 @@ public class SymbolUniverseProvider extends SymbolType<SymbolUniverseEnum> {
         ENGLISH_NAME_MAP.put("point of origin", G17);
     }
 
+    @Override
     public SymbolUniverseEnum valueOf(int id) {
         return ID_MAP.get(id);
     }
 
+    @Override
     public SymbolUniverseEnum fromEnglishName(String englishName) {
         SymbolUniverseEnum symbol = ENGLISH_NAME_MAP.get(englishName.toLowerCase());
 

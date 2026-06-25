@@ -1,6 +1,5 @@
 package dev.tauri.jsg.common.stargate.network.symbol;
 
-import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.api.JSGApi;
 import dev.tauri.jsg.api.config.JSGConfig;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
@@ -10,14 +9,12 @@ import dev.tauri.jsg.api.stargate.type.StargateTypes;
 import dev.tauri.jsg.common.registry.JSGBlocks;
 import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.core.client.model.IModelLoader;
-import dev.tauri.jsg.core.client.screen.tab.ITab;
 import dev.tauri.jsg.core.client.screen.tab.ITabAddress;
 import dev.tauri.jsg.core.client.texture.ITextureLoader;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
 import dev.tauri.jsg.core.common.symbol.SymbolUsage;
 import dev.tauri.jsg.core.common.symbol.address.IAddress;
 import dev.tauri.jsg.core.common.symbol.pointoforigin.IPointOfOriginType;
-import dev.tauri.jsg.core.mapping.JSGMapping;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
@@ -59,21 +56,6 @@ public class SymbolMilkyWayProvider extends SymbolType<SymbolMilkyWayEnum> {
     @Override
     public SymbolMilkyWayEnum getBRB() {
         return BRB;
-    }
-
-    @Override
-    public int[] getAncientTitlePos() {
-        return new int[]{330, 0};
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public ITab.ITabBuilder finalizeAddressTab(ITab.ITabBuilder builder) {
-        return builder.setTexture(JSGMapping.rl(JSG.MOD_ID, "textures/gui/container_stargate.png"), 512)
-                .setBackgroundTextureLocation(176, 0)
-                .setIconRenderPos(0, 6)
-                .setIconSize(22, 22)
-                .setIconTextureLocation(304, 0);
     }
 
     @Override
@@ -142,6 +124,7 @@ public class SymbolMilkyWayProvider extends SymbolType<SymbolMilkyWayEnum> {
         return getOrigin();
     }
 
+    @Override
     public float getAngleOfNearest(float angle) {
         int end = 38;
         int current = 0;
@@ -162,6 +145,7 @@ public class SymbolMilkyWayProvider extends SymbolType<SymbolMilkyWayEnum> {
         return getAngleByAngIndex(temp);
     }
 
+    @Override
     public float getAngleByAngIndex(int index) {
         if (index < 0) index = 0;
         if (index > 38) index = 38;

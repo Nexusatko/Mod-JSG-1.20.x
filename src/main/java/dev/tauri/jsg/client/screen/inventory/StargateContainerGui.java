@@ -13,6 +13,7 @@ import dev.tauri.jsg.common.container.StargateContainer;
 import dev.tauri.jsg.common.packet.JSGPacketHandler;
 import dev.tauri.jsg.common.packet.packets.stargate.SaveIrisCodeToServer;
 import dev.tauri.jsg.common.registry.JSGItems;
+import dev.tauri.jsg.core.JSGCore;
 import dev.tauri.jsg.core.client.screen.tab.TabSideEnum;
 import dev.tauri.jsg.core.client.screen.tab.TabbedContainerScreen;
 import dev.tauri.jsg.core.client.screen.tab.tabs.*;
@@ -24,6 +25,7 @@ import dev.tauri.jsg.core.common.item.IUpgradeItem;
 import dev.tauri.jsg.core.common.packet.JSGCorePacketHandler;
 import dev.tauri.jsg.core.common.packet.packets.SaveConfigToServer;
 import dev.tauri.jsg.core.common.power.JSGEnergyStorage;
+import dev.tauri.jsg.core.common.registry.CoreFonts;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
 import dev.tauri.jsg.core.common.util.I18n;
 import dev.tauri.jsg.core.mapping.JSGMapping;
@@ -31,6 +33,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -43,7 +46,9 @@ import java.util.*;
 import static dev.tauri.jsg.core.client.screen.util.GuiHelper.*;
 
 public class StargateContainerGui extends TabbedContainerScreen<StargateContainer> {
-    public static final ResourceLocation BACKGROUND_TEXTURE = JSGMapping.rl(JSG.MOD_ID, "textures/gui/container_stargate.png");
+    public static final ResourceLocation BACKGROUND_TEXTURE = JSGMapping.rl(JSG.MOD_ID, "textures/gui/container/stargate/gui.png");
+    public static final ResourceLocation IRIS_TAB_TEXTURE = JSGMapping.rl(JSG.MOD_ID, "textures/gui/container/stargate/iris_tab.png");
+    public static final ResourceLocation GENERAL_TABS_TEXTURE = JSGMapping.rl(JSGCore.MOD_ID, "textures/gui/tabs_general.png");
     private final Map<SymbolType<?>, TabAddress> addressTabs = new LinkedHashMap<>();
     private TabIris irisTab;
     private TabConfig configTab;
@@ -111,11 +116,11 @@ public class StargateContainerGui extends TabbedContainerScreen<StargateContaine
                 .setTabSize(128, 51)
                 .setTabTitle(I18n.format("gui.stargate.iris_code"))
                 .setTabSide(TabSideEnum.RIGHT)
-                .setTexture(BACKGROUND_TEXTURE, 512)
-                .setBackgroundTextureLocation(176 + 24, 113)
+                .setTexture(IRIS_TAB_TEXTURE, 256)
+                .setBackgroundTextureLocation(22, 22)
                 .setIconRenderPos(107, 6)
                 .setIconSize(22, 22)
-                .setIconTextureLocation(304, 22 * 4).build();
+                .setIconTextureLocation(0, 0).build();
 
         infoTab = (TabInfo) TabInfo.builder()
                 .setGuiSize(imageWidth, imageHeight)
@@ -126,7 +131,7 @@ public class StargateContainerGui extends TabbedContainerScreen<StargateContaine
                 .setTabSize(152, 51)
                 .setTabTitle(I18n.format("gui.stargate.info"))
                 .setTabSide(TabSideEnum.RIGHT)
-                .setTexture(BACKGROUND_TEXTURE, 512)
+                .setTexture(GENERAL_TABS_TEXTURE, 512)
                 .setBackgroundTextureLocation(176, 113)
                 .setIconRenderPos(131, 6)
                 .setIconSize(22, 22)
@@ -184,9 +189,18 @@ public class StargateContainerGui extends TabbedContainerScreen<StargateContaine
         drawGradientRect(graphics.pose(), leftPos + 10, topPos + 69 + 3, leftPos + 10 + widthInternal, topPos + 69 + 6, 0xffCDBC29, 0xff707316);
 
         // Draw ancient title
-        int[] pos = menu.gateTile.getSymbolType().getAncientTitlePos();
-        drawModalRectWithCustomSizedTexture(leftPos + 137, topPos + 4, pos[0], pos[1], 35, 8, 512, 512);
+        //int[] pos = menu.gateTile.getSymbolType().getAncientTitlePos();
+        //drawModalRectWithCustomSizedTexture(leftPos + 137, topPos + 4, pos[0], pos[1], 35, 8, 512, 512);
+        /*graphics.drawString(font, Component.literal("astria porta")
+                .withStyle(
+                        Style.EMPTY.withFont(CoreFonts.ANCIENT_FONT).withColor(0xff404040)
+                ), leftPos + 50, topPos + 4, 0xffffff, false);*/
+        var title = Component.translatable("gui.stargate." + menu.gateTile.getStargateType().getId().toString().replace(':', '.') + ".title").withStyle(Style.EMPTY.withFont(CoreFonts.ANCIENT_FONT).withColor(0xff404040));
+        //GuiHelper.renderScrollingStringLeftAligned(graphics, font, title, leftPos + this.imageWidth - Math.min(font.width(title), 37) - 6, leftPos + this.imageWidth- 5, topPos + 5, 0xffffff, false);
+        graphics.drawString(font, title, leftPos + this.imageWidth - font.width(title) - 3, topPos + 5, 0xffffff, false);
 
+        ITexture.bindTextureWithMc(BACKGROUND_TEXTURE);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         boolean drawICFirstCable = false;
         boolean drawICSecondCable = false;
 

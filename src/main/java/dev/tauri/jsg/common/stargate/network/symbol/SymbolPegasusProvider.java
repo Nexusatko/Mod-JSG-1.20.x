@@ -1,6 +1,5 @@
 package dev.tauri.jsg.common.stargate.network.symbol;
 
-import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.api.JSGApi;
 import dev.tauri.jsg.api.config.JSGConfig;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
@@ -10,14 +9,12 @@ import dev.tauri.jsg.api.stargate.type.StargateTypes;
 import dev.tauri.jsg.common.registry.JSGBlocks;
 import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.core.client.model.IModelLoader;
-import dev.tauri.jsg.core.client.screen.tab.ITab;
 import dev.tauri.jsg.core.client.screen.tab.tabs.TabAddress;
 import dev.tauri.jsg.core.client.texture.ITextureLoader;
 import dev.tauri.jsg.core.common.symbol.SymbolType;
 import dev.tauri.jsg.core.common.symbol.SymbolUsage;
 import dev.tauri.jsg.core.common.symbol.address.IAddress;
 import dev.tauri.jsg.core.common.symbol.pointoforigin.IPointOfOriginType;
-import dev.tauri.jsg.core.mapping.JSGMapping;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
@@ -62,21 +59,6 @@ public class SymbolPegasusProvider extends SymbolType<SymbolPegasusEnum> {
     }
 
     @Override
-    public int[] getAncientTitlePos() {
-        return new int[]{330, 18};
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public ITab.ITabBuilder finalizeAddressTab(ITab.ITabBuilder builder) {
-        return builder.setTexture(JSGMapping.rl(JSG.MOD_ID, "textures/gui/container_stargate.png"), 512)
-                .setBackgroundTextureLocation(176, 0)
-                .setIconRenderPos(0, 6)
-                .setIconSize(22, 22)
-                .setIconTextureLocation(304, 22);
-    }
-
-    @Override
     @OnlyIn(Dist.CLIENT)
     public TabAddress.SymbolCoords getSymbolCoords(int symbol) {
         return new TabAddress.SymbolCoords(29 + 34 * (symbol % 3), 20 + 28 * (symbol / 3));
@@ -112,6 +94,7 @@ public class SymbolPegasusProvider extends SymbolType<SymbolPegasusEnum> {
         return 27;
     }
 
+    @Override
     public SymbolPegasusEnum getRandomSymbol(Random random) {
         int id;
         do {
@@ -128,6 +111,7 @@ public class SymbolPegasusProvider extends SymbolType<SymbolPegasusEnum> {
         return stargateAddress.get(stargateAddress.getSize() - 1).origin();
     }
 
+    @Override
     public int getMinimalSymbolCountTo(SymbolType<?> symbolType, boolean localDial) {
 
         boolean eightChevrons = JSGConfig.Stargate.pegAndMilkUseEightChevrons.get();
@@ -143,14 +127,17 @@ public class SymbolPegasusProvider extends SymbolType<SymbolPegasusEnum> {
         return symbolType.getMinimalSymbolCountTo(JSGSymbolTypes.PEGASUS.get(), localDial);
     }
 
+    @Override
     public SymbolPegasusEnum getOrigin() {
         return SUBIDO;
     }
 
+    @Override
     public int getMaxSymbolsDisplay(boolean hasUpgrade) {
         return hasUpgrade ? 8 : 6;
     }
 
+    @Override
     public float getAnglePerGlyph() {
         return 1;
     }
@@ -160,6 +147,7 @@ public class SymbolPegasusProvider extends SymbolType<SymbolPegasusEnum> {
         return getOrigin();
     }
 
+    @Override
     public SymbolPegasusEnum getTopSymbol() {
         return SUBIDO;
     }
@@ -175,10 +163,12 @@ public class SymbolPegasusProvider extends SymbolType<SymbolPegasusEnum> {
         ENGLISH_NAME_MAP.put("point of origin", SUBIDO);
     }
 
+    @Override
     public SymbolPegasusEnum valueOf(int id) {
         return ID_MAP.get(id);
     }
 
+    @Override
     public SymbolPegasusEnum fromEnglishName(String englishName) {
         return ENGLISH_NAME_MAP.get(englishName.toLowerCase());
     }
