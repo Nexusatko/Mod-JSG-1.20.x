@@ -1,6 +1,7 @@
 package dev.tauri.jsg.datagen.tag;
 
 import dev.tauri.jsg.JSG;
+import dev.tauri.jsg.common.registry.JSGBlocks;
 import dev.tauri.jsg.common.registry.JSGItems;
 import dev.tauri.jsg.common.registry.tags.JSGItemTags;
 import dev.tauri.jsg.core.common.registry.CoreItems;
@@ -32,6 +33,8 @@ public class JSGItemTagGenerator extends ItemTagsProvider {
 
         Util.make(tag(ItemTags.CREEPER_DROP_MUSIC_DISCS), (tag) ->
                 JSGItems.RECORDS.forEach((event, item) -> tag.add(item.get())));
+
+        tag(ItemTags.SMELTS_TO_GLASS).add(JSGBlocks.ABYDOS_SAND.get().asItem());
 
         //JSG Tags
         //Iris blades
