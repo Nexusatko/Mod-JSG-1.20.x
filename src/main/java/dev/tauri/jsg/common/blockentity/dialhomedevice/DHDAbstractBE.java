@@ -1,6 +1,5 @@
 package dev.tauri.jsg.common.blockentity.dialhomedevice;
 
-import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.api.config.JSGConfig;
 import dev.tauri.jsg.api.config.ingame.option.StargateConfigOptions;
 import dev.tauri.jsg.api.dialhomedevice.StargateDHD;
@@ -141,6 +140,7 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
     @Override
     public void activateSymbol(SymbolInterface symbol) {
         if (level == null) return;
+        if (getStateManager().getButtonsState().get(symbol).isActive()) return;
         var playSound = getLinkedDeviceOptional().map(gateTile -> {
             if (!gateTile.getDialingManager().getStargateState().dialingComputer()) return true;
             return (gateTile instanceof IConfigurable configurable && configurable.getConfig().getValueOrDefault(StargateConfigOptions.Classic.DHD_OC_PRESS_SOUND));
@@ -154,11 +154,7 @@ public abstract class DHDAbstractBE extends JSGBlockEntity implements StargateDH
                 JSGSoundHelper.playSoundEvent(level, getBlockPos(), getButtonPressSound());
         }
 
-        try {
-            Optional.ofNullable(getStateManager().getButtonsState().get(symbol)).ifPresent(DHDButtonsState.ButtonState::activate);
-        } catch (Exception e) {
-            JSG.logger.info("wtf", e);
-        }
+        Optional.ofNullable(getStateManager().getButtonsState().get(symbol)).ifPresent(DHDButtonsState.ButtonState::activate);
     }
 
     @Override
