@@ -27,7 +27,7 @@ public enum SymbolPegasusEnum implements SymbolInterface {
     SIBBRON(31, "Sibbron", "31.obj", 0), //36
     GILLTIN(30, "Gilltin", "30.obj", 9),
     // no texture exist, but it is showing ROEHI because while rendering pegasus gate idle cycle is going through 0 - 35
-    UNKNOWN2(29, "Unknown2", "29.obj", 11),
+    UNKNOWN2(29, "Unknown2", "29.obj", -1),
     RAMNON(28, "Ramnon", "28.obj", 24),
     OLAVII(27, "Olavii", "27.obj", 14),
     HACEMILL(26, "Hacemill", "26.obj", 16),
@@ -39,7 +39,7 @@ public enum SymbolPegasusEnum implements SymbolInterface {
     TAHNAN(20, "Tahnan", "20.obj", 32),
     ZEO(19, "Zeo", "19.obj", 4),
     // same as UNKNOWN2
-    UNKNOWN1(18, "Unknown1", "18.obj", 35),
+    UNKNOWN1(18, "Unknown1", "18.obj", -1),
     ROBANDUS(17, "Robandus", "17.obj", 1),
     RECKTIC(16, "Recktic", "16.obj", 6),
     ZAMILLOZ(15, "Zamilloz", "15.obj", 19),
@@ -78,8 +78,8 @@ public enum SymbolPegasusEnum implements SymbolInterface {
         this.translationKey = "glyph.jsg.pegasus." + englishName.toLowerCase().replace(" ", "_");
         this.iconResource = JSGMapping.rl(JSGApi.MOD_ID, "textures/gui/symbol/pegasus/" + englishName.toLowerCase().replace(" ", "_") + ".png");
 
-        this.gateSymbolResource = JSGApi.JSG_LOADERS_HOLDER.texture().getTextureResource("pegasus/glyphs.png");
-        this.gateSymbolOffResource = JSGApi.JSG_LOADERS_HOLDER.texture().getTextureResource("pegasus/glyphs_off.png");
+        this.gateSymbolResource = JSGApi.JSG_LOADERS_HOLDER.texture().getTextureResource("pegasus/symbols/on/" + englishName.toLowerCase().replace(" ", "_"));
+        this.gateSymbolOffResource = JSGApi.JSG_LOADERS_HOLDER.texture().getTextureResource("pegasus/symbols/off/" + englishName.toLowerCase().replace(" ", "_"));
 
         this.modelResource = JSGApi.JSG_LOADERS_HOLDER.model().getModelResource("pegasus/dhd/buttons/" + model.split("\\.")[0] + "_base.obj");
         this.modelResourceLight = JSGApi.JSG_LOADERS_HOLDER.model().getModelResource("pegasus/dhd/buttons/" + model);
@@ -96,7 +96,7 @@ public enum SymbolPegasusEnum implements SymbolInterface {
 
     @Override
     public float getAngle() {
-        return id;
+        return textureSlot * 10f;
     }
 
     @Override
@@ -164,7 +164,7 @@ public enum SymbolPegasusEnum implements SymbolInterface {
 
     @Override
     public boolean isValidForAddress() {
-        return !brb() && !origin() && this != UNKNOWN1 && this != UNKNOWN2;
+        return !brb() && !origin();
     }
 
 
@@ -178,11 +178,6 @@ public enum SymbolPegasusEnum implements SymbolInterface {
             var symbol = JSGSymbolTypes.PEGASUS.get().valueOf(id);
             if (symbol != null && symbol.isValidForAddress()) return symbol;
         }
-    }
-
-    @Override
-    public boolean canBePressed() {
-        return !(this == UNKNOWN1 || this == UNKNOWN2);
     }
 
     @SuppressWarnings("all")

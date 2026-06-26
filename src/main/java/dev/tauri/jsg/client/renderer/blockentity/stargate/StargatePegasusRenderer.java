@@ -6,12 +6,14 @@ import com.mojang.math.Axis;
 import dev.tauri.jsg.api.registry.JSGSymbolTypes;
 import dev.tauri.jsg.api.stargate.ChevronEnum;
 import dev.tauri.jsg.api.stargate.StargatePointOfOriginsDefaults;
+import dev.tauri.jsg.api.stargate.network.address.symbol.types.SymbolPegasusEnum;
 import dev.tauri.jsg.common.loader.ElementEnum;
 import dev.tauri.jsg.common.stargate.animation.chevron.StargateChevronsState;
 import dev.tauri.jsg.common.stargate.animation.chevron.StargatePegasusChevronsState;
 import dev.tauri.jsg.common.stargate.animation.spinning.PegasusSpinHelper;
 import dev.tauri.jsg.core.client.model.AbstractOBJModel;
 import dev.tauri.jsg.core.client.renderer.EmissiveRenderer;
+import dev.tauri.jsg.core.common.symbol.SymbolInterface;
 import dev.tauri.jsg.core.common.util.math.NumberUtils;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
@@ -22,6 +24,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -63,16 +66,21 @@ public class StargatePegasusRenderer extends StargateClassicRenderer<StargatePeg
             double tick = (Minecraft.getInstance().gui.getGuiTicks() + partialTicks);
             int slot = (int) Math.floor(spinHelper.apply(tick, true));
             if (!chevronsState.isSlotActive(slot)) {
-                renderGlyph(((PegasusSpinHelper) spinHelper).getTargetSymbol().getId(), slot, false);
+                renderGlyph(((PegasusSpinHelper) spinHelper).getTargetSymbol(), slot, false);
             }
         }
 
         var allDim = !chevronsState.isAnySlotActive();
+        if (allDim && !spinHelper.isSpinning()) {
+            Arrays.stream(JSGSymbolTypes.PEGASUS.get().getValues()).forEach(symbol -> {
+                var slot = symbol.getAngle() / 10f;
+                if (slot < 0) return;
+                renderGlyph(symbol, (int) slot, true);
+            });
+        }
         for (int i = 0; i < GLYPHS_COUNT; i++) {
-            if (allDim && !spinHelper.isSpinning())
-                renderGlyph(i, i, true);
-            if (chevronsState.isSlotActive(i))
-                renderGlyph(chevronsState.getSymbolAtSlot(i).orElse(JSGSymbolTypes.PEGASUS.get().getOrigin()).getId(), i, false);
+            if (!chevronsState.isSlotActive(i)) continue;
+            renderGlyph(chevronsState.getSymbolAtSlot(i).orElse(JSGSymbolTypes.PEGASUS.get().getOrigin()), i, false);
         }
         stack.popPose();
 
@@ -124,39 +132,29 @@ public class StargatePegasusRenderer extends StargateClassicRenderer<StargatePeg
     }
 
     private double[] getPositionInRingAtIndex(double radius, int index) {
-        double deg = ((360.0 / GLYPHS_COUNT) * index);
+        double deg = -((360.0 / GLYPHS_COUNT) * index) + 90;
         double rad = Math.toRadians(deg);
-        return new double[]{radius * Math.cos(rad), radius * Math.sin(rad), deg};
+        return new double[]{radius * Math.cos(rad), radius * Math.sin(rad), (360.0 / GLYPHS_COUNT) * index};
     }
 
-    protected void renderGlyph(int glyphId, int slot, boolean deactivated) {
-        renderGlyph(glyphId, slot, deactivated, false);
+    protected void renderGlyph(SymbolInterface glyph, int slot, boolean deactivated) {
+        renderGlyph(glyph, slot, deactivated, false);
         if (deactivated) {
-            renderGlyph(glyphId, slot, false, true);
+            renderGlyph(glyph, slot, false, true);
         }
     }
 
 
-    private static final Map<Integer, VertexBuffer> SYMBOLS_MODEL_CACHE = new HashMap<>();
+    private static final Map<SymbolInterface, VertexBuffer> SYMBOLS_MODEL_CACHE = new HashMap<>();
 
     @SuppressWarnings("all")
-    protected void renderGlyph(int glyphId, int slot, boolean deactivated, boolean translatePos) {
+    protected void renderGlyph(SymbolInterface glyph, int slot, boolean deactivated, boolean translatePos) {
         if (AbstractOBJModel.getRenderMethod() != AbstractOBJModel.EnumOBJRenderMethod.NORMAL) {
-            renderGlyphGUI(glyphId, slot, deactivated, translatePos);
+            renderGlyphGUI((SymbolPegasusEnum) glyph, slot, deactivated, translatePos);
             return;
         }
-        final var correctedSlot = StargatePegasusChevronsState.getCorrectedSlot(slot);
-        var vertexBuffer = SYMBOLS_MODEL_CACHE.get(glyphId);
-
-        // The glyphs in the assets are arranged in a circle, so we extract those glyphs at certain positions.
-        double radius = 0.94;
-        // double[] uv = getPositionInRingAtIndex(radius, -glyphId);
-        int textureSlot = JSGSymbolTypes.PEGASUS.get().valueOf(glyphId).textureSlot;
-        double[] uv = getPositionInRingAtIndex(radius, -(textureSlot));
-        float x = (float) ((uv[0] + radius) / 2);
-        float y = (float) ((uv[1] + radius) / 2);
+        var vertexBuffer = SYMBOLS_MODEL_CACHE.get(glyph);
         float tileSize = 0.270f;
-        float uvSize = 0.06250f;
 
         if (vertexBuffer == null) {
             vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
@@ -167,28 +165,28 @@ public class StargatePegasusRenderer extends StargateClassicRenderer<StargatePeg
 
             buffer.vertex(-tileSize, 0, -tileSize)
                     .color(1f, 1f, 1f, 1f)
-                    .uv(x, y)
+                    .uv(0, 0)
                     .overlayCoords(OverlayTexture.NO_OVERLAY)
                     .uv2(LightTexture.FULL_BRIGHT)
                     .normal(0, 0, 1)
                     .endVertex();
             buffer.vertex(-tileSize, 0, tileSize)
                     .color(1f, 1f, 1f, 1f)
-                    .uv(x, y + uvSize)
+                    .uv(0, 1)
                     .overlayCoords(OverlayTexture.NO_OVERLAY)
                     .uv2(LightTexture.FULL_BRIGHT)
                     .normal(0, 0, 1)
                     .endVertex();
             buffer.vertex(tileSize, 0, tileSize)
                     .color(1f, 1f, 1f, 1f)
-                    .uv(x + uvSize, y + uvSize)
+                    .uv(1, 1)
                     .overlayCoords(OverlayTexture.NO_OVERLAY)
                     .uv2(LightTexture.FULL_BRIGHT)
                     .normal(0, 0, 1)
                     .endVertex();
             buffer.vertex(tileSize, 0, -tileSize)
                     .color(1f, 1f, 1f, 1f)
-                    .uv(x + uvSize, y)
+                    .uv(1, 0)
                     .overlayCoords(OverlayTexture.NO_OVERLAY)
                     .uv2(LightTexture.FULL_BRIGHT)
                     .normal(0, 0, 1)
@@ -203,39 +201,40 @@ public class StargatePegasusRenderer extends StargateClassicRenderer<StargatePeg
         VertexBuffer finalVertexBuffer = vertexBuffer;
         EmissiveRenderer.renderWithLightOverlay(stack, LightTexture.FULL_BRIGHT, true, () -> {
             var variant = (deactivated ? StargatePointOfOriginsDefaults.VARIANT_GATE_OFF_PNG : StargatePointOfOriginsDefaults.VARIANT_GATE_PNG);
-            var symbol = JSGSymbolTypes.PEGASUS.get().valueOf(glyphId);
-            if (symbol != null) {
-                symbol.bindIconTexture(tileEntity.getPointOfOrigin(), variant);
-            }
+            bindSymbolTextureForRing(glyph, variant);
             finalVertexBuffer.bind();
         }, () -> {
-            double[] slotPos = getPositionInRingAtIndex((GATE_DIAMETER / 2) - 0.85, correctedSlot);
+            double[] slotPos = getPositionInRingAtIndex((GATE_DIAMETER / 2) - 0.845, slot + 1);
 
             // Round is necessary here, since Minecraft doesn't handle many decimal places very well in this case,
             // so that the texture just ceases to exist.
             stack.translate(NumberUtils.round(slotPos[0], 3), NumberUtils.round(slotPos[1], 3), translatePos ? -0.105 : 0.205);
             stack.mulPose(Axis.XP.rotationDegrees(90));
 
-            stack.mulPose(Axis.YP.rotationDegrees((360.0f / GLYPHS_COUNT) * (correctedSlot - textureSlot) + 180));
+            stack.mulPose(Axis.YN.rotationDegrees((float) slotPos[2]));
             Matrix4f projection = RenderSystem.getProjectionMatrix();
             Matrix4f matrix = stack.last().pose();
             finalVertexBuffer.drawWithShader(matrix, projection, Objects.requireNonNull(RenderSystem.getShader()));
             VertexBuffer.unbind();
         });
-        SYMBOLS_MODEL_CACHE.put(glyphId, vertexBuffer);
+        SYMBOLS_MODEL_CACHE.put(glyph, vertexBuffer);
+    }
+
+    protected void bindSymbolTextureForRing(SymbolInterface glyph, String variant) {
+        if (glyph instanceof SymbolPegasusEnum symbolPegasusEnum)
+            symbolPegasusEnum.bindIconTexture(tileEntity.getPointOfOrigin(), variant);
+        else
+            glyph.bindIconTexture(tileEntity.getPointOfOrigin());
     }
 
     @SuppressWarnings("all")
-    protected void renderGlyphGUI(int glyphId, int slot, boolean deactivated, boolean translatePos) {
+    protected void renderGlyphGUI(SymbolPegasusEnum glyph, int slot, boolean deactivated, boolean translatePos) {
         final var correctedSlot = StargatePegasusChevronsState.getCorrectedSlot(slot);
         Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
         EmissiveRenderer.renderWithLightOverlay(stack, combinedLight, false, () -> {
             var variant = (deactivated ? StargatePointOfOriginsDefaults.VARIANT_GATE_OFF_PNG : StargatePointOfOriginsDefaults.VARIANT_GATE_PNG);
-            var symbol = JSGSymbolTypes.PEGASUS.get().valueOf(glyphId);
-            if (symbol != null) {
-                symbol.bindIconTexture(tileEntity.getPointOfOrigin(), variant);
-            }
+            glyph.bindIconTexture(tileEntity.getPointOfOrigin(), variant);
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         }, () -> {
             double[] slotPos = getPositionInRingAtIndex((GATE_DIAMETER / 2) - 0.85, correctedSlot);
@@ -243,7 +242,7 @@ public class StargatePegasusRenderer extends StargateClassicRenderer<StargatePeg
             // The glyphs in the assets are arranged in a circle, so we extract those glyphs at certain positions.
             double radius = 0.94;
             // double[] uv = getPositionInRingAtIndex(radius, -glyphId);
-            int textureSlot = JSGSymbolTypes.PEGASUS.get().valueOf(glyphId).textureSlot;
+            int textureSlot = glyph.textureSlot;
             double[] uv = getPositionInRingAtIndex(radius, -(textureSlot));
             float x = (float) ((uv[0] + radius) / 2);
             float y = (float) ((uv[1] + radius) / 2);
