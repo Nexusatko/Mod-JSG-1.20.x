@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 
@@ -163,7 +164,18 @@ public class StargateNetwork extends SavedData implements IStargateNetwork {
         setDirty();
     }
 
-    private void checkForInvalidDims() {
+    public void removeStargatesCauseDimDeleted(ResourceKey<LevelStem> dimension) {
+        var map = new HashMap<>(GATES_MAP_BY_POS);
+        for (var e : map.entrySet()) {
+            var pos = e.getKey();
+            if (pos.dimension.location().equals(dimension.location())) {
+                JSG.logger.warn("Removing stargate at {} from the network - dimension has been removed!", pos);
+                removeStargate(pos);
+            }
+        }
+    }
+
+    public void checkForInvalidDims() {
         if (JSGCore.currentServer == null) return; // we are on client - do not check
         var map = new HashMap<>(GATES_MAP_BY_POS);
         for (var e : map.entrySet()) {

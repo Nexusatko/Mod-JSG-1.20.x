@@ -147,10 +147,10 @@ public class StargateGenerator implements IStargateGenerator {
                 if (nextSlot >= 7) break;
                 ItemStack capacitor;
                 if (e.second()) {
-                    capacitor = new ItemStack(CoreItems.CRYSTAL_ENERGY_BASIC.get());
+                    capacitor = new ItemStack(CoreItems.CRYSTAL_ENERGY_CREATIVE.get());
                 } else {
                     if (e.first() < 0) continue;
-                    capacitor = new ItemStack(CoreItems.CRYSTAL_ENERGY_CREATIVE.get());
+                    capacitor = new ItemStack(CoreItems.CRYSTAL_ENERGY_BASIC.get());
                     var storage = capacitor.getCapability(ForgeCapabilities.ENERGY, null).resolve().orElseThrow();
                     if (storage instanceof JSGEnergyStorage jsgEnergyStorage)
                         jsgEnergyStorage.receiveLongEnergy(e.first(), false);

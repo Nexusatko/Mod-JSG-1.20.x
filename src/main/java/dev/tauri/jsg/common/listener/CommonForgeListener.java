@@ -11,9 +11,13 @@ import dev.tauri.jsg.common.recipes.StargateOrlinBaseBlockRecipe;
 import dev.tauri.jsg.common.recipes.UniverseDialerCloneRecipe;
 import dev.tauri.jsg.common.registry.JSGVillagers;
 import dev.tauri.jsg.common.registry.util.VillagerUtil;
+import dev.tauri.jsg.common.stargate.network.StargateNetwork;
 import dev.tauri.jsg.core.common.registry.CoreBlocks;
 import dev.tauri.jsg.core.common.util.CreativeItemsChecker;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
@@ -25,16 +29,23 @@ import net.minecraft.world.entity.projectile.Snowball;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executor;
 
@@ -119,5 +130,26 @@ public class CommonForgeListener {
             recipesManager.replaceRecipes(recipes);
             JSG.logger.info("Recipes successfully reloaded!");
         }));
+    }
+
+    private static final List<ResourceKey<LevelStem>> REMOVED_LEVELS = new ArrayList<>();
+
+    @SubscribeEvent
+    public static void checkSGNIntegrity(ServerAboutToStartEvent event) {
+        var server = event.getServer();
+        var registry = server.registryAccess().registry(Registries.LEVEL_STEM);
+        REMOVED_LEVELS.clear();
+        if (registry.isEmpty()) return;
+        if (!(registry.get() instanceof MappedRegistry<LevelStem> mappedRegistry)) return;
+        mappedRegistry.registryKeySet().stream()
+                .filter(registryEntry -> !DimensionType.getStorageFolder(ResourceKey.create(Registries.DIMENSION, registryEntry.location()), server.getWorldPath(LevelResource.ROOT)).toFile().exists())
+                .forEach(REMOVED_LEVELS::add);
+    }
+
+    @SubscribeEvent
+    public static void updateSGNIntegrity(ServerStartedEvent event) {
+        REMOVED_LEVELS.forEach(registryEntry -> StargateNetwork.INSTANCE.removeStargatesCauseDimDeleted(registryEntry));
+        REMOVED_LEVELS.clear();
+        StargateNetwork.INSTANCE.checkForInvalidDims();
     }
 }
