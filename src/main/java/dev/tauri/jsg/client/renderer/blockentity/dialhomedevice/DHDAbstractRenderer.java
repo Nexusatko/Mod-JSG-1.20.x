@@ -66,15 +66,16 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
         tileEntity = te;
         rendererState = (S) te.getStateManager().getRendererStateClient();
         this.partialTicks = partialTicks;
-        if (rendererState == null || te.getLevel() == null) return;
-
         this.level = te.getLevel();
+        if (rendererState == null || level == null) return;
         level.updateSkyBrightness();
-        @SuppressWarnings("null")
-        BlockState state = te.getLevel().getBlockState(te.getBlockPos());
+
+        BlockState state = level.getBlockState(te.getBlockPos());
         if (state.getBlock() != getDHDBlock()) return;
         renderLink(te.getBlockPos(), te, poseStack, bufferSource);
         renderRaycasterButtons(te, poseStack, bufferSource);
+
+        var dhdRotationAngle = level.getBlockState(tileEntity.getBlockPos()).getValue(JSGProperties.ROTATION_PROPERTY) * -22.5f;
 
         poseStack.pushPose();
 
@@ -83,10 +84,9 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
         }
 
         poseStack.translate(0.5, 0, 0.5);
-        poseStack.mulPose(Axis.YP.rotationDegrees(Objects.requireNonNull(level).getBlockState(tileEntity.getBlockPos()).getValue(JSGProperties.ROTATION_PROPERTY) * -22.5f));
+        poseStack.mulPose(Axis.YP.rotationDegrees(dhdRotationAngle));
 
         renderDHD(poseStack, bufferSource, combinedLight, combinedOverlay);
-        renderSymbols(poseStack, bufferSource, combinedLight, combinedOverlay, tileEntity.getStateManager().getButtonsState());
 
         var assemblyRenderTitleRunnable = renderAssembly(poseStack, bufferSource, combinedLight, combinedOverlay, showAssemblyHelper());
 
@@ -99,6 +99,12 @@ public abstract class DHDAbstractRenderer<S extends DHDAbstractRendererState> im
         poseStack.pushPose();
         poseStack.translate(0.5, 0.2, 0.5);
         assemblyRenderTitleRunnable.ifPresent(Runnable::run);
+        poseStack.popPose();
+
+        poseStack.pushPose();
+        poseStack.translate(0.5, 0, 0.5);
+        poseStack.mulPose(Axis.YP.rotationDegrees(dhdRotationAngle));
+        renderSymbols(poseStack, bufferSource, combinedLight, combinedOverlay, tileEntity.getStateManager().getButtonsState());
         poseStack.popPose();
 
         renderNaquadahTankTooltip(poseStack, bufferSource, combinedLight, combinedOverlay);
