@@ -50,7 +50,6 @@ public class UDMemoryMode extends UDNearbyMode {
             if (selectedEntry >= entries.size())
                 selectedEntry--;
             compound.putByte(C_SELECTED, selectedEntry);
-            stack.setTag(compound); // TODO(Mine): Investigate if when this line gets removed, it will still save it?
 
             /*
 
