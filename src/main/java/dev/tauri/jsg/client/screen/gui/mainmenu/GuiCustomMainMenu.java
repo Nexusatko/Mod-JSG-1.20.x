@@ -10,7 +10,7 @@ import dev.tauri.jsg.api.config.JSGConfig;
 import dev.tauri.jsg.client.screen.element.MainMenuMusicSlider;
 import dev.tauri.jsg.common.config.data.ProgressJSON;
 import dev.tauri.jsg.common.registry.JSGPositionedSounds;
-import dev.tauri.jsg.common.util.updater.GetUpdate;
+import dev.tauri.jsg.common.util.WebsiteUtils;
 import dev.tauri.jsg.core.client.screen.util.GuiHelper;
 import dev.tauri.jsg.core.client.screen.widget.IconButton;
 import dev.tauri.jsg.core.client.screen.widget.base.JSGButtonClassic;
@@ -45,8 +45,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static dev.tauri.jsg.common.util.updater.GetUpdate.DOWNLOAD_URL_USER;
-import static dev.tauri.jsg.common.util.updater.GetUpdate.openWebsiteToClient;
 import static dev.tauri.jsg.core.client.screen.util.GuiHelper.*;
 import static dev.tauri.jsg.core.client.sound.JSGSoundHelperClient.playPositionedFlyBySound;
 
@@ -70,13 +68,11 @@ public class GuiCustomMainMenu extends Screen {
     public static final MainMenuNotifications NOTIFIER = MainMenuNotifications.getManager();
     private static final int BACKGROUND_CHANGE_ANIMATION_LENGTH = 60; //ticks
     private static final int BACKGROUND_STAY_TIME = 200; //ticks
-    public static GetUpdate.UpdateResult UPDATER_RESULT = GetUpdate.LAST_UPDATE_RESULT;
     public static long menuDisplayed = -1;
     public static boolean menuWasDisplayed = false;
     public static double firstTransitionStart = 0;
     private static int currentButton = 0;
     private static boolean menuWasDisplayedIgnoredFPS = false;
-    private static int updaterNotification = -1;
 
     public double tick;
     public boolean isMusicPlaying = false;
@@ -179,11 +175,6 @@ public class GuiCustomMainMenu extends Screen {
         buttonList.add(new IconButton(++id, 0, 0, MainMenuGateRenderer.getIconsTexture(gateType), texSize, 0, 32, 32, 32, false, Component.translatable("menu.quit").getString()));
         buttonList.add(new IconButton(++id, 0, 0, MainMenuGateRenderer.getIconsTexture(gateType), texSize, 0, 0, 32, 32, false, Component.translatable("menu.about").getString()));
         buttonList.add(new IconButton(++id, 0, 0, MainMenuGateRenderer.getIconsTexture(gateType), texSize, 64, 0, 32, 32, false, Component.translatable("fml.menu.mods").getString()));
-
-        // ------------------------
-        // Notifier about updates
-        initUpdaterNotifier();
-
     }
 
     public int getButtonForDisplay(int offset) {
@@ -369,7 +360,7 @@ public class GuiCustomMainMenu extends Screen {
             int sizeXTauri = width / 10;
             int sizeYTauri = (230 * sizeXTauri) / 411;
             if (isPointInRegion(PADDING, height - PADDING - sizeYTauri, sizeXTauri, sizeYTauri, (int) mouseX, (int) mouseY)) {
-                openWebsiteToClient(GITHUB);
+                WebsiteUtils.openWebsiteToClient(GITHUB);
                 result = true;
             }
 
@@ -386,7 +377,7 @@ public class GuiCustomMainMenu extends Screen {
             int y = (int) (center[1] * 0.5);
 
             if (isPointInRegion(PADDING, PADDING, jsgSizeX, jsgSizeY, (int) mouseX, (int) mouseY) || isPointInRegion(x, y, sizeXJSG, sizeYJSG, (int) mouseX, (int) mouseY)) {
-                openWebsiteToClient(WEBSITE);
+                WebsiteUtils.openWebsiteToClient(WEBSITE);
                 result = true;
             }
         }
@@ -437,7 +428,7 @@ public class GuiCustomMainMenu extends Screen {
                     minecraft.stop();
                     break;
                 case 4:
-                    openWebsiteToClient(WEBSITE);
+                    WebsiteUtils.openWebsiteToClient(WEBSITE);
                     break;
                 case 5:
                     minecraft.setScreen(new ModListScreen(this));
@@ -566,7 +557,6 @@ public class GuiCustomMainMenu extends Screen {
             graphics.drawString(font, "currentBackground: " + currentBackground, PADDING, center[1] + (10 * (++i)), 0xffffff);
             graphics.drawString(font, "gateType: " + gateType.toString(), PADDING, center[1] + (10 * (++i)), 0xffffff);
             graphics.drawString(font, "currentButton: " + currentButton, PADDING, center[1] + (10 * (++i)), 0xffffff);
-            graphics.drawString(font, "updater: (Status: " + UPDATER_RESULT.result.toString() + "; Got: " + UPDATER_RESULT.response + ")", PADDING, center[1] + (10 * (++i)), 0xffffff);
             graphics.drawString(font, "currentAct: " + ProgressJSON.get().currentActId, PADDING, center[1] + (10 * (++i)), 0xffffff);
         }
 
@@ -715,90 +705,6 @@ public class GuiCustomMainMenu extends Screen {
         poseStack.popPose();
     }
 
-    public void initUpdaterNotifier() {
-        if (UPDATER_RESULT.result == GetUpdate.EnumUpdateResult.NEWER_AVAILABLE || UPDATER_RESULT.result == GetUpdate.EnumUpdateResult.ERROR) {
-            boolean error = UPDATER_RESULT.result == GetUpdate.EnumUpdateResult.ERROR;
-            if (updaterNotification == -1 || NOTIFIER.get(updaterNotification) == null) {
-                if (!error) {
-                    updaterNotification = NOTIFIER.add(new MainMenuNotifications.Notification(new ArrayList<>() {{
-                        // Download (20)
-                        String update = Component.translatable("menu.updater.download").getString();
-                        int width = font.width(update) + 20;
-                        add(new JSGButtonClassic(MainMenuNotifications.BUTTONS_ID_START, -width - (PADDING / 2), 0, width, 20, update));
-
-                        // Close (21)
-                        update = Component.translatable("menu.updater.close").getString();
-                        width = font.width(update) + 20;
-                        add(new JSGButtonClassic(MainMenuNotifications.BUTTONS_ID_START + 1, (PADDING / 2), 0, width, 20, update));
-                    }}, "New update is available!",
-                            "",
-                            "",
-                            "You can update to version " + UPDATER_RESULT.response,
-                            "It is highly recommended to update to this version!",
-                            "Some dangerous bugs should be fixed in this version."
-                    ) {
-                        @Override
-                        public void render(int mouseX, int mouseY, int width, int height, int rectX, int rectY, Screen parentScreen) {
-                            super.renderText(mouseX, mouseY, width, height, rectX, rectY, parentScreen);
-                            int xCenter = getCenterPos(0, 0)[0];
-
-                            buttons.get(0).setY(rectY + MainMenuNotifications.BACKGROUND_HEIGHT - 30);
-                            buttons.get(0).setX(xCenter - buttons.get(0).getWidth() - (PADDING / 2));
-                            buttons.get(0).render(graphics, mouseX, mouseY, 0);
-                            buttons.get(1).setX(xCenter + (PADDING / 2));
-                            buttons.get(1).setY(buttons.get(0).getY());
-                            buttons.get(1).render(graphics, mouseX, mouseY, 0);
-                        }
-
-                        @Override
-                        public void actionPerformed(@Nonnull JSGButtonClassic button) {
-                            switch (button.id) {
-                                case MainMenuNotifications.BUTTONS_ID_START:
-                                    openWebsiteToClient(DOWNLOAD_URL_USER);
-                                    break;
-                                case MainMenuNotifications.BUTTONS_ID_START + 1:
-                                    dismiss();
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    });
-                } else {
-                    updaterNotification = NOTIFIER.add(new MainMenuNotifications.Notification(new ArrayList<>() {{
-                        // Close (21)
-                        String close = Component.translatable("menu.updater.close").getString();
-                        int width = font.width(close) + 20;
-                        add(new JSGButtonClassic(MainMenuNotifications.BUTTONS_ID_START + 1, -width / 2, 0, width, 20, close));
-                    }}, "Error while checking update!",
-                            UPDATER_RESULT.response,
-                            "",
-                            "Can not get response from the server!",
-                            "Please check your internet connection.",
-                            "Problem can also be on our side."
-                    ) {
-                        @Override
-                        public void render(int mouseX, int mouseY, int width, int height, int rectX, int rectY, Screen parentScreen) {
-                            super.renderText(mouseX, mouseY, width, height, rectX, rectY, parentScreen);
-                            int xCenter = getCenterPos(0, 0)[0];
-
-                            buttons.get(0).setY(rectY + MainMenuNotifications.BACKGROUND_HEIGHT - 30);
-                            buttons.get(0).setX(xCenter - (buttons.get(0).getWidth() / 2));
-                            buttons.get(0).render(graphics, mouseX, mouseY, 0);
-                        }
-
-                        @Override
-                        public void actionPerformed(@Nonnull JSGButtonClassic button) {
-                            if (button.id == MainMenuNotifications.BUTTONS_ID_START + 1) {
-                                dismiss();
-                            }
-                        }
-                    });
-                }
-            }
-        }
-    }
-
     public void firstInit() {
 
         if (JSG.memoryTotal < 2L * 1024 * 1024 * 1024) {
@@ -836,7 +742,7 @@ public class GuiCustomMainMenu extends Screen {
                 public void actionPerformed(@Nonnull JSGButtonClassic button) {
                     switch (button.id) {
                         case MainMenuNotifications.BUTTONS_ID_START + 10:
-                            openWebsiteToClient(WIKI_RAM_ALLOCATION_URL);
+                            WebsiteUtils.openWebsiteToClient(WIKI_RAM_ALLOCATION_URL);
                             break;
                         case MainMenuNotifications.BUTTONS_ID_START + 11:
                             dismiss();

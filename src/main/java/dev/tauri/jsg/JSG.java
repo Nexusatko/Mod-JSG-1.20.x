@@ -21,7 +21,6 @@ import dev.tauri.jsg.common.registry.JSGRegistriesInit;
 import dev.tauri.jsg.common.stargate.StargateTypesLoader;
 import dev.tauri.jsg.common.stargate.network.StargateNetwork;
 import dev.tauri.jsg.common.stargate.network.StargateReservedAddresses;
-import dev.tauri.jsg.common.util.updater.GetUpdate;
 import dev.tauri.jsg.core.JSGAddon;
 import dev.tauri.jsg.core.JSGAddons;
 import dev.tauri.jsg.core.JSGCore;
@@ -217,8 +216,6 @@ public class JSG implements JSGAddon {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            GetUpdate.checkForUpdateVoid();
-
             AdminControllerTabsRegistry.addTab(DialingTab::new);
             AdminControllerTabsRegistry.addTab(DiagnosticsTab::new);
             AdminControllerTabsRegistry.addTab(NetworkTab::new);
