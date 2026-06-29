@@ -106,6 +106,7 @@ public class GetUpdate {
             JSG.logger.info("Fetched: " + result);
             //Removing the HTML tags
             result = result.replaceAll("<[^>]*>", "");
+            sc.close();
             return result;
         } catch (Exception e) {
             JSG.logger.error("Error while getting data from " + link);
