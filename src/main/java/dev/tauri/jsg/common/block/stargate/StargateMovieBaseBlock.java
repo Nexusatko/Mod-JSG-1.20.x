@@ -1,7 +1,7 @@
 package dev.tauri.jsg.common.block.stargate;
 
-import dev.tauri.jsg.JSG;
 import dev.tauri.jsg.common.registry.JSGBlockEntities;
+import dev.tauri.jsg.core.JSGCore;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +26,6 @@ public class StargateMovieBaseBlock extends StargateClassicBaseBlock {
     @Override
     public void appendHoverText(@NotNull ItemStack itemStack, @javax.annotation.Nullable BlockGetter blockGetter, @NotNull List<Component> components, @NotNull TooltipFlag tooltipFlag) {
         super.appendHoverText(itemStack, blockGetter, components, tooltipFlag);
-        components.add(JSG.getInProgress());
+        components.add(JSGCore.getInProgress());
     }
 }

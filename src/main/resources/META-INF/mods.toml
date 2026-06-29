@@ -8,7 +8,7 @@ license="${mod_license}"
    displayURL="https://justsgmod.eu"
    authors="${mod_authors}"
    description='''${mod_description}'''
-   updateJSONURL="https://api.modrinth.com/updates/jsg/forge_updates.json
+   updateJSONURL="https://api.modrinth.com/updates/jsg/forge_updates.json"
 [[dependencies."${mod_id}"]]
    modId="forge"
    mandatory=true

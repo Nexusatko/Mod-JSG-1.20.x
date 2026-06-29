@@ -27,9 +27,8 @@ import dev.tauri.jsg.core.JSGCore;
 import dev.tauri.jsg.core.LoggerWrapper;
 import dev.tauri.jsg.core.common.integration.Integrations;
 import dev.tauri.jsg.core.mapping.JSGMapping;
-import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,16 +39,16 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.util.Optional;
 
 @Mod(JSG.MOD_ID)
 public class JSG implements JSGAddon {
@@ -60,37 +59,8 @@ public class JSG implements JSGAddon {
     public static String MOD_VERSION = "";
     public static String MOD_VERSION_ONLY = "";
     public static final String MC_VERSION = "1.20.1";
-    public static File clientModPath;
 
     public static long memoryTotal = 0;
-
-    public static final String[] WELCOME_MESS = {
-            "=======================================",
-            "|     $$$$$\\  $$$$$$\\   $$$$$$\\",
-            "|     \\__$$ |$$  __$$\\ $$  __$$\\",
-            "|        $$ |$$ /  \\__|$$ /  \\__|",
-            "|        $$ |\\$$$$$$\\  $$ |$$$$\\",
-            "|  $$\\   $$ | \\____$$\\ $$ |\\_$$ |",
-            "|  $$ |  $$ |$$\\   $$ |$$ |  $$ |",
-            "|  \\$$$$$$  |\\$$$$$$  |\\$$$$$$  |",
-            "|   \\______/  \\______/  \\______/",
-            "",
-            " Authors: Tau'ri Dev team",
-            " Wiki: https://justsgmod.eu/docs",
-            " Version: {version}",
-            "======================================="
-    };
-
-    public static void displayWelcomeMessage() {
-        for (String s : WELCOME_MESS) {
-            logger.info(s.replaceAll("\\{version}", JSG.MOD_VERSION));
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public static Component getInProgress() {
-        return Component.literal(ChatFormatting.AQUA + "Work In Progress Item!");
-    }
 
     public static ResourceLocation rl(String path) {
         return JSGMapping.rl(JSG.MOD_ID, path);
@@ -111,18 +81,24 @@ public class JSG implements JSGAddon {
         StargateTypesLoader.load();
         // ----------
 
-        ModList.get().getModContainerById(MOD_ID).ifPresentOrElse(container -> {
-            MOD_VERSION_ONLY = container.getModInfo().getVersion().getQualifier();
+        Util.make(JSGAddons.getInfo(this), info -> {
+            MOD_VERSION_ONLY = info.get(JSGAddons.AddonInfo.VERSION);
             MOD_VERSION = MC_VERSION + "-" + MOD_VERSION_ONLY;
             JSGApi.MOD_VERSION = MOD_VERSION;
-            clientModPath = container.getModInfo().getOwningFile().getFile().getFilePath().toFile();
-        }, () -> {
         });
         JSG.memoryTotal = Runtime.getRuntime().maxMemory();
 
-        JSG.logger.info("Started loading JSG mod in {}", JSG.clientModPath.getAbsolutePath());
+        JSG.logger.info("Started loading JSG mod");
         JSG.logger.info("Mods directory: {}", JSGCore.modConfigDir.getAbsolutePath());
         JSG.logger.info("Loading JSG version {}", JSG.MOD_VERSION);
+
+        if (FMLEnvironment.dist.isClient()) {
+            try {
+                var clazz = Class.forName("dev.tauri.jsg.JSGServer");
+                throw new RuntimeException("Trying to JSG server version on a client, this is not going to end well... (class " + clazz.getCanonicalName() + " is present on client)");
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
 
         JSGConfig.load();
         JSGConfig.register();
@@ -148,8 +124,6 @@ public class JSG implements JSGAddon {
         Integrations.CCT.addOnLoad(CCDevices::load);
         Integrations.OC2.addOnLoad(OCDevices::load);
         Integrations.CREATE.addOnLoad(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> PonderScenes::new));
-
-        displayWelcomeMessage();
 
         JSGAddons.registerAddon(this);
     }
@@ -198,18 +172,27 @@ public class JSG implements JSGAddon {
     }
 
     @Override
-    public String getName() {
-        return MOD_NAME;
-    }
-
-    @Override
+    @NonNull
     public String getId() {
         return MOD_ID;
     }
 
     @Override
-    public String getVersion() {
-        return MOD_VERSION;
+    public String @NonNull [] getWelcomeLogo() {
+        return new String[]{
+                "░░░░░██╗░██████╗░██████╗░",
+                "░░░░░██║██╔════╝██╔════╝░",
+                "░░░░░██║╚█████╗░██║░░██╗░",
+                "██╗░░██║░╚═══██╗██║░░╚██╗",
+                "╚█████╔╝██████╔╝╚██████╔╝",
+                "░╚════╝░╚═════╝░░╚═════╝░"
+        };
+    }
+
+    @Override
+    @NonNull
+    public Optional<LoggerWrapper> getLoggerWrapper() {
+        return Optional.of(logger);
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

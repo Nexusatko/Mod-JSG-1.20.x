@@ -55,7 +55,7 @@ public class GuiCustomMainMenu extends Screen {
 
     public static final String WEBSITE = "https://justsgmod.eu/";
 
-    public static final String WIKI_RAM_ALLOCATION_URL = "https://justsgmod.eu/wiki/?type=1.20category=general&topic=start#Allocating%20more%20RAM";
+    public static final String WIKI_RAM_ALLOCATION_URL = "https://docs.tauridev.eu/jsg/getting-started/installation/#allocating-more-ram";
     public static final String GITHUB = "https://github.com/Tau-ri-Dev";
     public static final String JSG_RUNNING_TEXT = "Just Stargate Mod v" + JSG.MOD_VERSION.replaceAll(JSG.MC_VERSION + "-", "");
 
