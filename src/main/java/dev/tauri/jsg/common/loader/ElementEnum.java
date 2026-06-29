@@ -38,9 +38,24 @@ public enum ElementEnum implements IModelsHolder {
     MILKYWAY_CHEVRON_MOVING("milkyway/chevron_moving.obj", "milkyway/chevron", true),
     MILKYWAY_CHEVRON_BACK("milkyway/chevron_back.obj", "milkyway/gatering", true),
 
+    // --------------------------------------------------------------------------------------------
+    // Orlin's
+
     ORLIN_GATE("orlin/orlin_gate.obj", "orlin/orlin_gate_base", true),
     ORLIN_GATE_BURNT("orlin/orlin_gate_burnt.obj", "orlin/orlin_gate_burnt", true),
     ORLIN_STAND("orlin/orlin_stand.obj", "orlin/orlin_stand_base", true),
+
+    // --------------------------------------------------------------------------------------------
+    // Movie
+
+    MOVIE_GATE("movie/gate.obj", "movie/gatering", true),
+    MOVIE_RING("movie/ring.obj", "movie/gatering", true),
+
+    MOVIE_CHEVRON_LIGHT("movie/chevron_light.obj", "movie/chevron", true),
+    MOVIE_CHEVRON_FRAME("movie/chevron_frame.obj", "movie/gatering", true),
+    MOVIE_CHEVRON_MOVING("movie/chevron_moving.obj", "movie/chevron", true),
+    MOVIE_CHEVRON_MOVING_TOP("movie/chevron_moving_top.obj", "movie/chevron", true),
+    MOVIE_CHEVRON_BACK("movie/chevron_back.obj", "movie/gatering", true),
 
     // --------------------------------------------------------------------------------------------
     // Universe

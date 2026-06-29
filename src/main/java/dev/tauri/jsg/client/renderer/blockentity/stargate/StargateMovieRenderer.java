@@ -2,9 +2,11 @@ package dev.tauri.jsg.client.renderer.blockentity.stargate;
 
 import com.mojang.math.Axis;
 import dev.tauri.jsg.api.stargate.ChevronEnum;
+import dev.tauri.jsg.api.stargate.StargatePointOfOriginsDefaults;
 import dev.tauri.jsg.common.loader.ElementEnum;
 import dev.tauri.jsg.common.stargate.animation.chevron.StargateChevronsState;
 import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 
 import javax.annotation.Nonnull;
@@ -12,6 +14,32 @@ import javax.annotation.Nonnull;
 public class StargateMovieRenderer extends StargateMilkyWayRenderer {
     public StargateMovieRenderer(BlockEntityRendererProvider.Context ignored) {
         super(ignored);
+    }
+
+    @Override
+    protected void renderGate() {
+        stack.pushPose();
+        ElementEnum.MOVIE_GATE.bindTexture(rendererState.getBiomeOverlay()).render(stack, source, combinedLight);
+        stack.popPose();
+        renderRing();
+        renderChevrons();
+    }
+
+    @Override
+    protected void renderRing() {
+        stack.pushPose();
+        tileEntity.getDialingManager().getSpinHelper().correctClientRingStartTime(level.getGameTime(), Minecraft.getInstance().gui.getGuiTicks());
+        var angularRotation = (float) tileEntity.getDialingManager().getSpinHelper().apply(Minecraft.getInstance().gui.getGuiTicks() + partialTicks, true);
+
+
+        stack.translate(RING_LOC.x, RING_LOC.z, RING_LOC.y);
+        stack.mulPose(Axis.ZP.rotationDegrees(-angularRotation));
+        stack.translate(-RING_LOC.x, -RING_LOC.z, -RING_LOC.y);
+
+        ElementEnum.MOVIE_RING.bindTexture(rendererState.getBiomeOverlay()).render(stack, source, combinedLight);
+        tileEntity.getSymbolType().getOrigin().getModel(tileEntity.getStargateType(), tileEntity.getPointOfOrigin(), StargatePointOfOriginsDefaults.VARIANT_GATE).render(stack, source, combinedLight);
+
+        stack.popPose();
     }
 
     @Override
@@ -27,15 +55,18 @@ public class StargateMovieRenderer extends StargateMilkyWayRenderer {
         stack.pushPose();
 
         stack.translate(0, chevronOffset, 0);
-        ElementEnum.MILKYWAY_CHEVRON_LIGHT.render(stack, source, combinedLight);
+        ElementEnum.MOVIE_CHEVRON_LIGHT.render(stack, source, combinedLight);
 
         stack.translate(0, -2 * chevronOffset, 0);
-        ElementEnum.MILKYWAY_CHEVRON_MOVING.render(stack, source, combinedLight);
+        if (chevron.isFinal())
+            ElementEnum.MOVIE_CHEVRON_MOVING_TOP.render(stack, source, combinedLight);
+        else
+            ElementEnum.MOVIE_CHEVRON_MOVING.render(stack, source, combinedLight);
 
         stack.popPose();
 
-        ElementEnum.MILKYWAY_CHEVRON_FRAME.bindTexture(rendererState.getBiomeOverlay()).render(stack, source, combinedLight);
-        ElementEnum.MILKYWAY_CHEVRON_BACK.render(stack, source, combinedLight);
+        ElementEnum.MOVIE_CHEVRON_FRAME.bindTexture(rendererState.getBiomeOverlay()).render(stack, source, combinedLight);
+        ElementEnum.MOVIE_CHEVRON_BACK.render(stack, source, combinedLight);
 
         stack.popPose();
     }
