@@ -38,7 +38,7 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -95,7 +95,11 @@ public class JSG implements JSGAddon {
         if (FMLEnvironment.dist.isClient()) {
             try {
                 var clazz = Class.forName("dev.tauri.jsg.JSGServer");
-                throw new RuntimeException("Trying to JSG server version on a client, this is not going to end well... (class " + clazz.getCanonicalName() + " is present on client)");
+                ModList.get().getModContainerById(getId()).ifPresentOrElse(jsgMod -> {
+                    ModLoader.get().addWarning(new ModLoadingWarning(jsgMod.getModInfo(), ModLoadingStage.CONSTRUCT, "Trying to run JSG server version on a client, this is not going to end well...", "Class " + clazz.getCanonicalName() + " is present on client"));
+                }, () -> {
+                    throw new RuntimeException("Trying to run JSG server version on a client, this is not going to end well... (class " + clazz.getCanonicalName() + " is present on client)");
+                });
             } catch (ClassNotFoundException ignored) {
             }
         }
