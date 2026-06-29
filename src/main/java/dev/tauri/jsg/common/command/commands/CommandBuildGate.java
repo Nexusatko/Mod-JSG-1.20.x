@@ -53,7 +53,10 @@ public class CommandBuildGate extends JSGAbstractCommand {
         return command.then(Commands.argument("type", ResourceLocationArgument.id())
                 .suggests((CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) -> {
                     for (var type : StargateType.values()) {
-                        if (Objects.equals(builder.getRemainingLowerCase(), "") || type.getId().toString().startsWith(builder.getRemainingLowerCase()))
+                        if (Objects.equals(builder.getRemainingLowerCase(), "")
+                                || type.getId().toString().startsWith(builder.getRemainingLowerCase())
+                                || type.getId().getPath().startsWith(builder.getRemainingLowerCase())
+                        )
                             builder.suggest(type.getId().toString());
                     }
                     return builder.buildFuture();
