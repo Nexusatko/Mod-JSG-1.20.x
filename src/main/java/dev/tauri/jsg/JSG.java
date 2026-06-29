@@ -14,7 +14,6 @@ import dev.tauri.jsg.common.config.data.ProgressJSON;
 import dev.tauri.jsg.common.injectors.JSGLootTableInjectors;
 import dev.tauri.jsg.common.injectors.JSGTemplatePoolInjectors;
 import dev.tauri.jsg.common.integration.cctweaked.CCDevices;
-import dev.tauri.jsg.common.integration.create.PonderScenes;
 import dev.tauri.jsg.common.integration.oc2.OCDevices;
 import dev.tauri.jsg.common.packet.JSGPacketHandler;
 import dev.tauri.jsg.common.registry.JSGRegistriesInit;
@@ -127,7 +126,6 @@ public class JSG implements JSGAddon {
 
         Integrations.CCT.addOnLoad(CCDevices::load);
         Integrations.OC2.addOnLoad(OCDevices::load);
-        Integrations.CREATE.addOnLoad(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> PonderScenes::new));
 
         JSGAddons.registerAddon(this);
     }
