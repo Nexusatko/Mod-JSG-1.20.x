@@ -50,7 +50,7 @@ public class StargateMovieRenderer extends StargateMilkyWayRenderer {
 
         getTextureLoader().getTexture(getTextureLoader().getTextureResource("movie/chevron" + rendererState.getBiomeOverlay().suffix() + ".png")).bindTexture();
 
-        float chevronOffset = state.getOffset(partialTicks, 2);
+        float chevronOffset = chevron.isFinal() ? 0 : state.getOffset(partialTicks, 2);
 
         stack.pushPose();
 
